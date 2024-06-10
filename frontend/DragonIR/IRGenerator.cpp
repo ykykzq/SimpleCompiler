@@ -60,6 +60,9 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
 
     /* 编译单元 */
     ast2ir_handlers[ast_operator_type::AST_OP_COMPILE_UNIT] = &IRGenerator::ir_compile_unit;
+
+    /* 变量声明 */
+    ast2ir_handlers[ast_operator_type::AST_VAR_VAR_DECL] = &IRGenerator::ir_var_declare;
 }
 
 /// @brief 编译单元AST节点翻译成线性中间IR
@@ -202,6 +205,37 @@ bool IRGenerator::ir_function_define(ast_node * node)
 
     // 恢复成指向main函数
     symtab->currentFunc = nullptr;
+
+    return true;
+}
+/// @brief 变量声明翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_var_declare(ast_node * node)
+{
+    //在我们的处理中，只有void和int
+    auto var_type =
+        (node->sons[0]->node_type == ast_operator_type::AST_TYPE_INT) ? BasicType::TYPE_INT : BasicType::TYPE_VOID;
+    auto var_name = node->sons[1]->sons[0]->sons[0]->name;
+    auto var_init_val = node->sons[1]->sons[0]->sons[1];
+
+    //是否为全局变量
+    Value * var;
+    if (symtab->currentFunc == nullptr) {
+        //是全局变量，添加到符号表中
+        var = symtab->newVarValue("@" + var_name, var_type);
+        if (var_init_val != nullptr) {
+            //有初始化值一定为int
+            var->intVal = var_init_val->integer_val;
+        }
+    } else {
+        //否则添加到当前函数的符号表里
+        var = symtab->currentFunc->newVarValue(var_type);
+        var->local_name = var_name;
+        //局部变量的初始化则比较复杂
+        ir_assign(node->sons[1]->sons[0]);
+        node->blockInsts.addInst(node->sons[1]->sons[0]->blockInsts);
+    }
 
     return true;
 }
@@ -554,11 +588,20 @@ bool IRGenerator::ir_leaf_node_var_id(ast_node * node)
     // 变量，则需要在符号表中查找对应的值
     // 若变量之前没有有定值，则采用默认的值为0
 
-    val = symtab->currentFunc->findValue(node->name, false);
+    val = symtab->currentFunc->findValueLN(node->name, false);
+    // if (!val) {
+
+    //     // 变量不存在，则创建一个变量
+    //     val = symtab->currentFunc->newVarValue(node->name);
+    // }
     if (!val) {
 
-        // 变量不存在，则创建一个变量
-        val = symtab->currentFunc->newVarValue(node->name);
+        // 变量不存在，则在全局变量符号表里找
+        val = symtab->findValue("@" + node->name);
+        if (!val) {
+            // 全局变量也不存在，则在函数里创建一个变量
+            val = symtab->currentFunc->newVarValue("%" + node->name);
+        }
     }
 
     node->val = val;

@@ -92,6 +92,24 @@ void SymbolTable::outputIR(const std::string & filePath)
     }
 
     // 遍历所有的线性IR指令，文本输出
+    // 全局符号表
+    for (auto var: varsVector) {
+        if (var->isLocalVar()) {
+            if (var->intVal == 0) {
+                //没有初始化
+                std::string instStr;
+                instStr = "declare " + var->type.toString() + " " + var->getName() + "\n";
+                fprintf(fp, "%s", instStr.c_str());
+            } else {
+                //进行初始化
+                std::string instStr;
+                instStr = "declare " + var->type.toString() + " " + var->getName() + " = " +
+                          std::to_string(var->intVal) + "\n";
+                fprintf(fp, "%s", instStr.c_str());
+            }
+        }
+    }
+    // 全局函数列表
     for (auto func: funcVector) {
 
         std::string instStr;

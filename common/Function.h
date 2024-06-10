@@ -174,6 +174,12 @@ public:
     /// \return 变量对应的值
     Value * findValue(std::string name, bool create = false);
 
+    /// 根据localname取得当前符号的值。若变量不存在，则说明变量之前没有定值，则创建一个未知类型的值，初值为0
+    /// \param name 变量名
+    /// \param create true: 不存在返回nullptr；false：不存在则不创建
+    /// \return 变量对应的值
+    Value * findValueLN(std::string name, bool create = false);
+
     /// @brief 新建变量型Value
     /// @param name 变量ID
     /// @param type 变量类型

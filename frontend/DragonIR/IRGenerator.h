@@ -63,6 +63,11 @@ protected:
     /// @return 翻译是否成功，true：成功，false：失败
     bool ir_block(ast_node * node);
 
+    /// @brief 变量声明翻译成线性中间IR
+    /// @param node AST节点
+    /// @return 翻译是否成功，true：成功，false：失败
+    bool ir_var_declare(ast_node * node);
+
     /// @brief 表达式语句ST节点翻译成线性中间IR的共同函数
     /// @param node AST节点
     /// @param show 是否显示值，true：显示，false：不显示

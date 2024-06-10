@@ -302,15 +302,6 @@ Value * Function::newVarValue(std::string name, BasicType type)
     return retVal;
 }
 
-/// @brief Value插入到符号表中
-/// @param name Value的名称
-/// @param val Value信息
-void Function::insertValue(Value * val)
-{
-    varsMap.emplace(val->name, val);
-    varsVector.push_back(val);
-}
-
 /// @brief 新建一个匿名变量型的Value，并加入到符号表，用于后续释放空间
 /// \param type 类型
 /// \return 变量Value
@@ -322,6 +313,15 @@ Value * Function::newVarValue(BasicType type)
     insertValue(var);
 
     return var;
+}
+
+/// @brief Value插入到符号表中
+/// @param name Value的名称
+/// @param val Value信息
+void Function::insertValue(Value * val)
+{
+    varsMap.emplace(val->name, val);
+    varsVector.push_back(val);
 }
 
 /// 新建一个临时型的Value，并加入到符号表，用于后续释放空间
@@ -367,7 +367,35 @@ Value * Function::findValue(std::string name, bool create)
 
     return temp;
 }
+/// 根据localname取得当前符号的值。若变量不存在，则说明变量之前没有定值，则创建一个未知类型的值，初值为0
+/// \param name 变量名
+/// \param create true: 不存在返回nullptr；false：不存在则不创建
+/// \return 变量对应的值
+Value * Function::findValueLN(std::string local_name, bool create)
+{
+    Value * temp = nullptr;
 
+    // 这里只是针对函数内的变量进行检查，如果要考虑全局变量，则需要继续检查symtab的符号表
+    for (auto var: varsVector) {
+        if (var->local_name == local_name) {
+            temp = var;
+        }
+    }
+
+    // 没有找到，并且指定了全局符号表，则继续查找
+    if ((!temp) && symtab) {
+
+        temp = symtab->findValue(local_name, false);
+    }
+
+    // 变量名没有找到
+    if ((!temp) && create) {
+        temp = newVarValue(BasicType::TYPE_VOID);
+        temp->local_name = local_name;
+    }
+
+    return temp;
+}
 /// @brief 设置符号表，以便全局符号查找
 void Function::setSymtab(SymbolTable * _symtab)
 {

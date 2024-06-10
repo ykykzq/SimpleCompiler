@@ -60,6 +60,9 @@ public:
     /// @brief 变量名或内部标识的名字
     std::string name;
 
+	/// @brief 作为局部变量时的标识，例如，a
+    std::string local_name;
+
     /// @brief 类型
     ValueType type;
 
