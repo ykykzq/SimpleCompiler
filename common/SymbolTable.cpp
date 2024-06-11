@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <string>
+#include <iostream>
 #include <vector>
 
 #include "Function.h"
@@ -94,6 +95,18 @@ void SymbolTable::outputIR(const std::string & filePath)
     // 遍历所有的线性IR指令，文本输出
     // 全局符号表
     for (auto var: varsVector) {
+        if (var->isArray()) {
+            //数组单独处理
+            std::string instStr;
+            instStr = "declare " + var->type.toString() + " " + var->getName();
+            for (auto index: var->arrayIndexVector) {
+                instStr = instStr + "[" + std::to_string(index) + "]";
+            }
+
+            instStr = instStr + "\n";
+            fprintf(fp, "%s", instStr.c_str());
+            continue;
+        }
         if (var->isLocalVar()) {
             if (var->intVal == 0) {
                 //没有初始化
@@ -143,6 +156,46 @@ Value * SymbolTable::newVarValue(std::string name, BasicType type)
         }
     } else {
         retVal = new VarValue(name, type);
+        insertValue(retVal);
+    }
+
+    return retVal;
+}
+
+/// @brief 新建全局变量型Value
+/// @param name 变量ID
+/// @param type 变量类型
+/// @param index 下标集合
+Value * SymbolTable::newArrayValue(std::string name, BasicType type, std::vector<int32_t> index)
+{
+    Value * retVal = nullptr;
+
+    auto pIter = varsMap.find(name);
+    if (pIter != varsMap.end()) {
+
+        // 已存在的Value
+        retVal = pIter->second;
+
+        // 符号表中存在，则只是更新值
+        pIter->second->type = type;
+
+        if (type == BasicType::TYPE_INT) {
+            pIter->second->intVal = 0;
+        } else {
+            pIter->second->realVal = 0;
+        }
+
+        //更新下标表
+        for (auto x: index) {
+            retVal->arrayIndexVector.push_back(x);
+        }
+
+    } else {
+        retVal = new ArrayValue(name, type);
+        //更新下标表
+        for (auto x: index) {
+            retVal->arrayIndexVector.push_back(x);
+        }
         insertValue(retVal);
     }
 

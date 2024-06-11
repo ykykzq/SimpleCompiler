@@ -62,6 +62,12 @@ public:
     /// @param type 变量类型
     Value * newVarValue(std::string name, BasicType type = BasicType::TYPE_INT);
 
+    /// @brief 新建全局变量型Value
+    /// @param name 变量ID
+    /// @param type 变量类型
+    /// @param index 下标集合
+    Value * newArrayValue(std::string name, BasicType type, std::vector<int32_t> index);
+
     /// @brief 新建一个整型数值的Value，并加入到符号表，用于后续释放空间
     /// \param intVal 整数值
     /// \return 临时Value

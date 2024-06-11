@@ -10,6 +10,7 @@
  */
 #include <cstdint>
 #include <cstdio>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -217,27 +218,48 @@ bool IRGenerator::ir_var_declare(ast_node * node)
     auto var_type =
         (node->sons[0]->node_type == ast_operator_type::AST_TYPE_INT) ? BasicType::TYPE_INT : BasicType::TYPE_VOID;
 
-    auto define = node->sons[1];
-    for (auto son_node: define->sons) {
-        auto var_name = son_node->sons[0]->name;
-        auto var_init_val = son_node->sons[1];
-
-        //是否为全局变量
-        Value * var;
-        if (symtab->currentFunc == nullptr) {
-            //是全局变量，添加到符号表中
-            var = symtab->newVarValue("@" + var_name, var_type);
-            if (var_init_val != nullptr) {
-                //有初始化值一定为int
-                var->intVal = var_init_val->integer_val;
+    //处理一行内所有变量
+    auto defines = node->sons[1];
+    for (auto son_node: defines->sons) {
+        if (son_node->sons[0]->node_type == ast_operator_type::AST_ARRAY) {
+            //如果是数组则另行处理，目前默认为全局
+            auto var_name = "default_array_name";
+            std::vector<int32_t> indexs;
+            int i = 0;
+            for (auto index: son_node->sons[0]->sons) {
+                if (i == 0) {
+                    var_name = index->name.c_str();
+                } else {
+                    int32_t temp = index->integer_val;
+                    indexs.push_back(temp);
+                }
+                i++;
             }
+            symtab->newArrayValue("@" + std::string(var_name), var_type, indexs);
+            //处理初始化部分
+            // todo
+
         } else {
-            //否则添加到当前函数的符号表里
-            var = symtab->currentFunc->newVarValue(var_type);
-            var->local_name = var_name;
-            //局部变量的初始化则比较复杂
-            ir_assign(son_node);
-            node->blockInsts.addInst(son_node->blockInsts);
+            auto var_name = son_node->sons[0]->name;
+            auto var_init_val = son_node->sons[1];
+
+            //是否为全局变量
+            Value * var;
+            if (symtab->currentFunc == nullptr) {
+                //是全局变量，添加到符号表中
+                var = symtab->newVarValue("@" + var_name, var_type);
+                if (var_init_val != nullptr) {
+                    //有初始化值一定为int
+                    var->intVal = var_init_val->integer_val;
+                }
+            } else {
+                //否则添加到当前函数的符号表里
+                var = symtab->currentFunc->newVarValue(var_type);
+                var->local_name = var_name;
+                //局部变量的初始化则比较复杂
+                ir_assign(son_node);
+                node->blockInsts.addInst(son_node->blockInsts);
+            }
         }
     }
 

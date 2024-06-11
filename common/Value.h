@@ -12,6 +12,8 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "Common.h"
 #include "ValueType.h"
@@ -56,11 +58,14 @@ protected:
     /// @brief 是否是内存变量
     bool _mem = false;
 
+    /// @brief 是否是数组
+    bool _array = false;
+
 public:
     /// @brief 变量名或内部标识的名字
     std::string name;
 
-	/// @brief 作为局部变量时的标识，例如，a
+    /// @brief 作为局部变量时的标识，例如，a
     std::string local_name;
 
     /// @brief 类型
@@ -71,6 +76,9 @@ public:
 
     /// @brief 实数常量的值
     float realVal = 0;
+
+    /// @brief 作为数组的下标集合
+    std::vector<int32_t> arrayIndexVector;
 
     /// @brief 寄存器编号，-1表示没有分配寄存器，大于等于0代表是寄存器型Value
     int32_t regId = -1;
@@ -159,6 +167,13 @@ public:
         return _mem;
     }
 
+    /// @brief 检查变量是否是数组符号
+    /// @return true: 是 false：不是
+    bool isArray()
+    {
+        return _array;
+    }
+
     /// @brief 根据变量类型获取所占空间的大小
     /// @return 空间大小，单位字节
     int32_t getSize()
@@ -236,6 +251,30 @@ public:
 
     /// @brief 析构函数
     ~VarValue() override
+    {
+        // 如有资源清理，请这里追加代码
+    }
+};
+
+/// @brief 数组类
+class ArrayValue : public Value {
+
+public:
+    /// @brief 局部数组或者全局变量数组型Value
+    /// \param val
+    ArrayValue(std::string _name, BasicType _type = BasicType::TYPE_INT) : Value(_name, _type)
+    {
+        _var = true;
+        _array = true;
+    }
+
+    /// @brief 匿名数组Value
+    /// @param _type 类型
+    ArrayValue(BasicType _type = BasicType::TYPE_INT) : ArrayValue(createLocalVarName(), _type)
+    {}
+
+    /// @brief 析构函数
+    ~ArrayValue() override
     {
         // 如有资源清理，请这里追加代码
     }
