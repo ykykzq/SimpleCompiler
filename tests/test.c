@@ -1,8 +1,8 @@
-//test domain of global var define and local define
-int a = 3;
-int b = 5;
-
+//test local var define
 int main(){
-    int a = 5;
-    return a + b;
+    int a, b0, _c;
+    a = 1;
+    b0 = 2;
+    _c = 3;
+    return b0 + _c;
 }

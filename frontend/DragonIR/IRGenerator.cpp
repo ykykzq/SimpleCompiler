@@ -216,25 +216,29 @@ bool IRGenerator::ir_var_declare(ast_node * node)
     //在我们的处理中，只有void和int
     auto var_type =
         (node->sons[0]->node_type == ast_operator_type::AST_TYPE_INT) ? BasicType::TYPE_INT : BasicType::TYPE_VOID;
-    auto var_name = node->sons[1]->sons[0]->sons[0]->name;
-    auto var_init_val = node->sons[1]->sons[0]->sons[1];
 
-    //是否为全局变量
-    Value * var;
-    if (symtab->currentFunc == nullptr) {
-        //是全局变量，添加到符号表中
-        var = symtab->newVarValue("@" + var_name, var_type);
-        if (var_init_val != nullptr) {
-            //有初始化值一定为int
-            var->intVal = var_init_val->integer_val;
+    auto define = node->sons[1];
+    for (auto son_node: define->sons) {
+        auto var_name = son_node->sons[0]->name;
+        auto var_init_val = son_node->sons[1];
+
+        //是否为全局变量
+        Value * var;
+        if (symtab->currentFunc == nullptr) {
+            //是全局变量，添加到符号表中
+            var = symtab->newVarValue("@" + var_name, var_type);
+            if (var_init_val != nullptr) {
+                //有初始化值一定为int
+                var->intVal = var_init_val->integer_val;
+            }
+        } else {
+            //否则添加到当前函数的符号表里
+            var = symtab->currentFunc->newVarValue(var_type);
+            var->local_name = var_name;
+            //局部变量的初始化则比较复杂
+            ir_assign(son_node);
+            node->blockInsts.addInst(son_node->blockInsts);
         }
-    } else {
-        //否则添加到当前函数的符号表里
-        var = symtab->currentFunc->newVarValue(var_type);
-        var->local_name = var_name;
-        //局部变量的初始化则比较复杂
-        ir_assign(node->sons[1]->sons[0]);
-        node->blockInsts.addInst(node->sons[1]->sons[0]->blockInsts);
     }
 
     return true;
