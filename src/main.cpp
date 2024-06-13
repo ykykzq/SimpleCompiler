@@ -30,7 +30,7 @@
 #include "../include/ir_struct.h"
 #include "../include/ssa.h"
 #include "../include/ssa_struct.h"
-#include "parser.hpp"
+#include "./front_end/parser.hpp"
 ast::Root *ast_root;  // the root node of final AST
 extern int yyparse();
 extern int yylex_destroy();
