@@ -36,6 +36,13 @@ protected:
         return "%l" + std::to_string(tempVarCount++);
     }
 
+    /// @brief 新建一个局部变量名，全局编号，同临时变量一起编号
+    /// \return 临时变量名
+    static std::string createArrayVarName()
+    {
+        return "%l" + std::to_string(tempVarCount++);
+    }
+
     /// @brief 新建一个内存变量名，全局变量，同临时变量一起编号
     /// @return 内存变量名
     static std::string createMemVarName()
@@ -270,7 +277,7 @@ public:
 
     /// @brief 匿名数组Value
     /// @param _type 类型
-    ArrayValue(BasicType _type = BasicType::TYPE_INT) : ArrayValue(createLocalVarName(), _type)
+    ArrayValue(BasicType _type = BasicType::TYPE_INT) : ArrayValue(createArrayVarName(), _type)
     {}
 
     /// @brief 析构函数

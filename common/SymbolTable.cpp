@@ -162,9 +162,9 @@ Value * SymbolTable::newVarValue(std::string name, BasicType type)
     return retVal;
 }
 
-/// @brief 新建全局变量型Value
-/// @param name 变量ID
-/// @param type 变量类型
+/// @brief 新建全局变量型数组
+/// @param name 数组ID
+/// @param type 数组类型
 /// @param index 下标集合
 Value * SymbolTable::newArrayValue(std::string name, BasicType type, std::vector<int32_t> index)
 {

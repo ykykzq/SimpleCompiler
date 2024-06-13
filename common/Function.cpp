@@ -138,12 +138,22 @@ void Function::toString(std::string & str)
 
     //输出局部变量
     for (auto & val: varsVector) {
-        if (val->isLocalVar() || val->isTemp())
-            //第一次修改，替换为declare
-            //第二次修改，使得可以输出type。不在values中输出，而是在此处输出type
-            str += "\tdeclare " + val->type.toString() + " " + val->toString() + "\n";
+        if (val->isLocalVar() || val->isTemp()) {
+            if (val->isArray()) {
+                //如果是数组
+                str += "\tdeclare " + val->type.toString() + " " + val->toString();
+                for (auto index: val->arrayIndexVector) {
+                    str += "[" + std::to_string(index) + "]";
+                }
+                str += +"\n";
+            } else {
+                //是普通变量
+                //第一次修改，替换为declare
+                //第二次修改，使得可以输出type。不在values中输出，而是在此处输出type
+                str += "\tdeclare " + val->type.toString() + " " + val->toString() + "\n";
+            }
+        }
     }
-
     // 遍历所有的线性IR指令，文本输出
     for (auto & inst: code.getInsts()) {
 
@@ -164,7 +174,6 @@ void Function::toString(std::string & str)
     // 输出函数尾部
     str += "}\n";
 }
-
 /// @brief 获取下一个Label名字
 /// @return 下一个Label名字
 std::string Function::getNextLabelName()
@@ -313,6 +322,46 @@ Value * Function::newVarValue(BasicType type)
     insertValue(var);
 
     return var;
+}
+
+/// @brief 新建全局变量型数组
+/// @param name 数组ID
+/// @param type 数组类型
+/// @param index 下标集合
+Value * Function::newArrayValue(std::string name, BasicType type, std::vector<int32_t> index)
+{
+    Value * retVal = nullptr;
+
+    auto value = findValueLN(name);
+    if (value != nullptr) {
+
+        // 已存在的Value
+
+        // 符号表中存在，则只是更新值
+        value->type = type;
+
+        if (type == BasicType::TYPE_INT) {
+            value->intVal = 0;
+        } else {
+            value->realVal = 0;
+        }
+
+        //更新下标表
+        for (auto x: index) {
+            retVal->arrayIndexVector.push_back(x);
+        }
+    } else {
+        // 不存在的Value
+        retVal = new ArrayValue(type);
+        retVal->local_name = name;
+        //更新下标表
+        for (auto x: index) {
+            retVal->arrayIndexVector.push_back(x);
+        }
+        insertValue(retVal);
+    }
+
+    return retVal;
 }
 
 /// @brief Value插入到符号表中
