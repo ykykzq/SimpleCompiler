@@ -146,6 +146,9 @@ void Function::toString(std::string & str)
                     str += "[" + std::to_string(index) + "]";
                 }
                 str += +"\n";
+            } else if (val->isPointer()) {
+                //因为更改了value的toString()，不需要在此进行修改
+                str += "\tdeclare " + val->type.toString() + " " + val->toString() + "\n";
             } else {
                 //是普通变量
                 //第一次修改，替换为declare
@@ -324,7 +327,7 @@ Value * Function::newVarValue(BasicType type)
     return var;
 }
 
-/// @brief 新建全局变量型数组
+/// @brief 新建数组
 /// @param name 数组ID
 /// @param type 数组类型
 /// @param index 下标集合
@@ -362,6 +365,19 @@ Value * Function::newArrayValue(std::string name, BasicType type, std::vector<in
     }
 
     return retVal;
+}
+
+/// @brief 新建一个匿名指针的Value，并加入到符号表，用于后续释放空间
+/// \param type 类型
+/// \return 变量Value
+Value * Function::newPointerValue(BasicType type)
+{
+    // 创建匿名变量，肯定唯一，直接插入
+    Value * var = new PointerValue(type);
+
+    insertValue(var);
+
+    return var;
 }
 
 /// @brief Value插入到符号表中

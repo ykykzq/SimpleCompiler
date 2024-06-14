@@ -68,6 +68,9 @@ protected:
     /// @brief 是否是数组
     bool _array = false;
 
+    /// @brief 是否是指针
+    bool _pointer = false;
+
 public:
     /// @brief 变量名或内部标识的名字
     std::string name;
@@ -181,6 +184,13 @@ public:
         return _array;
     }
 
+    /// @brief 检查变量是否是指针
+    /// @return true: 是 false：不是
+    bool isPointer()
+    {
+        return _pointer;
+    }
+
     /// @brief 根据变量类型获取所占空间的大小
     /// @return 空间大小，单位字节
     int32_t getSize()
@@ -284,6 +294,36 @@ public:
     ~ArrayValue() override
     {
         // 如有资源清理，请这里追加代码
+    }
+};
+
+/// @brief 指针类
+class PointerValue : public Value {
+
+public:
+    /// @brief 局部变量或者全局变量型Value
+    /// \param val
+    PointerValue(std::string _name, BasicType _type = BasicType::TYPE_FLOAT) : Value(_name, _type)
+    {
+        _var = true;
+        _pointer = true;
+    }
+
+    /// @brief 匿名变量Value
+    /// @param _type 类型
+    PointerValue(BasicType _type = BasicType::TYPE_FLOAT) : PointerValue(createLocalVarName(), _type)
+    {}
+
+    /// @brief 析构函数
+    ~PointerValue() override
+    {
+        // 如有资源清理，请这里追加代码
+    }
+    /// @brief Value变字符串显示
+    /// @return 字符串
+    virtual std::string toString() override
+    {
+        return "*" + getName(); /*;删除使得assign不再输出type*/
     }
 };
 

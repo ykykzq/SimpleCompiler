@@ -189,7 +189,7 @@ public:
     /// @param type 变量类型
     Value * newVarValue(BasicType type);
 
-    /// @brief 新建全局变量型数组
+    /// @brief 新建数组
     /// @param name 数组ID
     /// @param type 数组类型
     /// @param index 下标集合
@@ -198,6 +198,12 @@ public:
     /// @brief 新建一个临时型的Value，并加入到符号表，用于后续释放空间
     /// \param type 变量类型
     /// \return 临时变量Value
+
+    /// @brief 新建一个匿名指针的Value，并加入到符号表，用于后续释放空间
+    /// \param type 类型
+    /// \return 变量Value
+    Value * newPointerValue(BasicType type);
+
     Value * newTempValue(BasicType type);
 
     /// @brief 设置符号表，以便全局符号查找

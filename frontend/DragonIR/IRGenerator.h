@@ -109,6 +109,11 @@ protected:
     /// @return 翻译是否成功，true：成功，false：失败
     bool ir_leaf_node_var_id(ast_node * node);
 
+    /// @brief 数组变量节点翻译成线性中间IR——确认该变量存在并计算出地址。地址塞进node->val里
+    /// @param node AST节点
+    /// @return 翻译是否成功，true：成功，false：失败
+    bool ir_leaf_node_array_var(ast_node * node);
+
     /// @brief 无符号整数字面量叶子节点翻译成线性中间IR
     /// @param node AST节点
     /// @return 翻译是否成功，true：成功，false：失败

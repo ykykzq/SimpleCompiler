@@ -37,6 +37,7 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_LEAF_LITERAL_UINT] = &IRGenerator::ir_leaf_node_uint;
     ast2ir_handlers[ast_operator_type::AST_OP_LEAF_LITERAL_FLOAT] = &IRGenerator::ir_leaf_node_float;
     ast2ir_handlers[ast_operator_type::AST_OP_LEAF_VAR_ID] = &IRGenerator::ir_leaf_node_var_id;
+    ast2ir_handlers[ast_operator_type::AST_ARRAY] = &IRGenerator::ir_leaf_node_array_var;
 
     /* 表达式运算， 加减 */
     ast2ir_handlers[ast_operator_type::AST_OP_SUB] = &IRGenerator::ir_sub;
@@ -571,7 +572,6 @@ bool IRGenerator::ir_assign(ast_node * node)
     // 这里假定赋值的类型是一致的
     left->val->type = right->val->type;
     node->val = left->val;
-
     return true;
 }
 
@@ -623,12 +623,12 @@ bool IRGenerator::ir_return(ast_node * node)
     return true;
 }
 
-/// @brief 标识符叶子节点翻译成线性中间IR
+/// @brief 标识符叶子节点翻译成线性中间IR——本质上确认该变量存在
 /// @param node AST节点
 /// @return 翻译是否成功，true：成功，false：失败
 bool IRGenerator::ir_leaf_node_var_id(ast_node * node)
 {
-    Value * val;
+    Value * val = nullptr;
 
     // 新建一个ID型Value
 
@@ -647,6 +647,7 @@ bool IRGenerator::ir_leaf_node_var_id(ast_node * node)
         val = symtab->findValue("@" + node->name);
         if (!val) {
             // 全局变量也不存在，则在函数里创建一个变量
+            printf("语法错误：未找到变量%s。在函数中创建该变量", node->name.c_str());
             val = symtab->currentFunc->newVarValue("%" + node->name);
         }
     }
@@ -655,7 +656,78 @@ bool IRGenerator::ir_leaf_node_var_id(ast_node * node)
 
     return true;
 }
+/// @brief 数组变量节点翻译成线性中间IR——确认该变量存在并计算出地址。地址塞进node->val里
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
+{
+    Value * array_value = nullptr;
+    array_value = symtab->currentFunc->findValueLN(node->sons[0]->name);
+    if (!array_value) {
 
+        // 变量不存在，则在全局变量符号表里找
+        array_value = symtab->findValue("@" + node->name);
+        if (!array_value) {
+            // 全局变量也不存在，则在函数里创建一个变量
+            printf("语法错误：未找到数组%s。在函数中创建该变量", node->name.c_str());
+        }
+    }
+    //计算地址
+    auto dimensions = array_value->arrayIndexVector;
+    int i = 0;
+    Value * fore_value;
+    for (auto dimension: dimensions) {
+        if (i == 0) {
+            //对于n维的数组，需要乘加n-1次。第一个维度不重要
+            i++;
+            continue;
+        } else if (i == 1) {
+            //上一个index * 维度的维数。dimension*index
+            auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            ast_node * index1 = node->sons[i];
+            ast_node * index2 = node->sons[i + 1];
+
+            ConstValue * src1 = new ConstValue((int32_t) index1->integer_val);
+            ConstValue * src2 = new ConstValue(dimension);
+            node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, src1, src2));
+
+            //乘法结果 + 当前index
+            auto temp2 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            auto src3 = new ConstValue((int32_t) index2->integer_val);
+            node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, src3));
+
+            //更新fore_value
+            fore_value = temp2;
+        } else {
+            //上一个index * 维度的维数。dimension*index
+            auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            ast_node * index = node->sons[i + 1];
+
+            ConstValue * src2 = new ConstValue(dimension);
+            node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, fore_value, src2));
+
+            //乘法结果 + 当前index
+            auto temp2 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            auto src3 = new ConstValue((int32_t) index->integer_val);
+            node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, src3));
+
+            //更新fore_value
+            fore_value = temp2;
+        }
+        i++;
+    }
+    //再乘以4
+    auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, fore_value, new ConstValue(4)));
+
+    //再加上基址
+    auto temp2 = symtab->currentFunc->newPointerValue(BasicType::TYPE_INT);
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, array_value));
+
+    //此时temp2里面就是我们需要的地址
+    node->val = temp2;
+    return true;
+}
 /// @brief 无符号整数字面量叶子节点翻译成线性中间IR
 /// @param node AST节点
 /// @return 翻译是否成功，true：成功，false：失败

@@ -36,6 +36,9 @@ enum class IRInstOperator {
     /// @brief 整数的减法指令，二元运算
     IRINST_OP_SUB_I,
 
+    /// @brief 整数的乘法指令，二元运算
+    IRINST_OP_MUL_I,
+
     /// @brief 赋值指令，一元运算
     IRINST_OP_ASSIGN,
 
