@@ -100,6 +100,22 @@ FuncDef : T_VOID T_ID '(' ')' Block  {
         /* 1代表int */
 		$$ = create_func_def(1, $2.lineno, $2.id, $6, $4);
     }
+	|T_VOID T_ID '(' ')'   ';'{
+		/* 0代表void */
+        $$ = create_func_def(0, $2.lineno, $2.id, nullptr);
+    }
+    | T_VOID T_ID '(' FuncFParams ')' ';' {
+        /* 0代表void */
+		$$ = create_func_def(0, $2.lineno, $2.id, $4);
+    }
+	| Btype T_ID '(' ')'  ';' {
+        /* 1代表int */
+		$$ = create_func_def(1, $2.lineno, $2.id,  nullptr);
+    }
+    | Btype T_ID '(' FuncFParams ')' ';' {
+        /* 1代表int */
+		$$ = create_func_def(1, $2.lineno, $2.id, $4);
+    }
     ;
 
 // 函数参数

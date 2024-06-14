@@ -1,7 +1,13 @@
-//test add
+//test sub
+int a;
+
+void putint(int k);
+
 int main(){
-    int a, b;
+    int b;
+    b = 2;
     a = 10;
-    b = -1;
-    return a + b;
+    putint(b - a);
+
+    return 0;
 }

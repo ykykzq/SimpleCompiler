@@ -131,6 +131,11 @@ bool IRGenerator::ir_function_define(ast_node * node)
         return false;
     }
 
+    if (symtab->findFunction(node->name) != nullptr) {
+        if (symtab->findFunction(node->name)->isBuiltin())
+            //内置函数无需定义
+            return true;
+    }
     // 创建一个新的函数定义，函数的返回类型设置为VOID，待定，必须等return时才能确定，目前可以是VOID或者INT类型
     symtab->currentFunc = new Function(node->name, BasicType::TYPE_VOID);
     bool result = symtab->insertFunction(symtab->currentFunc);

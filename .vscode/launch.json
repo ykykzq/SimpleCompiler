@@ -76,7 +76,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/cmake-build-debug/minic",
-			"args": ["-S", "-A", "tests/test.txt"],
+			"args": ["-S", "-A", "tests/test.c"],
 			// 程序的入口（main函数的入口）是否停止
 			"stopAtEntry": true,
 			"cwd": "${workspaceFolder}",
