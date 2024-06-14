@@ -138,6 +138,16 @@ void Function::toString(std::string & str)
 
     //输出局部变量
     for (auto & val: varsVector) {
+
+        //检查是否在形参中
+        bool is_param = false;
+        for (const auto & param: getParams()) {
+            if (param.val->name == val->name) {
+                is_param = true;
+                break;
+            }
+        }
+
         if (val->isLocalVar() || val->isTemp()) {
             if (val->isArray()) {
                 //如果是数组
@@ -147,8 +157,12 @@ void Function::toString(std::string & str)
                 }
                 str += +"\n";
             } else if (val->isPointer()) {
+                //指针变量
                 //因为更改了value的toString()，不需要在此进行修改
                 str += "\tdeclare " + val->type.toString() + " " + val->toString() + "\n";
+            } else if (is_param) {
+                //如果是形参，则已经定义过，不需要再定义
+                continue;
             } else {
                 //是普通变量
                 //第一次修改，替换为declare

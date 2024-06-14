@@ -24,7 +24,7 @@ class SymbolTable;
 class FuncFormalParam {
 
 public:
-    /// @brief 参数名字，可为空
+    /// @brief 参数名字，可为空。形式：%t1
     std::string name;
 
     /// @brief 形参类型

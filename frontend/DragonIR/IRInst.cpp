@@ -207,7 +207,7 @@ void FuncCallIRInst::toString(std::string & str)
 
     for (size_t k = 0; k < srcValues.size(); ++k) {
 
-        str += srcValues[k]->toString();
+        str += srcValues[k]->type.toString() + " " + srcValues[k]->toString();
 
         if (k != (srcValues.size() - 1)) {
             str += ", ";

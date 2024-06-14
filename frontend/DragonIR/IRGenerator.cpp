@@ -317,10 +317,15 @@ bool IRGenerator::ir_function_formal_params(ast_node * node)
     for (auto son: node->sons) {
 
         // 创建变量，默认整型
-        Value * var = symtab->currentFunc->newVarValue(son->name, BasicType::TYPE_INT);
+        Value * var = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+
+        // 创建变量，默认整型
+        Value * param_in_func = symtab->currentFunc->newVarValue(BasicType::TYPE_INT);
+        param_in_func->local_name = son->sons[1]->name;
+        node->blockInsts.addInst(new AssignIRInst(param_in_func, var));
 
         // 默认是整数类型
-        params.emplace_back(son->name, BasicType::TYPE_INT, var);
+        params.emplace_back(var->name, BasicType::TYPE_INT, var);
     }
 
     return true;
@@ -689,7 +694,7 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
     if (!array_value) {
 
         // 变量不存在，则在全局变量符号表里找
-        array_value = symtab->findValue("@" + node->name);
+        array_value = symtab->findValue("@" + node->sons[0]->name);
         if (!array_value) {
             // 全局变量也不存在，则在函数里创建一个变量
             printf("语法错误：未找到数组%s。在函数中创建该变量", node->name.c_str());
@@ -698,7 +703,10 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
     //计算地址
     auto dimensions = array_value->arrayIndexVector;
     int i = 0;
-    Value * fore_value;
+
+    //可以不初始化。初始化的目的在于处理一维数组
+    Value * fore_value = symtab->newConstValue((int32_t) node->sons[i]->integer_val); //默认为0
+
     for (auto dimension: dimensions) {
         if (i == 0) {
             //对于n维的数组，需要乘加n-1次。第一个维度不重要
