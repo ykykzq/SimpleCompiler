@@ -234,8 +234,7 @@ AssignIRInst::~AssignIRInst()
 void AssignIRInst::toString(std::string & str)
 {
     Value *src1 = srcValues[0], *result = dstValue;
-
-    str = result->getName() + " = " + src1->toString();
+    str = result->toString() + " = " + src1->toString();
 }
 
 /// @brief return语句指令

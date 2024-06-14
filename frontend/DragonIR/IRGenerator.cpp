@@ -492,7 +492,20 @@ bool IRGenerator::ir_add(ast_node * node)
     // 创建临时变量保存IR的值，以及线性IR指令
     node->blockInsts.addInst(left->blockInsts);
     node->blockInsts.addInst(right->blockInsts);
-    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, resultValue, left->val, right->val));
+
+    Value * src1 = left->val;
+    Value * src2 = right->val;
+    if (src1->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+        src1 = dequote;
+    }
+    if (src2->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+        src2 = dequote;
+    }
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, resultValue, src1, src2));
     node->val = resultValue;
 
     return true;
@@ -567,7 +580,17 @@ bool IRGenerator::ir_assign(ast_node * node)
     // 创建临时变量保存IR的值，以及线性IR指令
     node->blockInsts.addInst(right->blockInsts);
     node->blockInsts.addInst(left->blockInsts);
-    node->blockInsts.addInst(new AssignIRInst(left->val, right->val));
+
+    Value * src1 = left->val;
+    Value * src2 = right->val;
+
+    if (src2->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+        src2 = dequote;
+    }
+
+    node->blockInsts.addInst(new AssignIRInst(src1, src2));
 
     // 这里假定赋值的类型是一致的
     left->val->type = right->val->type;

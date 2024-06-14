@@ -132,6 +132,9 @@ public:
     /// @return 字符串
     virtual std::string toString()
     {
+        if (isPointer()) {
+            return "*" + getName();
+        }
         return /*type.toString() + " " + */ getName(); /*;删除使得assign不再输出type*/
     }
 
@@ -311,19 +314,13 @@ public:
 
     /// @brief 匿名变量Value
     /// @param _type 类型
-    PointerValue(BasicType _type = BasicType::TYPE_FLOAT) : PointerValue(createLocalVarName(), _type)
+    PointerValue(BasicType _type = BasicType::TYPE_FLOAT) : PointerValue(createTempVarName(), _type)
     {}
 
     /// @brief 析构函数
     ~PointerValue() override
     {
         // 如有资源清理，请这里追加代码
-    }
-    /// @brief Value变字符串显示
-    /// @return 字符串
-    virtual std::string toString() override
-    {
-        return "*" + getName(); /*;删除使得assign不再输出type*/
     }
 };
 
