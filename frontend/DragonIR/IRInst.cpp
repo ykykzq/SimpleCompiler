@@ -149,6 +149,16 @@ void BinaryIRInst::toString(std::string & str)
             // 乘法指令，二元运算
             str = result->getName() + " = mul " + src1->toString() + ", " + src2->toString();
             break;
+        case IRInstOperator::IRINST_OP_DIV_I:
+
+            // 乘法指令，二元运算
+            str = result->getName() + " = div " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_MOD_I:
+
+            // 乘法指令，二元运算
+            str = result->getName() + " = mod " + src1->toString() + ", " + src2->toString();
+            break;
         default:
             // 未知指令
             IRInst::toString(str);

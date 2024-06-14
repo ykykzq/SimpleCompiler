@@ -1,13 +1,6 @@
-//test sub
-int a;
-
-void putint(int k);
-
+//test rem
 int main(){
-    int b;
-    b = 2;
+    int a;
     a = 10;
-    putint(b - a);
-
-    return 0;
+    return a % 3;
 }

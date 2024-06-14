@@ -42,6 +42,9 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     /* 表达式运算， 加减 */
     ast2ir_handlers[ast_operator_type::AST_OP_SUB] = &IRGenerator::ir_sub;
     ast2ir_handlers[ast_operator_type::AST_OP_ADD] = &IRGenerator::ir_add;
+    ast2ir_handlers[ast_operator_type::AST_OP_MUL] = &IRGenerator::ir_mul;
+    ast2ir_handlers[ast_operator_type::AST_OP_DIV] = &IRGenerator::ir_div;
+    ast2ir_handlers[ast_operator_type::AST_OP_MOD] = &IRGenerator::ir_mod;
 
     /* 语句 */
     ast2ir_handlers[ast_operator_type::AST_OP_EXPR] = &IRGenerator::ir_expr_noshow;
@@ -571,6 +574,159 @@ bool IRGenerator::ir_sub(ast_node * node)
 
         node->val = resultValue;
     }
+
+    return true;
+}
+
+/// @brief 整数乘法AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_mul(ast_node * node)
+{
+    ast_node * src1_node = node->sons[0];
+    ast_node * src2_node = node->sons[1];
+
+    // 加法节点，左结合，先计算左节点，后计算右节点
+
+    // 加法的左边操作数
+    ast_node * left = ir_visit_ast_node(src1_node);
+    if (!left) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 加法的右边操作数
+    ast_node * right = ir_visit_ast_node(src2_node);
+    if (!right) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
+    // TODO real number add
+
+    Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+
+    // 创建临时变量保存IR的值，以及线性IR指令
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+
+    Value * src1 = left->val;
+    Value * src2 = right->val;
+    if (src1->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+        src1 = dequote;
+    }
+    if (src2->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+        src2 = dequote;
+    }
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, resultValue, src1, src2));
+    node->val = resultValue;
+
+    return true;
+}
+
+/// @brief 整数除法法AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_div(ast_node * node)
+{
+    ast_node * src1_node = node->sons[0];
+    ast_node * src2_node = node->sons[1];
+
+    // 加法节点，左结合，先计算左节点，后计算右节点
+
+    // 加法的左边操作数
+    ast_node * left = ir_visit_ast_node(src1_node);
+    if (!left) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 加法的右边操作数
+    ast_node * right = ir_visit_ast_node(src2_node);
+    if (!right) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
+    // TODO real number add
+
+    Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+
+    // 创建临时变量保存IR的值，以及线性IR指令
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+
+    Value * src1 = left->val;
+    Value * src2 = right->val;
+    if (src1->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+        src1 = dequote;
+    }
+    if (src2->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+        src2 = dequote;
+    }
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_DIV_I, resultValue, src1, src2));
+    node->val = resultValue;
+
+    return true;
+}
+
+/// @brief 整数取余AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_mod(ast_node * node)
+{
+    ast_node * src1_node = node->sons[0];
+    ast_node * src2_node = node->sons[1];
+
+    // 加法节点，左结合，先计算左节点，后计算右节点
+
+    // 加法的左边操作数
+    ast_node * left = ir_visit_ast_node(src1_node);
+    if (!left) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 加法的右边操作数
+    ast_node * right = ir_visit_ast_node(src2_node);
+    if (!right) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
+    // TODO real number add
+
+    Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+
+    // 创建临时变量保存IR的值，以及线性IR指令
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+
+    Value * src1 = left->val;
+    Value * src2 = right->val;
+    if (src1->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+        src1 = dequote;
+    }
+    if (src2->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+        src2 = dequote;
+    }
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MOD_I, resultValue, src1, src2));
+    node->val = resultValue;
 
     return true;
 }
