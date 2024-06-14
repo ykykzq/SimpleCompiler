@@ -169,6 +169,24 @@ protected:
     }
 };
 
+/// @brief 一元运算指令
+class UnaryIRInst : public IRInst {
+
+public:
+    /// @brief 构造函数
+    /// @param _op 操作符
+    /// @param _result 结果操作数
+    /// @param _srcVal1 源操作数1
+    /// @param _srcVal2 源操作数2
+    UnaryIRInst(IRInstOperator _op, Value * _result, Value * _srcVal1);
+
+    /// @brief 析构函数
+    virtual ~UnaryIRInst() override;
+
+    /// @brief 转换成字符串
+    void toString(std::string & str) override;
+};
+
 /// @brief 二元运算指令
 class BinaryIRInst : public IRInst {
 

@@ -1,11 +1,7 @@
-int a;
-int func(int p){
-	p = p - 1;
-	return p;
-}
+//test add
 int main(){
-	int b;
-	a = 10;
-	b = func(a);
-	return b;
+    int a, b;
+    a = 10;
+    b = -1;
+    return a + b;
 }
