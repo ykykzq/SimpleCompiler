@@ -37,6 +37,9 @@ std::string ValueType::toString()
         case BasicType::TYPE_NONE:
             str = "None";
             break;
+        case BasicType::TYPE_BOOL:
+            str = "i1";
+            break;
         default:
             str = "Unknown";
     }

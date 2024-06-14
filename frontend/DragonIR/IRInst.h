@@ -45,6 +45,29 @@ enum class IRInstOperator {
     /// @brief 整数的取余指令，二元运算
     IRINST_OP_MOD_I,
 
+    /// @brief 布尔的>指令，二元运算
+    IRINST_OP_GTH_B,
+
+    /// @brief 布尔的<指令，二元运算
+    IRINST_OP_STH_B,
+
+    /// @brief 布尔的>=指令，二元运算
+    IRINST_OP_GOE_B,
+
+    /// @brief 布尔的<=指令，二元运算
+    IRINST_OP_SOE_B,
+
+    /// @brief 布尔的==指令，二元运算
+    IRINST_OP_EE_B,
+    /// @brief 布尔的!=指令，二元运算
+    IRINST_OP_NE_B,
+
+    /// @brief 布尔的&&指令，二元运算
+    IRINST_OP_ANDAND_B,
+
+    /// @brief 布尔的||指令，二元运算
+    IRINST_OP_OROR_B,
+
     /// @brief 赋值指令，一元运算
     IRINST_OP_ASSIGN,
 
@@ -68,6 +91,11 @@ public:
     /// @param op
     /// @param result
     IRInst(IRInstOperator op, Value * result = nullptr);
+
+    /// @brief 构造函数
+    /// @param op
+    /// @param result
+    IRInst(IRInstOperator _op, Value * _result, IRInst * TrueInst, IRInst * FalseInst);
 
     /// @brief 析构函数
     virtual ~IRInst() = default;
@@ -285,11 +313,17 @@ public:
 };
 
 class GotoIRInst : public IRInst {
+public:
+    Value * condition;
 
 public:
     /// @brief return语句指令
     /// @param target 跳转目标
     GotoIRInst(IRInst * target);
+
+    /// @brief 有条件跳转语句指令
+    /// @param target 跳转目标
+    GotoIRInst(Value * condition, IRInst * trueInst, IRInst * falseInst);
 
     /// @brief 析构函数
     virtual ~GotoIRInst() override;

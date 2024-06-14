@@ -27,6 +27,15 @@ IRInst::IRInst()
 IRInst::IRInst(IRInstOperator _op, Value * _result) : op(_op), dstValue(_result)
 {}
 
+/// @brief 构造函数
+/// @param op
+/// @param result
+/// @param srcVal1
+/// @param srcVal2
+IRInst::IRInst(IRInstOperator _op, Value * _result, IRInst * TrueInst, IRInst * FalseInst)
+    : op(_op), dstValue(_result), trueInst(TrueInst), falseInst(FalseInst)
+{}
+
 /// @brief 获取指令操作码
 /// @return 指令操作码
 IRInstOperator IRInst::getOp()
@@ -158,6 +167,48 @@ void BinaryIRInst::toString(std::string & str)
 
             // 乘法指令，二元运算
             str = result->getName() + " = mod " + src1->toString() + ", " + src2->toString();
+            break;
+
+        /// 下面为布尔算式
+        case IRInstOperator::IRINST_OP_GTH_B:
+
+            // >指令，二元运算
+            str = result->getName() + " = icmp gt " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_STH_B:
+
+            // <指令，二元运算
+            str = result->getName() + " = icmp lt " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_GOE_B:
+
+            // >=指令，二元运算
+            str = result->getName() + " = icmp ge " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_SOE_B:
+
+            // <=指令，二元运算
+            str = result->getName() + " = icmp le " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_EE_B:
+
+            // ==指令，二元运算
+            str = result->getName() + " = icmp eq " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_NE_B:
+
+            // !=指令，二元运算
+            str = result->getName() + " = icmp neq " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_ANDAND_B:
+
+            // &&指令，二元运算
+            str = result->getName() + " = icmp and " + src1->toString() + ", " + src2->toString();
+            break;
+        case IRInstOperator::IRINST_OP_OROR_B:
+
+            // ||指令，二元运算
+            str = result->getName() + " = icmp or " + src1->toString() + ", " + src2->toString();
             break;
         default:
             // 未知指令
@@ -330,12 +381,23 @@ void EntryIRInst::toString(std::string & str)
     str = "entry";
 }
 
-/// @brief return语句指令
+/// @brief 无条件跳转语句指令
 /// @param target 跳转目标
 GotoIRInst::GotoIRInst(IRInst * target) : IRInst(IRInstOperator::IRINST_OP_GOTO, nullptr)
 {
     // 真假目标一样，则无条件跳转
     trueInst = falseInst = target;
+}
+
+/// @brief 有条件跳转语句指令
+/// @param target 跳转目标
+GotoIRInst::GotoIRInst(Value * condition, IRInst * trueInst, IRInst * falseInst)
+    : IRInst(IRInstOperator::IRINST_OP_GOTO, nullptr, trueInst, falseInst)
+{
+    // 真假目标一样，则无条件跳转
+    this->trueInst = trueInst;
+    this->falseInst = falseInst;
+    this->condition = condition;
 }
 
 /// @brief 析构函数
@@ -345,5 +407,12 @@ GotoIRInst::~GotoIRInst()
 /// @brief 转换成字符串
 void GotoIRInst::toString(std::string & str)
 {
-    str = "br label ." + trueInst->getLabelName();
+    if (trueInst == falseInst) {
+        //无条件跳转
+        str = "br label ." + trueInst->getLabelName();
+    } else {
+        //有条件跳转
+        str = "bc " + condition->toString() + ", label ." + trueInst->getLabelName() + ", label ." +
+              falseInst->getLabelName();
+    }
 }

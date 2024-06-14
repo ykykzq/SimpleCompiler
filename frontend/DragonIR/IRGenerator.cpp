@@ -51,6 +51,8 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_EXPR_SHOW] = &IRGenerator::ir_expr_show;
     ast2ir_handlers[ast_operator_type::AST_OP_ASSIGN] = &IRGenerator::ir_assign;
     ast2ir_handlers[ast_operator_type::AST_OP_RETURN_STATEMENT] = &IRGenerator::ir_return;
+    ast2ir_handlers[ast_operator_type::AST_OP_IF] = &IRGenerator::ir_if;
+    ast2ir_handlers[ast_operator_type::AST_COND] = &IRGenerator::ir_conditon;
 
     /* 函数调用 */
     ast2ir_handlers[ast_operator_type::AST_OP_FUNC_CALL] = &IRGenerator::ir_function_call;
@@ -825,6 +827,130 @@ bool IRGenerator::ir_return(ast_node * node)
         // TODO 这里目前什么都不做
     }
 
+    return true;
+}
+/// @brief if节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_if(ast_node * node)
+{
+    auto condtion = node->sons[0];
+    auto true_block = node->sons[1];
+    auto false_block = node->sons[2];
+
+    //返回的表达式在该节点中
+    auto cond_inst_node = ir_visit_ast_node(condtion);
+    if (!cond_inst_node) {
+        return false;
+    }
+    //返回的表达式在该节点中
+    auto true_block_inst_node = ir_visit_ast_node(true_block);
+    if (!true_block_inst_node) {
+        return false;
+    }
+
+    IRInst * trueBlockLabelInst = new LabelIRInst();
+    IRInst * falseBlockLabelInst = new LabelIRInst();
+
+    ast_node * false_block_inst_node;
+    if (false_block != nullptr) {
+        //假分支不一定存在
+        false_block_inst_node = ir_visit_ast_node(true_block);
+        if (!false_block_inst_node) {
+            return false;
+        }
+    }
+
+    //装配inst
+    node->blockInsts.addInst(cond_inst_node->blockInsts);
+    node->blockInsts.addInst(new GotoIRInst(cond_inst_node->val, trueBlockLabelInst, falseBlockLabelInst));
+    node->blockInsts.addInst(trueBlockLabelInst);
+    node->blockInsts.addInst(true_block_inst_node->blockInsts);
+    node->blockInsts.addInst(falseBlockLabelInst);
+    if (false_block != nullptr) {
+        node->blockInsts.addInst(false_block_inst_node->blockInsts);
+    }
+    return true;
+}
+
+/// @brief if的 condition 节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_conditon(ast_node * node)
+{
+    ast_node * src1_node = node->sons[0]->sons[0];
+    ast_node * src2_node = node->sons[0]->sons[1];
+
+    // 布尔算式的左边操作数
+    ast_node * left = ir_visit_ast_node(src1_node);
+    if (!left) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 加法的右边操作数
+    ast_node * right = ir_visit_ast_node(src2_node);
+    if (!right) {
+        // 某个变量没有定值
+        return false;
+    }
+
+    // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
+    // TODO real number add
+
+    Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_BOOL);
+
+    // 创建临时变量保存IR的值，以及线性IR指令
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+
+    Value * src1 = left->val;
+    Value * src2 = right->val;
+    if (src1->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+        src1 = dequote;
+    }
+    if (src2->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+        src2 = dequote;
+    }
+
+    IRInstOperator op;
+    switch (node->sons[0]->node_type) {
+        case ast_operator_type::AST_OP_GTH:
+            op = IRInstOperator::IRINST_OP_GTH_B;
+            break;
+        case ast_operator_type::AST_OP_STH:
+            op = IRInstOperator::IRINST_OP_STH_B;
+            break;
+        case ast_operator_type::AST_OP_GOE:
+            op = IRInstOperator::IRINST_OP_GOE_B;
+            break;
+        case ast_operator_type::AST_OP_SOE:
+            op = IRInstOperator::IRINST_OP_SOE_B;
+            break;
+        case ast_operator_type::AST_OP_EE:
+            op = IRInstOperator::IRINST_OP_EE_B;
+            break;
+        case ast_operator_type::AST_OP_NE:
+            op = IRInstOperator::IRINST_OP_NE_B;
+            break;
+        case ast_operator_type::AST_OP_ANDAND:
+            op = IRInstOperator::IRINST_OP_ANDAND_B;
+            break;
+        case ast_operator_type::AST_OP_OROR:
+            op = IRInstOperator::IRINST_OP_OROR_B;
+            break;
+        default:
+            return false;
+    }
+
+    node->blockInsts.addInst(new BinaryIRInst(op, resultValue, src1, src2));
+    node->val = resultValue;
+
+    return true;
     return true;
 }
 

@@ -119,6 +119,16 @@ protected:
     /// @return 翻译是否成功，true：成功，false：失败
     bool ir_return(ast_node * node);
 
+    /// @brief if节点翻译成线性中间IR
+    /// @param node AST节点
+    /// @return 翻译是否成功，true：成功，false：失败
+    bool ir_if(ast_node * node);
+
+    /// @brief if的 condition 节点翻译成线性中间IR
+    /// @param node AST节点
+    /// @return 翻译是否成功，true：成功，false：失败
+    bool ir_conditon(ast_node * node);
+
     /// @brief 标识符叶子节点翻译成线性中间IR
     /// @param node AST节点
     /// @return 翻译是否成功，true：成功，false：失败
