@@ -1169,8 +1169,14 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
     auto dimensions = array_value->arrayIndexVector;
     int i = 0;
 
-    //可以不初始化。初始化的目的在于处理一维数组
-    Value * fore_value = symtab->newConstValue((int32_t) node->sons[i]->integer_val); //默认为0
+    //初始化的目的在于处理一维数组
+    Value * fore_value;
+    if (node->sons[i + 1]->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
+        fore_value = symtab->newConstValue((int32_t) node->sons[i + 1]->integer_val); //默认为第一个
+    else if (node->sons[i + 1]->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
+        auto var_node = ir_visit_ast_node(node->sons[i + 1]);
+        fore_value = var_node->val;
+    }
 
     for (auto dimension: dimensions) {
         if (i == 0) {
@@ -1183,13 +1189,29 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
             ast_node * index1 = node->sons[i];
             ast_node * index2 = node->sons[i + 1];
 
-            ConstValue * src1 = new ConstValue((int32_t) index1->integer_val);
+            //获取第一个index
+            Value * src1 = nullptr;
+            if (index1->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
+                src1 = new ConstValue((int32_t) index1->integer_val);
+            else if (index1->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
+                auto var_node = ir_visit_ast_node(index1);
+                src1 = var_node->val;
+            }
+
             ConstValue * src2 = new ConstValue(dimension);
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, src1, src2));
 
             //乘法结果 + 当前index
             auto temp2 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
-            auto src3 = new ConstValue((int32_t) index2->integer_val);
+
+            //获取第二个index
+            Value * src3 = nullptr;
+            if (index2->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
+                src3 = new ConstValue((int32_t) index2->integer_val);
+            else if (index2->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
+                auto var_node = ir_visit_ast_node(index2);
+                src3 = var_node->val;
+            }
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, src3));
 
             //更新fore_value
