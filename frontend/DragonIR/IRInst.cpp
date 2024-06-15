@@ -249,6 +249,12 @@ void UnaryIRInst::toString(std::string & str)
             // 减法指令，二元运算
             str = result->getName() + " = neg " + src1->toString();
             break;
+
+        case IRInstOperator::IRINST_OP_NOT_B:
+
+            // 减法指令，二元运算
+            str = result->getName() + " = not " + src1->toString();
+            break;
         // case IRInstOperator::IRINST_OP_MUL_I:
 
         //     // 乘法指令，二元运算

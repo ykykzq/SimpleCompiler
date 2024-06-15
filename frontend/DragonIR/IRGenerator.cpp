@@ -46,6 +46,9 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_DIV] = &IRGenerator::ir_div;
     ast2ir_handlers[ast_operator_type::AST_OP_MOD] = &IRGenerator::ir_mod;
 
+    /* 一元运算符 */
+    ast2ir_handlers[ast_operator_type::AST_OP_NOT] = &IRGenerator::ir_unary_not;
+
     /* 比较运算 */
     ast2ir_handlers[ast_operator_type::AST_OP_GTH] = &IRGenerator::ir_comp;
     ast2ir_handlers[ast_operator_type::AST_OP_STH] = &IRGenerator::ir_comp;
@@ -742,6 +745,34 @@ bool IRGenerator::ir_mod(ast_node * node)
         src2 = dequote;
     }
     node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MOD_I, resultValue, src1, src2));
+    node->val = resultValue;
+
+    return true;
+}
+
+/// @brief 一元not运算AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_unary_not(ast_node * node)
+{
+    ast_node * src1_node = node->sons[0];
+
+    //如果为一元运算节点
+    // 加法的左边操作数
+    ast_node * left = ir_visit_ast_node(src1_node);
+    if (!left) {
+        // 某个变量没有定值
+        return false;
+    }
+    Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_BOOL);
+
+    auto src1 = src1_node->val;
+    auto src2 = new ConstValue(0);
+
+    // 创建临时变量保存IR的值，以及线性IR指令
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_EE_B, resultValue, src1, src2));
+
     node->val = resultValue;
 
     return true;

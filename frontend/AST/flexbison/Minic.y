@@ -100,7 +100,7 @@ FuncDef : T_VOID T_ID '(' ')' Block  {
         /* 1代表int */
 		$$ = create_func_def(1, $2.lineno, $2.id, $6, $4);
     }
-	|T_VOID T_ID '(' ')'   ';'{
+	| T_VOID T_ID '(' ')'   ';'{
 		/* 0代表void */
         $$ = create_func_def(0, $2.lineno, $2.id, nullptr);
     }

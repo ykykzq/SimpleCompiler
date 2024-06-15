@@ -1,23 +1,11 @@
-int a;
-int b;
-int c;
-int d;
-int e;
-
-int getint();
-
-int main()
-{
-	a=getint();
-	b=getint();
-	c=getint();
-	d=getint();
-	e=getint();
-	int flag;
-	flag = 0;
-	if(a-b*c!=d-a/c||a*b/c==e+d||a+b+c==d+e)
-	{
-		flag=1;
-	}
-	return flag;
+int main() {
+    int a;
+    a = 10;
+    if (-!!!a) {
+        a = - - -1;
+    }
+    else {
+        a = 0;
+    }
+    return a;
 }

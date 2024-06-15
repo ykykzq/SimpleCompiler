@@ -59,8 +59,12 @@ enum class IRInstOperator {
 
     /// @brief 布尔的==指令，二元运算
     IRINST_OP_EE_B,
+
     /// @brief 布尔的!=指令，二元运算
     IRINST_OP_NE_B,
+
+    /// @brief 布尔的!指令，一元运算
+    IRINST_OP_NOT_B,
 
     // /// @brief 布尔的&&指令，二元运算
     // IRINST_OP_ANDAND_B,

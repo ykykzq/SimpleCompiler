@@ -1358,7 +1358,7 @@ yyreduce:
 
   case 10: /* FuncDef: T_VOID T_ID '(' ')' ';'  */
 #line 103 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                  {
+                                   {
 		/* 0代表void */
         (yyval.node) = create_func_def(0, (yyvsp[-3].var_id).lineno, (yyvsp[-3].var_id).id, nullptr);
     }
