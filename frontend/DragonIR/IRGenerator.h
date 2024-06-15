@@ -134,6 +134,11 @@ protected:
     /// @return 翻译是否成功，true：成功，false：失败
     bool ir_conditon(ast_node * node);
 
+    /// @brief break 节点翻译成线性中间IR
+    /// @param node AST节点
+    /// @return 翻译是否成功，true：成功，false：失败
+    bool ir_break(ast_node * node);
+
     /// @brief 比较运算节点翻译成线性中间IR。仅计算布尔值，不需要考虑跳转
     /// @param node AST节点
     /// @return 翻译是否成功，true：成功，false：失败

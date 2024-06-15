@@ -1,11 +1,15 @@
-// test if-else-if
-
-
+//test break
 int main(){
-    int a;
-    a = 10;
-    while(a<10){
-        a=a-1;
+    int i;
+    i = 0;
+    int sum;
+    sum = 0;
+    while(i < 100){
+        if(i == 50){
+            break;
+        }
+        sum = sum + i;
+        i = i + 1;
     }
-    return 1;
+    return sum;
 }

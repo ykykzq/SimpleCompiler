@@ -66,6 +66,7 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_IF] = &IRGenerator::ir_if;
     ast2ir_handlers[ast_operator_type::AST_WHILE] = &IRGenerator::ir_while;
     ast2ir_handlers[ast_operator_type::AST_COND] = &IRGenerator::ir_conditon;
+    ast2ir_handlers[ast_operator_type::AST_BREAK] = &IRGenerator::ir_break;
 
     /* 函数调用 */
     ast2ir_handlers[ast_operator_type::AST_OP_FUNC_CALL] = &IRGenerator::ir_function_call;
@@ -939,6 +940,19 @@ bool IRGenerator::ir_conditon(ast_node * node)
         node->sons[0]->node_type != ast_operator_type::AST_OP_OROR) {
         node->blockInsts.addInst(new GotoIRInst(cond_inst_node->val, node->true_blcok_label, node->false_blcok_label));
     }
+    return true;
+}
+
+/// @brief break 节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_break(ast_node * node)
+{
+    auto while_node = node;
+    while (while_node->node_type != ast_operator_type::AST_WHILE) {
+        while_node = while_node->parent;
+    }
+    node->blockInsts.addInst(new GotoIRInst(while_node->false_blcok_label));
     return true;
 }
 
