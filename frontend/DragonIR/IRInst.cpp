@@ -198,7 +198,7 @@ void BinaryIRInst::toString(std::string & str)
         case IRInstOperator::IRINST_OP_NE_B:
 
             // !=指令，二元运算
-            str = result->getName() + " = icmp neq " + src1->toString() + ", " + src2->toString();
+            str = result->getName() + " = icmp ne " + src1->toString() + ", " + src2->toString();
             break;
         // case IRInstOperator::IRINST_OP_ANDAND_B:
 
