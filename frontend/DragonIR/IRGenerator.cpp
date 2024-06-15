@@ -64,6 +64,7 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_ASSIGN] = &IRGenerator::ir_assign;
     ast2ir_handlers[ast_operator_type::AST_OP_RETURN_STATEMENT] = &IRGenerator::ir_return;
     ast2ir_handlers[ast_operator_type::AST_OP_IF] = &IRGenerator::ir_if;
+    ast2ir_handlers[ast_operator_type::AST_WHILE] = &IRGenerator::ir_while;
     ast2ir_handlers[ast_operator_type::AST_COND] = &IRGenerator::ir_conditon;
 
     /* 函数调用 */
@@ -853,7 +854,7 @@ bool IRGenerator::ir_if(ast_node * node)
     //便于短路求值
     node->true_blcok_label = new LabelIRInst();
     node->false_blcok_label = new LabelIRInst();
-    node->exit_blcok_label = new LabelIRInst();
+    auto exit_blcok_label = new LabelIRInst();
 
     //返回的表达式在该节点中
     auto cond_inst_node = ir_visit_ast_node(condtion);
@@ -879,15 +880,48 @@ bool IRGenerator::ir_if(ast_node * node)
     node->blockInsts.addInst(cond_inst_node->blockInsts);
     node->blockInsts.addInst(node->true_blcok_label);
     node->blockInsts.addInst(true_block_inst_node->blockInsts);
-    node->blockInsts.addInst(new GotoIRInst(node->exit_blcok_label));
+    node->blockInsts.addInst(new GotoIRInst(exit_blcok_label));
     node->blockInsts.addInst(node->false_blcok_label);
     if (false_block != nullptr) {
         node->blockInsts.addInst(false_block_inst_node->blockInsts);
     }
-    node->blockInsts.addInst(node->exit_blcok_label);
+    node->blockInsts.addInst(exit_blcok_label);
     return true;
 }
+/// @brief while节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_while(ast_node * node)
+{
+    auto condtion = node->sons[0];
+    auto block = node->sons[1];
 
+    //便于短路求值
+    auto entry_label = new LabelIRInst();
+    node->true_blcok_label = new LabelIRInst();
+    node->false_blcok_label = new LabelIRInst();
+
+    //返回的表达式在该节点中
+    auto cond_inst_node = ir_visit_ast_node(condtion);
+    if (!cond_inst_node) {
+        return false;
+    }
+    //返回的表达式在该节点中
+    auto block_inst_node = ir_visit_ast_node(block);
+    if (!block_inst_node) {
+        return false;
+    }
+
+    //装配inst
+    node->blockInsts.addInst(entry_label);
+    node->blockInsts.addInst(cond_inst_node->blockInsts);
+    node->blockInsts.addInst(node->true_blcok_label);
+    node->blockInsts.addInst(block_inst_node->blockInsts);
+    node->blockInsts.addInst(new GotoIRInst(entry_label));
+    node->blockInsts.addInst(node->false_blcok_label);
+
+    return true;
+}
 /// @brief if的 condition 节点翻译成线性中间IR
 /// @param node AST节点
 /// @return 翻译是否成功，true：成功，false：失败
@@ -895,7 +929,6 @@ bool IRGenerator::ir_conditon(ast_node * node)
 {
     node->true_blcok_label = node->parent->true_blcok_label;
     node->false_blcok_label = node->parent->false_blcok_label;
-    node->exit_blcok_label = node->parent->exit_blcok_label;
     // condition下面可能是 布尔运算 或者 比较运算
     auto cond_inst_node = ir_visit_ast_node(node->sons[0]);
 

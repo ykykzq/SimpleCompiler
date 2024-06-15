@@ -1,16 +1,11 @@
-// test if-else
-int ifElse() {
-  int a;
-  a = 5;
-  if (a == 5) {
-    a = 25;
-  } else {
-    a = a * 2;
-  }
-  return (a);
-}
+// test if-else-if
 
 
-int main() {
-  return (ifElse());
+int main(){
+    int a;
+    a = 10;
+    while(a<10){
+        a=a-1;
+    }
+    return 1;
 }
