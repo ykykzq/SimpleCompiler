@@ -200,16 +200,16 @@ void BinaryIRInst::toString(std::string & str)
             // !=指令，二元运算
             str = result->getName() + " = icmp neq " + src1->toString() + ", " + src2->toString();
             break;
-        case IRInstOperator::IRINST_OP_ANDAND_B:
+        // case IRInstOperator::IRINST_OP_ANDAND_B:
 
-            // &&指令，二元运算
-            str = result->getName() + " = icmp and " + src1->toString() + ", " + src2->toString();
-            break;
-        case IRInstOperator::IRINST_OP_OROR_B:
+        //     // &&指令，二元运算
+        //     str = result->getName() + " = icmp and " + src1->toString() + ", " + src2->toString();
+        //     break;
+        // case IRInstOperator::IRINST_OP_OROR_B:
 
-            // ||指令，二元运算
-            str = result->getName() + " = icmp or " + src1->toString() + ", " + src2->toString();
-            break;
+        //     // ||指令，二元运算
+        //     str = result->getName() + " = icmp or " + src1->toString() + ", " + src2->toString();
+        //     break;
         default:
             // 未知指令
             IRInst::toString(str);

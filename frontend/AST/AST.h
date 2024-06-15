@@ -20,6 +20,7 @@
 #include "../DragonIR/IRCode.h"
 //#include "Value.h"
 #include "../../common/Value.h"
+#include "IRInst.h"
 
 /// @brief AST节点的类型
 enum class ast_operator_type : int {
@@ -214,6 +215,15 @@ public:
 
     /// @brief 线性IR指令或者运行产生的Value，用于线性IR指令产生用
     Value * val;
+
+    //跳转指令用
+    LabelIRInst * true_blcok_label = nullptr;
+
+    //跳转指令用
+    LabelIRInst * false_blcok_label = nullptr;
+
+    //跳转指令用
+    LabelIRInst * exit_blcok_label = nullptr;
 
     /// @brief 构造函数
     /// @param _type 节点值的类型

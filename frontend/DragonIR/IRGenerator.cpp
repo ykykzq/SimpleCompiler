@@ -46,6 +46,18 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_DIV] = &IRGenerator::ir_div;
     ast2ir_handlers[ast_operator_type::AST_OP_MOD] = &IRGenerator::ir_mod;
 
+    /* 比较运算 */
+    ast2ir_handlers[ast_operator_type::AST_OP_GTH] = &IRGenerator::ir_comp;
+    ast2ir_handlers[ast_operator_type::AST_OP_STH] = &IRGenerator::ir_comp;
+    ast2ir_handlers[ast_operator_type::AST_OP_GOE] = &IRGenerator::ir_comp;
+    ast2ir_handlers[ast_operator_type::AST_OP_SOE] = &IRGenerator::ir_comp;
+    ast2ir_handlers[ast_operator_type::AST_OP_EE] = &IRGenerator::ir_comp;
+    ast2ir_handlers[ast_operator_type::AST_OP_NE] = &IRGenerator::ir_comp;
+
+    /* 布尔运算 */
+    ast2ir_handlers[ast_operator_type::AST_OP_ANDAND] = &IRGenerator::ir_bool_cal;
+    ast2ir_handlers[ast_operator_type::AST_OP_OROR] = &IRGenerator::ir_bool_cal;
+
     /* 语句 */
     ast2ir_handlers[ast_operator_type::AST_OP_EXPR] = &IRGenerator::ir_expr_noshow;
     ast2ir_handlers[ast_operator_type::AST_OP_EXPR_SHOW] = &IRGenerator::ir_expr_show;
@@ -427,7 +439,7 @@ bool IRGenerator::ir_block(ast_node * node)
     return true;
 }
 
-/// @brief 表达式语句ST节点翻译成线性中间IR的共同函数
+/// @brief 表达式语句AST节点翻译成线性中间IR的共同函数
 /// @param node AST节点
 /// @param show 是否显示值，true：显示，false：不显示
 /// @return 翻译是否成功，true：成功，false：失败
@@ -838,6 +850,11 @@ bool IRGenerator::ir_if(ast_node * node)
     auto true_block = node->sons[1];
     auto false_block = node->sons[2];
 
+    //便于短路求值
+    node->true_blcok_label = new LabelIRInst();
+    node->false_blcok_label = new LabelIRInst();
+    node->exit_blcok_label = new LabelIRInst();
+
     //返回的表达式在该节点中
     auto cond_inst_node = ir_visit_ast_node(condtion);
     if (!cond_inst_node) {
@@ -849,13 +866,10 @@ bool IRGenerator::ir_if(ast_node * node)
         return false;
     }
 
-    IRInst * trueBlockLabelInst = new LabelIRInst();
-    IRInst * falseBlockLabelInst = new LabelIRInst();
-
     ast_node * false_block_inst_node;
     if (false_block != nullptr) {
         //假分支不一定存在
-        false_block_inst_node = ir_visit_ast_node(true_block);
+        false_block_inst_node = ir_visit_ast_node(false_block);
         if (!false_block_inst_node) {
             return false;
         }
@@ -863,13 +877,14 @@ bool IRGenerator::ir_if(ast_node * node)
 
     //装配inst
     node->blockInsts.addInst(cond_inst_node->blockInsts);
-    node->blockInsts.addInst(new GotoIRInst(cond_inst_node->val, trueBlockLabelInst, falseBlockLabelInst));
-    node->blockInsts.addInst(trueBlockLabelInst);
+    node->blockInsts.addInst(node->true_blcok_label);
     node->blockInsts.addInst(true_block_inst_node->blockInsts);
-    node->blockInsts.addInst(falseBlockLabelInst);
+    node->blockInsts.addInst(new GotoIRInst(node->exit_blcok_label));
+    node->blockInsts.addInst(node->false_blcok_label);
     if (false_block != nullptr) {
         node->blockInsts.addInst(false_block_inst_node->blockInsts);
     }
+    node->blockInsts.addInst(node->exit_blcok_label);
     return true;
 }
 
@@ -878,8 +893,29 @@ bool IRGenerator::ir_if(ast_node * node)
 /// @return 翻译是否成功，true：成功，false：失败
 bool IRGenerator::ir_conditon(ast_node * node)
 {
-    ast_node * src1_node = node->sons[0]->sons[0];
-    ast_node * src2_node = node->sons[0]->sons[1];
+    node->true_blcok_label = node->parent->true_blcok_label;
+    node->false_blcok_label = node->parent->false_blcok_label;
+    node->exit_blcok_label = node->parent->exit_blcok_label;
+    // condition下面可能是 布尔运算 或者 比较运算
+    auto cond_inst_node = ir_visit_ast_node(node->sons[0]);
+
+    node->blockInsts.addInst(cond_inst_node->blockInsts);
+
+    //如果是单纯的布尔值
+    if (node->sons[0]->node_type != ast_operator_type::AST_OP_ANDAND &&
+        node->sons[0]->node_type != ast_operator_type::AST_OP_OROR) {
+        node->blockInsts.addInst(new GotoIRInst(cond_inst_node->val, node->true_blcok_label, node->false_blcok_label));
+    }
+    return true;
+}
+
+/// @brief 比较运算节点翻译成线性中间IR。仅计算布尔值，不需要考虑跳转
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_comp(ast_node * node)
+{
+    ast_node * src1_node = node->sons[0];
+    ast_node * src2_node = node->sons[1];
 
     // 布尔算式的左边操作数
     ast_node * left = ir_visit_ast_node(src1_node);
@@ -894,9 +930,6 @@ bool IRGenerator::ir_conditon(ast_node * node)
         // 某个变量没有定值
         return false;
     }
-
-    // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
-    // TODO real number add
 
     Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_BOOL);
 
@@ -918,7 +951,7 @@ bool IRGenerator::ir_conditon(ast_node * node)
     }
 
     IRInstOperator op;
-    switch (node->sons[0]->node_type) {
+    switch (node->node_type) {
         case ast_operator_type::AST_OP_GTH:
             op = IRInstOperator::IRINST_OP_GTH_B;
             break;
@@ -937,12 +970,12 @@ bool IRGenerator::ir_conditon(ast_node * node)
         case ast_operator_type::AST_OP_NE:
             op = IRInstOperator::IRINST_OP_NE_B;
             break;
-        case ast_operator_type::AST_OP_ANDAND:
-            op = IRInstOperator::IRINST_OP_ANDAND_B;
-            break;
-        case ast_operator_type::AST_OP_OROR:
-            op = IRInstOperator::IRINST_OP_OROR_B;
-            break;
+        // case ast_operator_type::AST_OP_ANDAND:
+        //     op = IRInstOperator::IRINST_OP_ANDAND_B;
+        //     break;
+        // case ast_operator_type::AST_OP_OROR:
+        //     op = IRInstOperator::IRINST_OP_OROR_B;
+        //     break;
         default:
             return false;
     }
@@ -951,7 +984,89 @@ bool IRGenerator::ir_conditon(ast_node * node)
     node->val = resultValue;
 
     return true;
-    return true;
+}
+
+/// @brief 布尔运算（&& ||）节点翻译成线性中间IR。如果父节点有跳转指令进行跳转
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_bool_cal(ast_node * node)
+{
+    // 根据父节点类型继承label
+    //代表着整个节点为真/假时进入的block
+    if (node->node_type == ast_operator_type::AST_OP_ANDAND) {
+
+        node->false_blcok_label = node->parent->false_blcok_label;
+        // node->exit_blcok_label = node->parent->exit_blcok_label;
+    } else if (node->node_type == ast_operator_type::AST_OP_OROR) {
+        node->true_blcok_label = node->parent->true_blcok_label;
+
+        // node->exit_blcok_label = node->parent->exit_blcok_label;
+    } else if (node->node_type == ast_operator_type::AST_COND) {
+        node->true_blcok_label = node->parent->true_blcok_label;
+        node->false_blcok_label = node->parent->false_blcok_label;
+        // node->exit_blcok_label = node->parent->exit_blcok_label;
+    }
+
+    //根据当前运算类型
+    if (node->node_type == ast_operator_type::AST_OP_ANDAND) {
+
+        ast_node * src1_node = node->sons[0];
+        ast_node * src2_node = node->sons[1];
+
+        // 左边操作数
+        ast_node * left = ir_visit_ast_node(src1_node);
+        if (!left) {
+            // 某个变量没有定值
+            return false;
+        }
+
+        // 右边操作数
+        ast_node * right = ir_visit_ast_node(src2_node);
+        if (!right) {
+            // 某个变量没有定值
+            return false;
+        }
+        node->true_blcok_label = new LabelIRInst();
+
+        //装填指令
+        node->blockInsts.addInst(left->blockInsts);
+        node->blockInsts.addInst(new GotoIRInst(left->val, node->true_blcok_label, node->false_blcok_label));
+        node->blockInsts.addInst(node->true_blcok_label);
+        node->blockInsts.addInst(right->blockInsts);
+        node->blockInsts.addInst(new GotoIRInst(right->val, node->parent->true_blcok_label, node->false_blcok_label));
+
+        return true;
+    } else if (node->node_type == ast_operator_type::AST_OP_OROR) {
+        ast_node * src1_node = node->sons[0];
+        ast_node * src2_node = node->sons[1];
+
+        // 左边操作数
+        ast_node * left = ir_visit_ast_node(src1_node);
+        if (!left) {
+            // 某个变量没有定值
+            return false;
+        }
+
+        // 右边操作数
+        ast_node * right = ir_visit_ast_node(src2_node);
+        if (!right) {
+            // 某个变量没有定值
+            return false;
+        }
+        node->false_blcok_label = new LabelIRInst();
+
+        //装填指令
+        node->blockInsts.addInst(left->blockInsts);
+        node->blockInsts.addInst(new GotoIRInst(left->val, node->true_blcok_label, node->false_blcok_label));
+        node->blockInsts.addInst(node->false_blcok_label);
+        node->blockInsts.addInst(right->blockInsts);
+        node->blockInsts.addInst(new GotoIRInst(right->val, node->true_blcok_label, node->parent->false_blcok_label));
+
+        return true;
+    } else {
+        //不是&&或||，翻译失败
+        return false;
+    }
 }
 
 /// @brief 标识符叶子节点翻译成线性中间IR——本质上确认该变量存在

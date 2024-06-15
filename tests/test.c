@@ -1,27 +1,16 @@
-// test if-else-if
-int ifElseIf() {
+// test if-else
+int ifElse() {
   int a;
   a = 5;
-  int b;
-  b = 10;
-  if(a == 6 || b == 0xb) {
-    return a;
+  if (a == 5) {
+    a = 25;
+  } else {
+    a = a * 2;
   }
-  else {
-    if (b == 10 && a == 1)
-      a = 25;
-    else if (b == 10 && a == -5)
-      a = a + 15;
-    else
-      a = -a;
-  }
-
-  return a;
+  return (a);
 }
 
-void putint(int k);
 
-int main(){
-  putint(ifElseIf());
-  return 0;
+int main() {
+  return (ifElse());
 }

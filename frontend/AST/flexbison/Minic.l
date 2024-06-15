@@ -37,7 +37,9 @@
 /* 辅助定义式或者宏，后面使用时带上大括号 */
 
 d			[0-9]
-l           [a-zA-Z_]
+o           [0-7]
+l           [a-zA-Z]|_
+h           [0-9a-fA-F]
 white		[\t\040]
 white_line  [\r\n]
 
@@ -69,13 +71,27 @@ white_line  [\r\n]
                 ; // 忽略行注释
             }
 
-{d}+		{
-                // 词法识别无符号整数，注意对于负数，则需要识别为负号和无符号数两个Token
-                yylval.integer_num.val = (uint32_t)strtol(yytext, (char **)NULL, 10);
+[1-9]{d}*|0		{
+                // 十进制整数
+                yylval.integer_num.val = (int)strtol(yytext, (char **)NULL, 10);
                 yylval.integer_num.lineno = yylineno;
+                // printf("%s  %d\n",yytext, yylval.integer_num.val);
+                return T_DIGIT;
+           }
+"0"(x|X){h}+	{
+                // 十六进制整数
+                yylval.integer_num.val = (int)strtol(yytext, (char **)NULL, 16);
+                yylval.integer_num.lineno = yylineno;
+                // printf("%s  %d\n",yytext, yylval.integer_num.val);
                 return T_DIGIT;
             }
-
+"0"{o}+	        {
+                // 八进制整数
+                yylval.integer_num.val = (int)strtol(yytext, (char **)NULL, 8);
+                yylval.integer_num.lineno = yylineno;
+                // printf("%s  %d\n",yytext, yylval.integer_num.val);
+                return T_DIGIT;
+            }
 "function"  {
                 // function作为关键字，作为特殊ID被预留
                 return T_FUNC;
