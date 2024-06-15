@@ -1,20 +1,23 @@
-int arr[6];
+int a;
+int b;
+int c;
+int d;
+int e;
 
-int main() {
-  int i, sum;
+int getint();
 
-  arr[0] = 1;
-  arr[1] = 2;
-  arr[2] = 33;
-  arr[3] = 4;
-  arr[4] = 5;
-  arr[5] = 6;
-
-  i = 0;
-  sum = 0;
-  while (i < 6) {
-    sum = sum + arr[i];
-    i = i + 1;
-  }
-  return sum;
+int main()
+{
+	a=getint();
+	b=getint();
+	c=getint();
+	d=getint();
+	e=getint();
+	int flag;
+	flag = 0;
+	if(a-b*c!=d-a/c||a*b/c==e+d||a+b+c==d+e)
+	{
+		flag=1;
+	}
+	return flag;
 }

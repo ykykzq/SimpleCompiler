@@ -1040,15 +1040,18 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
 {
     // 根据父节点类型继承label
     //代表着整个节点为真/假时进入的block
-    if (node->node_type == ast_operator_type::AST_OP_ANDAND) {
-
+    if (node->parent->node_type == ast_operator_type::AST_OP_ANDAND) {
+        if (node == node->parent->sons[0])
+            node->true_blcok_label = node->parent->son2_label;
+        else if (node == node->parent->sons[1])
+            node->true_blcok_label = node->parent->true_blcok_label;
         node->false_blcok_label = node->parent->false_blcok_label;
         // node->exit_blcok_label = node->parent->exit_blcok_label;
-    } else if (node->node_type == ast_operator_type::AST_OP_OROR) {
+    } else if (node->parent->node_type == ast_operator_type::AST_OP_OROR) {
         node->true_blcok_label = node->parent->true_blcok_label;
 
         // node->exit_blcok_label = node->parent->exit_blcok_label;
-    } else if (node->node_type == ast_operator_type::AST_COND) {
+    } else if (node->parent->node_type == ast_operator_type::AST_COND) {
         node->true_blcok_label = node->parent->true_blcok_label;
         node->false_blcok_label = node->parent->false_blcok_label;
         // node->exit_blcok_label = node->parent->exit_blcok_label;
@@ -1060,6 +1063,7 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
         ast_node * src1_node = node->sons[0];
         ast_node * src2_node = node->sons[1];
 
+        node->son2_label = new LabelIRInst();
         // 左边操作数
         ast_node * left = ir_visit_ast_node(src1_node);
         if (!left) {
@@ -1073,14 +1077,15 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
             // 某个变量没有定值
             return false;
         }
-        node->true_blcok_label = new LabelIRInst();
 
         //装填指令
         node->blockInsts.addInst(left->blockInsts);
-        node->blockInsts.addInst(new GotoIRInst(left->val, node->true_blcok_label, node->false_blcok_label));
-        node->blockInsts.addInst(node->true_blcok_label);
+        if (left->val != nullptr) // nullptr代表为一个&& 或 ||
+            node->blockInsts.addInst(new GotoIRInst(left->val, node->son2_label, node->false_blcok_label));
+        node->blockInsts.addInst(node->son2_label);
         node->blockInsts.addInst(right->blockInsts);
-        node->blockInsts.addInst(new GotoIRInst(right->val, node->parent->true_blcok_label, node->false_blcok_label));
+        if (right->val != nullptr)
+            node->blockInsts.addInst(new GotoIRInst(right->val, node->true_blcok_label, node->false_blcok_label));
 
         return true;
     } else if (node->node_type == ast_operator_type::AST_OP_OROR) {

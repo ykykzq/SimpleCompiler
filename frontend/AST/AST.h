@@ -222,6 +222,9 @@ public:
     //跳转指令用
     LabelIRInst * false_blcok_label = nullptr;
 
+    //&& 和 ||指令用
+    LabelIRInst * son2_label = nullptr;
+
     /// @brief 构造函数
     /// @param _type 节点值的类型
     /// @param line_no 行号
