@@ -430,9 +430,13 @@ bool IRGenerator::ir_function_call(ast_node * node)
             if (!temp) {
                 return false;
             }
-
-            realParams.push_back(temp->val);
             node->blockInsts.addInst(temp->blockInsts);
+            Value * relPa = temp->val;
+            if (temp->val->isPointer()) {
+                relPa = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(new AssignIRInst(relPa, temp->val));
+            }
+            realParams.push_back(relPa);
         }
     }
 
