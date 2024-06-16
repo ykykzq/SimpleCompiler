@@ -6,11 +6,21 @@ int bubblesort(int arr[])
 {
     int i;
     int j;
-    i =0;
-    while (i < n - 1) {
-        int tmp;
-        tmp=1;
-     i=i+1;
+    i =0; 
+    while(i < n-1){
+    // Last i elements are already in place
+        j = 0;
+        while(j < n-i-1){
+            if (arr[j] > arr[j+1]) {
+                // swap(&arr[j], &arr[j+1]); 
+                int tmp;
+                tmp = arr[j+1];
+                arr[j+1] = arr[j];
+                arr[j] = tmp;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
     }
     return 0;
 }
@@ -22,6 +32,13 @@ int main(){
     a[5]=1;a[6]=6;a[7]=5;a[8]=7;a[9]=8;
     int i;
     i = bubblesort(a);
-    
-    return i;
+    while (i < n) {
+        int tmp;
+        tmp = a[i];
+        putint(tmp);
+        tmp = 10;
+        putch(tmp);
+        i = i + 1;
+    }
+    return 0;
 }
