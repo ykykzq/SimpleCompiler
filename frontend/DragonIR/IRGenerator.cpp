@@ -599,7 +599,19 @@ bool IRGenerator::ir_sub(ast_node * node)
         // 创建临时变量保存IR的值，以及线性IR指令
         node->blockInsts.addInst(left->blockInsts);
         node->blockInsts.addInst(right->blockInsts);
-        node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_SUB_I, resultValue, left->val, right->val));
+        Value * src1 = left->val;
+        Value * src2 = right->val;
+        if (src1->isPointer()) {
+            Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+            src1 = dequote;
+        }
+        if (src2->isPointer()) {
+            Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+            src2 = dequote;
+        }
+        node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_SUB_I, resultValue, src1, src2));
         node->val = resultValue;
     } else {
         //如果为一元运算节点
@@ -1279,10 +1291,16 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
                     return false;
                 }
                 node->blockInsts.addInst(var_node->blockInsts);
+
                 src1 = var_node->val;
             }
 
             ConstValue * src2 = new ConstValue(dimension);
+            if (src1->isPointer()) {
+                Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(new AssignIRInst(dequote, src1));
+                src1 = dequote;
+            }
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, src1, src2));
 
             //乘法结果 + 当前index
@@ -1316,6 +1334,11 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
             ast_node * index = node->sons[i + 1];
 
             ConstValue * src2 = new ConstValue(dimension);
+            if (fore_value->isPointer()) {
+                Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(new AssignIRInst(dequote, fore_value));
+                fore_value = dequote;
+            }
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, fore_value, src2));
 
             //乘法结果 + 当前index
@@ -1330,6 +1353,11 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
     }
     //再乘以4
     auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+    if (fore_value->isPointer()) {
+        Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+        node->blockInsts.addInst(new AssignIRInst(dequote, fore_value));
+        fore_value = dequote;
+    }
     node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, fore_value, new ConstValue(4)));
 
     //再加上基址
