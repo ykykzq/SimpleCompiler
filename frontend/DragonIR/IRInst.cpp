@@ -373,7 +373,7 @@ ExitIRInst::~ExitIRInst()
 void ExitIRInst::toString(std::string & str)
 {
     if (srcValues.empty()) {
-        str = "exit void";
+        str = "exit";
     } else {
         Value * src1 = srcValues[0];
         str = "exit " + src1->toString();

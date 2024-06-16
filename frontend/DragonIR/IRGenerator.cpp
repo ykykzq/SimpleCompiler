@@ -188,12 +188,13 @@ bool IRGenerator::ir_function_define(ast_node * node)
     // 函数出口指令保存到函数信息中，因为在语义分析函数体时return语句需要跳转到函数尾部，需要这个label指令
     symtab->currentFunc->setExitLabel(exitLabelInst);
 
-    // 新建一个Value，用于保存函数的返回值，如果没有返回值可不用申请，
-    // 目前未知，先创建一个，不用后续可释放
-    Value * retValue = symtab->currentFunc->newVarValue(BasicType::TYPE_INT);
+    //把这一块移动到 ir_function_return_type 里
+    // // 新建一个Value，用于保存函数的返回值，如果没有返回值可不用申请，
+    // // 目前未知，先创建一个，不用后续可释放
+    // Value * retValue = symtab->currentFunc->newVarValue(BasicType::TYPE_INT);
 
-    // 保存函数返回值变量到函数信息中，在return语句翻译时需要设置值到这个变量中
-    symtab->currentFunc->setReturnValue(retValue);
+    // // 保存函数返回值变量到函数信息中，在return语句翻译时需要设置值到这个变量中
+    // symtab->currentFunc->setReturnValue(retValue);
 
     // 遍历函数体内的每个语句
     for (auto son: node->sons) {
@@ -219,14 +220,15 @@ bool IRGenerator::ir_function_define(ast_node * node)
     irCode.addInst(exitLabelInst);
 
     // 检查函数是否有返回值类型，则需要设置返回值，否则不设置
+    auto retValue = symtab->currentFunc->getReturnValue();
     if (symtab->currentFunc->getReturnType().type != BasicType::TYPE_VOID) {
         // 函数出口指令
         irCode.addInst(new ExitIRInst(retValue));
     } else {
         // 清理资源恢复原状
-        symtab->currentFunc->deleteVarValue(retValue);
-        symtab->currentFunc->setReturnValue(nullptr);
-        delete retValue;
+        // symtab->currentFunc->deleteVarValue(retValue);
+        // symtab->currentFunc->setReturnValue(nullptr);
+        // delete retValue;
 
         // 函数出口指令
         irCode.addInst(new ExitIRInst());
@@ -323,9 +325,16 @@ bool IRGenerator::ir_function_return_type(ast_node * node)
     // 这里设置返回值类型
     if (node->sons[0]->node_type == ast_operator_type::AST_TYPE_VOID) {
         symtab->currentFunc->getReturnType().type = BasicType::TYPE_VOID;
+        symtab->currentFunc->setReturnValue(nullptr);
         return true;
     } else if (node->sons[0]->node_type == ast_operator_type::AST_TYPE_INT) {
         symtab->currentFunc->getReturnType().type = BasicType::TYPE_INT;
+        // 新建一个Value，用于保存函数的返回值，如果没有返回值可不用申请，
+        // 目前未知，先创建一个，不用后续可释放
+        Value * retValue = symtab->currentFunc->newVarValue(BasicType::TYPE_INT);
+
+        // 保存函数返回值变量到函数信息中，在return语句翻译时需要设置值到这个变量中
+        symtab->currentFunc->setReturnValue(retValue);
         return true;
     }
 
@@ -871,7 +880,7 @@ bool IRGenerator::ir_return(ast_node * node)
 
     // return语句可能没有没有表达式，也可能有，因此这里必须进行区分判断
     if (!node->sons.empty()) {
-
+        //有return的值
         ast_node * son_node = node->sons[0];
 
         // 返回的表达式的指令保存在right节点中
@@ -881,32 +890,31 @@ bool IRGenerator::ir_return(ast_node * node)
             // 某个变量没有定值
             return false;
         }
+        // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
+
+        // 创建临时变量保存IR的值，以及线性IR指令
+        node->blockInsts.addInst(right->blockInsts);
+
+        // 返回值赋值到函数返回值变量上，然后跳转到函数的尾部
+        node->blockInsts.addInst(new AssignIRInst(symtab->currentFunc->getReturnValue(), right->val));
+
+        // 跳转到函数的尾部出口指令上
+        node->blockInsts.addInst(new GotoIRInst(symtab->currentFunc->getExitLabel()));
+
+        node->val = right->val;
+
+        //检查返回值类型
+        if (symtab->currentFunc->getReturnType().type == BasicType::TYPE_INT) {
+            // 不空默认返回int
+            return true;
+        }
+    } else {
+        //没有返回值，则应当为void
+        if (symtab->currentFunc->getReturnType().type == BasicType::TYPE_VOID) {
+            // void
+            return true;
+        }
     }
-
-    // 这里只处理整型的数据，如需支持实数，则需要针对类型进行处理
-
-    // 创建临时变量保存IR的值，以及线性IR指令
-    node->blockInsts.addInst(right->blockInsts);
-
-    // 返回值赋值到函数返回值变量上，然后跳转到函数的尾部
-    node->blockInsts.addInst(new AssignIRInst(symtab->currentFunc->getReturnValue(), right->val));
-
-    // 跳转到函数的尾部出口指令上
-    node->blockInsts.addInst(new GotoIRInst(symtab->currentFunc->getExitLabel()));
-
-    node->val = right->val;
-
-    //检查返回值类型，并设置返回值
-    auto son = node->sons[0];
-    if (symtab->currentFunc->getReturnType().type == BasicType::TYPE_VOID && son == nullptr) {
-        // void
-        return true;
-
-    } else if (symtab->currentFunc->getReturnType().type == BasicType::TYPE_INT && son != nullptr) {
-        // 不空默认返回int
-        return true;
-    }
-
     return false;
 }
 /// @brief if节点翻译成线性中间IR
@@ -1276,6 +1284,21 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
             ast_node * index1 = node->sons[i];
             ast_node * index2 = node->sons[i + 1];
 
+            //处理index小于dimensions数量，也就是返回数组的情况
+            if (index1 == nullptr) {
+                //第一个维度都没有，直接返回数组基址
+                int j = 0;
+                std::vector<int32_t> indexs;
+                for (auto index: array_value->arrayIndexVector) {
+                    if (j >= 0) {
+                        indexs.push_back(index);
+                    }
+                }
+                auto temp2 = symtab->currentFunc->newTempArrayValue(BasicType::TYPE_INT, indexs);
+                node->val = temp2;
+                break;
+            }
+
             //获取第一个index
             Value * src1 = nullptr;
             if (index1->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
@@ -1308,6 +1331,21 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
 
             //获取第二个index
             Value * src3 = nullptr;
+            //处理index2不存在的情况
+            if (index2 == nullptr) {
+                //第二个维度不存在，则index从第二个开始
+                int j = 0;
+                std::vector<int32_t> indexs;
+                for (auto index: array_value->arrayIndexVector) {
+                    if (j >= 1) {
+                        indexs.push_back(index);
+                    }
+                    j++;
+                }
+                auto temp2 = symtab->currentFunc->newTempArrayValue(BasicType::TYPE_INT, indexs);
+                node->val = temp2;
+                break;
+            }
             if (index2->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
                 src3 = new ConstValue((int32_t) index2->integer_val);
             else if (index2->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
@@ -1333,6 +1371,20 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
             auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
             ast_node * index = node->sons[i + 1];
 
+            if (index == nullptr) {
+                //提前结束
+                int j = 0;
+                std::vector<int32_t> indexs;
+                for (auto index_iter: array_value->arrayIndexVector) {
+                    if (j >= i) {
+                        indexs.push_back(index_iter);
+                    }
+                }
+                auto temp2 = symtab->currentFunc->newTempArrayValue(BasicType::TYPE_INT, indexs);
+                node->val = temp2;
+                break;
+            }
+
             ConstValue * src2 = new ConstValue(dimension);
             if (fore_value->isPointer()) {
                 Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
@@ -1351,7 +1403,7 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
         }
         i++;
     }
-    //再乘以4
+    //再乘以4。temp1是元素相对于基址的偏移
     auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
     if (fore_value->isPointer()) {
         Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
@@ -1360,12 +1412,16 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
     }
     node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, fore_value, new ConstValue(4)));
 
-    //再加上基址
+    //再加上基址。temp2是最终的元素地址
     auto temp2 = symtab->currentFunc->newPointerValue(BasicType::TYPE_INT);
     node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, array_value));
 
     //此时temp2里面就是我们需要的地址
-    node->val = temp2;
+    if (node->val == nullptr) {
+        //不为空代表提前结束了，已有返回值
+        node->val = temp2;
+    }
+
     return true;
 }
 /// @brief 无符号整数字面量叶子节点翻译成线性中间IR
