@@ -196,7 +196,7 @@ Value * SymbolTable::newArrayValue(std::string name, BasicType type, std::vector
         }
 
     } else {
-        retVal = new ArrayValue(name, type);
+        retVal = new LocalArrayValue(name, type);
         //更新下标表
         for (auto x: index) {
             retVal->arrayIndexVector.push_back(x);

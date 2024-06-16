@@ -284,7 +284,7 @@ bool IRGenerator::ir_var_declare(ast_node * node)
                     }
                     i++;
                 }
-                symtab->currentFunc->newArrayValue(std::string(var_name), var_type, indexs);
+                symtab->currentFunc->newLocalArrayValue(std::string(var_name), var_type, indexs);
             }
 
         } else {

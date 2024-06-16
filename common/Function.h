@@ -189,11 +189,17 @@ public:
     /// @param type 变量类型
     Value * newVarValue(BasicType type);
 
+    /// @brief 新建局部数组
+    /// @param name 数组ID
+    /// @param type 数组类型
+    /// @param index 下标集合
+    Value * newLocalArrayValue(std::string name, BasicType type, std::vector<int32_t> index);
+
     /// @brief 新建数组
     /// @param name 数组ID
     /// @param type 数组类型
     /// @param index 下标集合
-    Value * newArrayValue(std::string name, BasicType type, std::vector<int32_t> index);
+    Value * newTempArrayValue(BasicType type, std::vector<int32_t> index);
 
     /// @brief 新建一个临时型的Value，并加入到符号表，用于后续释放空间
     /// \param type 变量类型

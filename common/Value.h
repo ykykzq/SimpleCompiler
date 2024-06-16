@@ -38,9 +38,16 @@ protected:
 
     /// @brief 新建一个局部变量名，全局编号，同临时变量一起编号
     /// \return 临时变量名
-    static std::string createArrayVarName()
+    static std::string createLocalArrayVarName()
     {
         return "%l" + std::to_string(tempVarCount++);
+    }
+
+    /// @brief 新建一个局部变量名，全局编号，同临时变量一起编号
+    /// \return 临时变量名
+    static std::string createTempArrayVarName()
+    {
+        return "%t" + std::to_string(tempVarCount++);
     }
 
     /// @brief 新建一个内存变量名，全局变量，同临时变量一起编号
@@ -277,12 +284,12 @@ public:
 };
 
 /// @brief 数组类
-class ArrayValue : public Value {
+class LocalArrayValue : public Value {
 
 public:
     /// @brief 局部数组或者全局变量数组型Value
     /// \param val
-    ArrayValue(std::string _name, BasicType _type = BasicType::TYPE_INT) : Value(_name, _type)
+    LocalArrayValue(std::string _name, BasicType _type = BasicType::TYPE_INT) : Value(_name, _type)
     {
         _var = true;
         _array = true;
@@ -290,11 +297,35 @@ public:
 
     /// @brief 匿名数组Value
     /// @param _type 类型
-    ArrayValue(BasicType _type = BasicType::TYPE_INT) : ArrayValue(createArrayVarName(), _type)
+    LocalArrayValue(BasicType _type = BasicType::TYPE_INT) : LocalArrayValue(createLocalArrayVarName(), _type)
     {}
 
     /// @brief 析构函数
-    ~ArrayValue() override
+    ~LocalArrayValue() override
+    {
+        // 如有资源清理，请这里追加代码
+    }
+};
+
+/// @brief 数组类
+class TempArrayValue : public Value {
+
+public:
+    /// @brief 局部数组或者全局变量数组型Value
+    /// \param val
+    TempArrayValue(std::string _name, BasicType _type = BasicType::TYPE_INT) : Value(_name, _type)
+    {
+        _var = true;
+        _array = true;
+    }
+
+    /// @brief 匿名数组Value
+    /// @param _type 类型
+    TempArrayValue(BasicType _type = BasicType::TYPE_INT) : TempArrayValue(createTempArrayVarName(), _type)
+    {}
+
+    /// @brief 析构函数
+    ~TempArrayValue() override
     {
         // 如有资源清理，请这里追加代码
     }

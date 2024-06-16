@@ -341,11 +341,11 @@ Value * Function::newVarValue(BasicType type)
     return var;
 }
 
-/// @brief 新建数组
+/// @brief 新建局部数组
 /// @param name 数组ID
 /// @param type 数组类型
 /// @param index 下标集合
-Value * Function::newArrayValue(std::string name, BasicType type, std::vector<int32_t> index)
+Value * Function::newLocalArrayValue(std::string name, BasicType type, std::vector<int32_t> index)
 {
     Value * retVal = nullptr;
 
@@ -369,7 +369,7 @@ Value * Function::newArrayValue(std::string name, BasicType type, std::vector<in
         }
     } else {
         // 不存在的Value
-        retVal = new ArrayValue(type);
+        retVal = new LocalArrayValue(type);
         retVal->local_name = name;
         //更新下标表
         for (auto x: index) {
@@ -377,6 +377,26 @@ Value * Function::newArrayValue(std::string name, BasicType type, std::vector<in
         }
         insertValue(retVal);
     }
+
+    return retVal;
+}
+
+/// @brief 新建临时数组
+/// @param name 数组ID
+/// @param type 数组类型
+/// @param index 下标集合
+Value * Function::newTempArrayValue(BasicType type, std::vector<int32_t> index)
+{
+    Value * retVal = nullptr;
+
+    // 不存在的Value
+    retVal = new TempArrayValue(type);
+    retVal->local_name = name;
+    //更新下标表
+    for (auto x: index) {
+        retVal->arrayIndexVector.push_back(x);
+    }
+    insertValue(retVal);
 
     return retVal;
 }
