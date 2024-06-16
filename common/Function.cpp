@@ -10,6 +10,7 @@
  */
 
 #include <algorithm>
+#include <string>
 
 #include "Function.h"
 #include "SymbolTable.h"
@@ -35,8 +36,18 @@ std::string FuncFormalParam::toString()
     std::string typeName;
     typeName = type.toString();
 
-    // 类型名 空格 形参参数名
-    return typeName + " " + name;
+    std::string re;
+    if (val->isArray()) {
+        re = typeName + " " + name;
+        for (auto index: val->arrayIndexVector) {
+            re = re + "[" + std::to_string(index) + "]";
+        }
+    } else {
+        // 类型名 空格 形参参数名
+        re = typeName + " " + name;
+    }
+
+    return re;
 }
 
 /// @brief 匿名构造函数
@@ -139,17 +150,20 @@ void Function::toString(std::string & str)
     //输出局部变量
     for (auto & val: varsVector) {
 
-        //检查是否在形参中
+        //不需要输出形参
         bool is_param = false;
         for (const auto & param: getParams()) {
-            if (param.val->name == val->name) {
+            if (val->name == param.val->name) {
                 is_param = true;
                 break;
             }
         }
 
         if (val->isLocalVar() || val->isTemp()) {
-            if (val->isArray()) {
+            if (is_param) {
+                //如果是形参，则已经定义过，不需要再定义
+                continue;
+            } else if (val->isArray()) {
                 //如果是数组
                 str += "\tdeclare " + val->type.toString() + " " + val->toString();
                 for (auto index: val->arrayIndexVector) {
@@ -160,10 +174,9 @@ void Function::toString(std::string & str)
                 //指针变量
                 //因为更改了value的toString()，不需要在此进行修改
                 str += "\tdeclare " + val->type.toString() + " " + val->toString() + "\n";
-            } else if (is_param) {
-                //如果是形参，则已经定义过，不需要再定义
-                continue;
-            } else {
+            } else
+
+            {
                 //是普通变量
                 //第一次修改，替换为declare
                 //第二次修改，使得可以输出type。不在values中输出，而是在此处输出type

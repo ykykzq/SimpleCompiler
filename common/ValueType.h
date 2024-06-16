@@ -19,6 +19,7 @@ enum class BasicType : int {
     TYPE_INT,   // 整型
     TYPE_FLOAT, // Float类型
     TYPE_BOOL,  // bool类型
+    TYPE_CHAR,  // bool类型
     TYPE_MAX,   // 其它类型，未知类型
 };
 

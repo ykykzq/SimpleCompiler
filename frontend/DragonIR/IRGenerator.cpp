@@ -342,17 +342,40 @@ bool IRGenerator::ir_function_formal_params(ast_node * node)
 
     // 遍历形式参数列表，孩子是叶子节点
     for (auto son: node->sons) {
+        if (son->sons[1]->node_type == ast_operator_type::AST_ARRAY) {
+            //如果是数组
+            // 创建变量，默认整型
+            std::string var_name;
+            std::vector<int32_t> indexs;
 
-        // 创建变量，默认整型
-        Value * var = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            for (auto index: son->sons[1]->sons) {
+                if (index == son->sons[1]->sons[0]) {
+                    var_name = index->name;
+                } else {
+                    indexs.push_back(index->integer_val);
+                }
+            }
+            // 创建变量，默认整型
+            Value * var = symtab->currentFunc->newTempArrayValue(BasicType::TYPE_INT, indexs);
 
-        // 创建变量，默认整型
-        Value * param_in_func = symtab->currentFunc->newVarValue(BasicType::TYPE_INT);
-        param_in_func->local_name = son->sons[1]->name;
-        node->blockInsts.addInst(new AssignIRInst(param_in_func, var));
+            // 创建变量，默认整型
+            Value * param_in_func = symtab->currentFunc->newLocalArrayValue(var_name, BasicType::TYPE_INT, indexs);
+            node->blockInsts.addInst(new AssignIRInst(param_in_func, var));
 
-        // 默认是整数类型
-        params.emplace_back(var->name, BasicType::TYPE_INT, var);
+            // 默认是整数类型
+            params.emplace_back(var->name, BasicType::TYPE_INT, var);
+        } else {
+            // 创建变量，默认整型
+            Value * var = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+
+            // 创建变量，默认整型
+            Value * param_in_func = symtab->currentFunc->newVarValue(BasicType::TYPE_INT);
+            param_in_func->local_name = son->sons[1]->name;
+            node->blockInsts.addInst(new AssignIRInst(param_in_func, var));
+
+            // 默认是整数类型
+            params.emplace_back(var->name, BasicType::TYPE_INT, var);
+        }
     }
 
     return true;

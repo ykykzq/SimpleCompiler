@@ -34,6 +34,11 @@ SymbolTable::SymbolTable()
                        {},                  // 形参类型
                        true                 // 内置函数
     );
+    (void) newFunction("putch",                     // 函数名
+                       BasicType::TYPE_INT,         // 返回值类型
+                       {{"", BasicType::TYPE_INT}}, // 形参类型
+                       true                         // 内置函数
+    );
 }
 
 /// @brief 根据函数名查找函数信息

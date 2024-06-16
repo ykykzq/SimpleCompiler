@@ -11,6 +11,7 @@
 #include "IRInst.h"
 // #include "Value.h"
 #include "../../common/Value.h"
+#include <string>
 
 /// @brief 构造函数
 IRInst::IRInst()
@@ -320,6 +321,12 @@ void FuncCallIRInst::toString(std::string & str)
 
         str += srcValues[k]->type.toString() + " " + srcValues[k]->toString();
 
+        if (srcValues[k]->isArray()) {
+            //是数组还要输出index
+            for (auto index: srcValues[k]->arrayIndexVector) {
+                str += "[" + std::to_string(index) + "]";
+            }
+        }
         if (k != (srcValues.size() - 1)) {
             str += ", ";
         }
