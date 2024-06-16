@@ -1025,7 +1025,7 @@ bool IRGenerator::ir_comp(ast_node * node)
         return false;
     }
 
-    // 加法的右边操作数
+    // 右边操作数
     ast_node * right = ir_visit_ast_node(src2_node);
     if (!right) {
         // 某个变量没有定值
@@ -1234,12 +1234,22 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
     auto dimensions = array_value->arrayIndexVector;
     int i = 0;
 
-    //初始化的目的在于处理一维数组
+    // fore_value代表上一轮的offset
     Value * fore_value;
-    if (node->sons[i + 1]->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
-        fore_value = symtab->newConstValue((int32_t) node->sons[i + 1]->integer_val); //默认为第一个
-    else if (node->sons[i + 1]->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
-        auto var_node = ir_visit_ast_node(node->sons[i + 1]);
+    //初始化，目的在于处理一维数组
+    if (node->sons[1]->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
+        fore_value = symtab->newConstValue((int32_t) node->sons[1]->integer_val); //默认为第一个
+    else if (node->sons[1]->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
+        auto var_node = ir_visit_ast_node(node->sons[1]);
+        fore_value = var_node->val;
+    } else {
+        //如果是二元算式
+        auto var_node = ir_visit_ast_node(node->sons[1]);
+        if (!var_node) {
+            // 某个变量没有定值
+            return false;
+        }
+        node->blockInsts.addInst(var_node->blockInsts);
         fore_value = var_node->val;
     }
 
@@ -1261,6 +1271,15 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
             else if (index1->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
                 auto var_node = ir_visit_ast_node(index1);
                 src1 = var_node->val;
+            } else {
+                //如果是二元算式
+                auto var_node = ir_visit_ast_node(index1);
+                if (!var_node) {
+                    // 某个变量没有定值
+                    return false;
+                }
+                node->blockInsts.addInst(var_node->blockInsts);
+                src1 = var_node->val;
             }
 
             ConstValue * src2 = new ConstValue(dimension);
@@ -1276,7 +1295,17 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
             else if (index2->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
                 auto var_node = ir_visit_ast_node(index2);
                 src3 = var_node->val;
+            } else {
+                //如果是二元算式
+                auto var_node = ir_visit_ast_node(index2);
+                if (!var_node) {
+                    // 某个变量没有定值
+                    return false;
+                }
+                node->blockInsts.addInst(var_node->blockInsts);
+                src3 = var_node->val;
             }
+
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, src3));
 
             //更新fore_value
