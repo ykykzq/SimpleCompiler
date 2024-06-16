@@ -315,20 +315,20 @@ bool IRGenerator::ir_var_declare(ast_node * node)
     return true;
 }
 
-/// @brief 处理函数返回值类型。判断是否与声明的值相符
+/// @brief 设置函数返回值类型。
 /// @param node AST节点
 /// @return 翻译是否成功，true：成功，false：失败
 bool IRGenerator::ir_function_return_type(ast_node * node)
 {
-    auto son = node->sons[0];
-    if (symtab->currentFunc->getReturnValue() == nullptr && son->node_type == ast_operator_type::AST_TYPE_VOID) {
-        // void
+    // 这里设置返回值类型
+    if (node->sons[0]->node_type == ast_operator_type::AST_TYPE_VOID) {
+        symtab->currentFunc->getReturnType().type = BasicType::TYPE_VOID;
         return true;
-    } else if (symtab->currentFunc->getReturnValue() != nullptr && son->node_type == ast_operator_type::AST_TYPE_INT) {
-        // int
+    } else if (node->sons[0]->node_type == ast_operator_type::AST_TYPE_INT) {
+        symtab->currentFunc->getReturnType().type = BasicType::TYPE_INT;
         return true;
     }
-    printf("返回值类型与声明不匹配\n");
+
     return false;
 }
 
@@ -884,18 +884,18 @@ bool IRGenerator::ir_return(ast_node * node)
 
     node->val = right->val;
 
-    // 这里设置返回值类型
-    ValueType & returnType = symtab->currentFunc->getReturnType();
-    if (returnType.type == BasicType::TYPE_VOID) {
-        // 设置类型
-        returnType.type = right->val->type.type;
-    } else if (returnType.type != right->val->type.type) {
-        // 两者类型不一致，要出错显示
-        // 或者隐式转换成更高的类型
-        // TODO 这里目前什么都不做
+    //检查返回值类型，并设置返回值
+    auto son = node->sons[0];
+    if (symtab->currentFunc->getReturnType().type == BasicType::TYPE_VOID && son == nullptr) {
+        // void
+        return true;
+
+    } else if (symtab->currentFunc->getReturnType().type == BasicType::TYPE_INT && son != nullptr) {
+        // 不空默认返回int
+        return true;
     }
 
-    return true;
+    return false;
 }
 /// @brief if节点翻译成线性中间IR
 /// @param node AST节点
