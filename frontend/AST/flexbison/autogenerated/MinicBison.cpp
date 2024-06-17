@@ -514,16 +514,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   268
+#define YYLAST   290
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  34
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  40
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  102
+#define YYNRULES  106
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  193
+#define YYNSTATES  203
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   279
@@ -579,12 +579,12 @@ static const yytype_int16 yyrline[] =
      159,   171,   175,   182,   187,   196,   199,   205,   212,   226,
      229,   233,   239,   242,   245,   248,   253,   259,   263,   269,
      275,   281,   287,   291,   295,   299,   304,   308,   312,   316,
-     320,   325,   329,   333,   338,   342,   347,   351,   356,   359,
-     363,   367,   371,   375,   382,   388,   394,   398,   404,   407,
-     413,   416,   423,   427,   433,   436,   442,   445,   451,   454,
-     460,   463,   466,   472,   479,   484,   489,   494,   499,   502,
-     507,   515,   522,   527,   534,   542,   547,   551,   557,   564,
-     571,   577,   580
+     320,   325,   329,   333,   336,   341,   345,   349,   352,   355,
+     360,   364,   369,   372,   376,   380,   384,   388,   395,   401,
+     407,   411,   417,   420,   426,   429,   436,   440,   446,   449,
+     455,   458,   464,   467,   473,   476,   479,   485,   492,   497,
+     502,   507,   512,   515,   520,   528,   535,   540,   547,   555,
+     560,   564,   570,   577,   584,   590,   593
 };
 #endif
 
@@ -622,12 +622,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-134)
+#define YYPACT_NINF (-148)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-1)
+#define YYTABLE_NINF (-39)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -636,26 +636,27 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-     165,    25,  -134,    20,    16,  -134,  -134,  -134,  -134,    54,
-      62,    44,  -134,  -134,  -134,    53,   -11,   152,  -134,    -4,
-      50,   158,  -134,    21,    42,   242,   242,   242,    15,  -134,
-      68,   242,    49,  -134,    62,    57,    90,  -134,    83,    66,
-     178,  -134,    69,   242,   242,   242,   242,   200,   164,  -134,
-      63,    72,  -134,  -134,  -134,   200,  -134,    85,    60,  -134,
-      71,  -134,  -134,  -134,   116,  -134,  -134,  -134,   156,  -134,
-      74,    25,    70,    94,  -134,  -134,    80,   227,  -134,  -134,
-    -134,   103,   242,   242,   242,   242,   242,  -134,  -134,  -134,
-    -134,   112,   117,  -134,   122,   136,  -134,   210,   114,   123,
-     134,   167,  -134,  -134,   186,  -134,  -134,   171,  -134,    68,
-     172,  -134,  -134,  -134,   204,   242,  -134,  -134,  -134,  -134,
-     184,  -134,   164,   164,  -134,  -134,  -134,    15,  -134,   242,
-    -134,    49,  -134,   242,  -134,  -134,   182,   242,   242,  -134,
-    -134,  -134,  -134,  -134,   242,  -134,   161,   194,  -134,   242,
-    -134,  -134,  -134,  -134,  -134,   202,   200,   201,    -2,   213,
-     216,   215,   220,  -134,  -134,  -134,   121,    34,    40,   217,
-     218,   225,   230,   121,  -134,   241,   242,   200,   242,   200,
-     242,   242,   242,   242,  -134,   121,   200,   200,   201,   201,
-      -2,   213,  -134
+     113,    17,  -148,    32,   117,  -148,  -148,  -148,  -148,    82,
+      90,    75,  -148,  -148,  -148,    74,     5,   110,  -148,     8,
+      33,   124,  -148,     4,    16,   138,   138,   138,    78,  -148,
+     128,   138,    87,  -148,    90,    61,    39,  -148,   141,    83,
+     158,  -148,   114,   138,   138,   138,   138,   178,   139,  -148,
+     171,   140,  -148,  -148,  -148,   178,  -148,   185,    56,  -148,
+     111,  -148,  -148,  -148,    80,  -148,  -148,  -148,   165,  -148,
+     146,    17,   194,   196,  -148,  -148,   156,   235,  -148,  -148,
+    -148,   207,   138,   138,   138,   138,   138,  -148,  -148,  -148,
+    -148,   157,   160,  -148,   163,   175,  -148,   232,   220,   231,
+     241,   242,  -148,  -148,   195,  -148,  -148,   243,  -148,   128,
+     225,  -148,  -148,  -148,   131,   138,  -148,  -148,  -148,  -148,
+     188,  -148,   139,   139,  -148,  -148,  -148,    78,  -148,   138,
+    -148,    87,  -148,   138,  -148,  -148,   244,   238,   238,  -148,
+    -148,  -148,  -148,  -148,   138,  -148,   245,   246,  -148,   138,
+    -148,  -148,  -148,  -148,  -148,   238,   238,   236,   178,   222,
+       7,   249,   250,   247,   251,  -148,  -148,  -148,   249,  -148,
+      53,    65,   211,   215,    28,    60,   248,   252,   254,   255,
+     215,  -148,  -148,  -148,   272,   138,   178,   138,   178,   138,
+     138,   238,   238,  -148,   215,   178,   178,   222,   222,     7,
+     249,   249,  -148
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -663,42 +664,43 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,    95,     0,     0,     2,     4,    79,    78,     0,
-       0,     0,     1,     3,     5,    91,    93,     0,    88,     0,
-       0,     0,    81,     0,     0,     0,     0,     0,     0,    87,
-       0,     0,     0,    80,     0,     0,     0,    14,     0,     0,
-       0,    97,    99,     0,     0,     0,     0,    85,    41,    45,
-     100,     0,    58,    98,    94,    38,    90,     0,     0,    92,
-      91,    89,    86,    83,     0,    84,    82,    10,     0,     6,
-       0,     0,    16,    17,    12,     8,     0,     0,    61,    62,
-      63,     0,     0,     0,     0,     0,     0,    64,    65,    70,
-      68,     0,     0,    74,     0,     0,    76,     0,     0,     0,
+       0,     0,    99,     0,     0,     2,     4,    83,    82,     0,
+       0,     0,     1,     3,     5,    95,    97,     0,    92,     0,
+       0,     0,    85,     0,     0,     0,     0,     0,     0,    91,
+       0,     0,     0,    84,     0,     0,     0,    14,     0,     0,
+       0,   101,   103,     0,     0,     0,     0,    89,    41,    45,
+     104,     0,    62,   102,    98,    38,    94,     0,     0,    96,
+      95,    93,    90,    87,     0,    88,    86,    10,     0,     6,
+       0,     0,    16,    17,    12,     8,     0,     0,    65,    66,
+      67,     0,     0,     0,     0,     0,     0,    68,    69,    74,
+      72,     0,     0,    78,     0,     0,    80,     0,     0,     0,
        0,     0,    21,    29,     0,    23,    25,     0,    26,     0,
-      98,    11,     7,    15,     0,     0,    13,     9,    59,   101,
-       0,    96,    39,    40,    42,    43,    44,     0,    67,     0,
-      66,     0,    73,     0,    72,    36,     0,     0,     0,    33,
-      34,    22,    24,    28,     0,    18,     0,     0,    60,     0,
-      69,    71,    75,    77,    35,     0,    46,    51,    54,    56,
-      37,     0,     0,    19,    20,   102,     0,     0,     0,     0,
-       0,     0,     0,     0,    27,    30,     0,    47,     0,    48,
-       0,     0,     0,     0,    32,     0,    49,    50,    53,    52,
-      55,    57,    31
+     102,    11,     7,    15,     0,     0,    13,     9,    63,   105,
+       0,   100,    39,    40,    42,    43,    44,     0,    71,     0,
+      70,     0,    77,     0,    76,    36,     0,     0,     0,    33,
+      34,    22,    24,    28,     0,    18,     0,     0,    64,     0,
+      73,    75,    79,    81,    35,     0,     0,     0,    46,    51,
+      55,    60,    37,     0,     0,    19,    20,   106,    59,    45,
+      46,    55,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    27,    54,    58,    30,     0,    47,     0,    48,     0,
+       0,     0,     0,    32,     0,    49,    50,    53,    52,    55,
+      57,    61,    31
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -134,  -134,   251,   232,   189,  -134,   -28,  -134,   157,  -133,
-     124,   -23,   -25,   150,    58,    81,    82,  -134,   -24,     0,
-     -57,  -134,  -134,   -60,  -134,  -134,   174,  -134,  -134,   234,
-     -19,  -134,  -134,  -134,   236,  -134,    13,  -134,   -63,  -134
+    -148,  -148,   278,   259,   216,  -148,   -18,  -148,   180,  -147,
+     148,   -23,   -25,   182,    77,  -134,  -136,  -148,   -36,    -5,
+     -57,  -148,  -148,   -53,  -148,  -148,   213,  -148,  -148,   256,
+     -13,  -148,  -148,  -148,   258,  -148,    12,  -148,   -58,  -148
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
        0,     4,     5,    36,    37,    73,   103,   104,   105,   106,
-     155,   107,    55,    48,   157,   158,   159,   160,    49,    50,
+     157,   107,    55,    48,   159,   160,   161,   162,    49,    50,
       59,    91,    92,    65,    94,    95,   108,     7,    21,    22,
       51,    63,     8,    17,    18,    56,    38,    52,    53,   120
 };
@@ -706,66 +708,72 @@ static const yytype_uint8 yydefgoto[] =
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_uint8 yytable[] =
+static const yytype_int16 yytable[] =
 {
-      47,    90,    47,    54,    93,   110,    47,    69,    57,    16,
-      20,    75,    62,     9,    10,   169,    12,     9,    27,    78,
-      79,    80,    28,    81,    11,    25,     1,     2,     3,    31,
-      16,   170,     2,   175,    20,    89,     2,    41,    42,    47,
-     184,   110,   112,    41,    42,    96,    58,    35,   117,    43,
-      44,    45,   192,     2,   119,    43,    44,    45,    15,    46,
-     124,   125,   126,    41,    42,    46,    19,   176,    39,    23,
-     150,   152,    60,   178,   136,    43,    44,    45,    24,    27,
-      64,   109,    25,    32,    67,    46,    26,    72,    68,    47,
-      47,    58,    27,    74,    77,   146,   147,    68,    25,   114,
-      25,   111,    87,   110,    26,    68,   151,   116,    47,    16,
-     110,    68,   156,   156,   153,    88,    70,   109,    71,    41,
-      42,   162,   110,   115,    41,    42,   165,    97,    98,   121,
-      99,    43,    44,    45,   100,   101,    43,    44,    45,   137,
-     127,    46,   177,   179,   128,   129,    46,    64,   138,   130,
-     131,   186,    68,   187,   132,   156,   156,   156,   156,    41,
-      42,   139,    97,    98,   133,    99,     1,     2,   134,   100,
-     101,    43,    44,    45,     6,     1,     2,     3,    14,    29,
-      30,    46,    84,    85,    86,    33,    34,    68,   102,    41,
-      42,   163,    97,    98,   140,    99,     1,     2,   143,   100,
-     101,    43,    44,    45,    76,   144,    71,    41,    42,   154,
-     148,    46,   149,    41,    42,    82,    83,    68,   141,    43,
-      44,    45,   167,   168,   164,    43,    44,    45,   166,    46,
-      41,    42,   122,   123,   145,    46,   171,   135,   188,   189,
-     172,   173,    43,    44,    45,    41,    42,   174,   182,   185,
-     180,   181,    46,   118,   183,    13,    40,    43,    44,    45,
-     113,   142,   161,   190,     0,   191,    61,    46,    66
+      47,    90,    47,    54,    16,    20,    47,    78,    79,    80,
+     110,    93,     9,    10,    57,     2,     9,    69,    62,   168,
+     172,    75,   171,    81,   176,    16,   184,     2,     2,    20,
+      35,    41,    42,   193,    27,    89,    11,    25,    28,    47,
+     177,    31,    39,    43,    44,    45,   110,   202,   124,   125,
+     126,    96,   112,    46,   119,   200,   201,   199,   117,    41,
+      42,   185,    27,    41,    42,    70,    32,    71,    82,    83,
+     150,    43,    44,    45,   136,    43,    44,    45,   152,   -38,
+     109,    46,   176,    41,    42,    46,    15,    58,    67,    47,
+      47,   182,    68,   187,    19,    43,    44,    45,   177,    24,
+      23,   146,   147,    25,    16,    46,   151,    26,    47,    58,
+      74,    64,   158,   158,    68,   110,   109,    12,    64,   169,
+     153,   164,   110,     1,     2,     3,   167,     1,     2,     3,
+     158,   170,    60,    81,    41,    42,   110,    29,    30,    77,
+      25,    41,    42,    25,    26,    72,    43,    44,    45,   186,
+     188,    33,    34,    43,    44,    45,    46,    84,    85,    86,
+     195,   145,   196,    46,   158,   158,   158,   158,    41,    42,
+      87,    97,    98,   111,    99,     1,     2,    68,   100,   101,
+      43,    44,    45,   116,    76,   127,    71,    68,   129,   128,
+      46,   131,   130,    82,    83,   132,    68,   102,    41,    42,
+      27,    97,    98,   133,    99,     1,     2,   134,   100,   101,
+      43,    44,    45,     6,   148,    88,   149,    14,    41,    42,
+      46,    97,    98,   114,    99,   115,    68,   141,   100,   101,
+      43,    44,    45,   121,   178,    41,    42,   183,    41,    42,
+      46,    41,    42,   174,   175,   137,    68,    43,    44,    45,
+      43,    44,    45,    43,    44,   155,   138,    46,   144,   135,
+      46,   118,   173,   156,   122,   123,   197,   198,   139,   140,
+     143,   154,   178,   180,   179,   165,   166,   191,   181,   192,
+     194,   189,    13,    40,   142,   190,   163,   113,    61,     0,
+      66
 };
 
 static const yytype_int16 yycheck[] =
 {
-      25,    58,    27,    26,    64,    68,    31,    35,    27,     9,
-      10,    39,    31,     0,     1,    17,     0,     4,    29,    43,
-      44,    45,    33,    46,     4,    29,    10,    11,    12,    33,
-      30,    33,    11,   166,    34,    58,    11,     3,     4,    64,
-     173,   104,    70,     3,     4,    64,    31,    26,    76,    15,
-      16,    17,   185,    11,    77,    15,    16,    17,     4,    25,
-      84,    85,    86,     3,     4,    25,     4,    33,    26,    25,
-     127,   131,     4,    33,    97,    15,    16,    17,    25,    29,
-      31,    68,    29,    33,    27,    25,    33,     4,    31,   114,
-     115,    31,    29,    27,    25,   114,   115,    31,    29,    29,
-      29,    27,    30,   166,    33,    31,   129,    27,   133,   109,
-     173,    31,   137,   138,   133,    30,    26,   104,    28,     3,
-       4,   144,   185,    29,     3,     4,   149,     6,     7,    26,
-       9,    15,    16,    17,    13,    14,    15,    16,    17,    25,
-      28,    25,   167,   168,    32,    28,    25,    31,    25,    32,
-      28,   176,    31,   178,    32,   180,   181,   182,   183,     3,
-       4,    27,     6,     7,    28,     9,    10,    11,    32,    13,
-      14,    15,    16,    17,     0,    10,    11,    12,     4,    27,
-      28,    25,    18,    19,    20,    27,    28,    31,    32,     3,
-       4,    30,     6,     7,    27,     9,    10,    11,    27,    13,
-      14,    15,    16,    17,    26,    33,    28,     3,     4,    27,
-      26,    25,    28,     3,     4,    15,    16,    31,    32,    15,
-      16,    17,    21,    22,    30,    15,    16,    17,    26,    25,
-       3,     4,    82,    83,    30,    25,    23,    27,   180,   181,
-      24,    26,    15,    16,    17,     3,     4,    27,    23,     8,
-      33,    33,    25,    26,    24,     4,    24,    15,    16,    17,
-      71,   104,   138,   182,    -1,   183,    30,    25,    34
+      25,    58,    27,    26,     9,    10,    31,    43,    44,    45,
+      68,    64,     0,     1,    27,    11,     4,    35,    31,   155,
+     156,    39,   156,    46,    17,    30,   173,    11,    11,    34,
+      26,     3,     4,   180,    29,    58,     4,    29,    33,    64,
+      33,    33,    26,    15,    16,    17,   104,   194,    84,    85,
+      86,    64,    70,    25,    77,   191,   192,   191,    76,     3,
+       4,    33,    29,     3,     4,    26,    33,    28,    15,    16,
+     127,    15,    16,    17,    97,    15,    16,    17,   131,    26,
+      68,    25,    17,     3,     4,    25,     4,    31,    27,   114,
+     115,    26,    31,    33,     4,    15,    16,    17,    33,    25,
+      25,   114,   115,    29,   109,    25,   129,    33,   133,    31,
+      27,    31,   137,   138,    31,   173,   104,     0,    31,   155,
+     133,   144,   180,    10,    11,    12,   149,    10,    11,    12,
+     155,   156,     4,   156,     3,     4,   194,    27,    28,    25,
+      29,     3,     4,    29,    33,     4,    15,    16,    17,   174,
+     175,    27,    28,    15,    16,    17,    25,    18,    19,    20,
+     185,    30,   187,    25,   189,   190,   191,   192,     3,     4,
+      30,     6,     7,    27,     9,    10,    11,    31,    13,    14,
+      15,    16,    17,    27,    26,    28,    28,    31,    28,    32,
+      25,    28,    32,    15,    16,    32,    31,    32,     3,     4,
+      29,     6,     7,    28,     9,    10,    11,    32,    13,    14,
+      15,    16,    17,     0,    26,    30,    28,     4,     3,     4,
+      25,     6,     7,    29,     9,    29,    31,    32,    13,    14,
+      15,    16,    17,    26,    23,     3,     4,    26,     3,     4,
+      25,     3,     4,    21,    22,    25,    31,    15,    16,    17,
+      15,    16,    17,    15,    16,    17,    25,    25,    33,    27,
+      25,    26,    26,    25,    82,    83,   189,   190,    27,    27,
+      27,    27,    23,    26,    24,    30,    30,    23,    27,    24,
+       8,    33,     4,    24,   104,    33,   138,    71,    30,    -1,
+      34
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -787,11 +795,12 @@ static const yytype_int8 yystos[] =
       73,    26,    47,    47,    52,    52,    52,    28,    32,    28,
       32,    28,    32,    28,    32,    27,    45,    25,    25,    27,
       27,    32,    42,    27,    33,    30,    64,    64,    26,    28,
-      54,    45,    57,    64,    27,    44,    46,    48,    49,    50,
-      51,    44,    45,    30,    30,    45,    26,    21,    22,    17,
-      33,    23,    24,    26,    27,    43,    33,    46,    33,    46,
-      33,    33,    23,    24,    43,     8,    46,    46,    48,    48,
-      49,    50,    43
+      54,    45,    57,    64,    27,    17,    25,    44,    46,    48,
+      49,    50,    51,    44,    45,    30,    30,    45,    50,    52,
+      46,    49,    50,    26,    21,    22,    17,    33,    23,    24,
+      26,    27,    26,    26,    43,    33,    46,    33,    46,    33,
+      33,    23,    24,    43,     8,    46,    46,    48,    48,    49,
+      50,    50,    43
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -802,12 +811,12 @@ static const yytype_int8 yyr1[] =
       39,    40,    40,    41,    41,    42,    42,    43,    43,    43,
       43,    43,    43,    43,    43,    43,    43,    44,    45,    46,
       46,    46,    47,    47,    47,    47,    48,    48,    48,    48,
-      48,    49,    49,    49,    50,    50,    51,    51,    52,    52,
-      52,    52,    52,    52,    53,    53,    54,    54,    55,    55,
-      56,    56,    57,    57,    58,    58,    59,    59,    60,    60,
-      61,    62,    62,    63,    63,    64,    65,    66,    67,    67,
-      68,    68,    68,    68,    69,    70,    71,    71,    71,    72,
-      72,    73,    73
+      48,    49,    49,    49,    49,    50,    50,    50,    50,    50,
+      51,    51,    52,    52,    52,    52,    52,    52,    53,    53,
+      54,    54,    55,    55,    56,    56,    57,    57,    58,    58,
+      59,    59,    60,    60,    61,    62,    62,    63,    63,    64,
+      65,    66,    67,    67,    68,    68,    68,    68,    69,    70,
+      71,    71,    71,    72,    72,    73,    73
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -818,12 +827,12 @@ static const yytype_int8 yyr2[] =
        4,     2,     3,     1,     2,     1,     1,     4,     2,     1,
        5,     7,     5,     2,     2,     3,     2,     1,     1,     3,
        3,     1,     3,     3,     3,     1,     1,     3,     3,     4,
-       4,     1,     4,     4,     1,     4,     1,     4,     1,     3,
-       4,     2,     2,     2,     4,     4,     3,     3,     1,     3,
-       1,     3,     3,     3,     1,     3,     1,     3,     1,     1,
-       4,     1,     3,     3,     3,     1,     1,     3,     1,     3,
-       3,     1,     3,     1,     1,     1,     3,     1,     1,     1,
-       1,     1,     3
+       4,     1,     4,     4,     3,     1,     4,     4,     3,     2,
+       1,     4,     1,     3,     4,     2,     2,     2,     4,     4,
+       3,     3,     1,     3,     1,     3,     3,     3,     1,     3,
+       1,     3,     1,     1,     4,     1,     3,     3,     3,     1,
+       1,     3,     1,     3,     3,     1,     3,     1,     1,     1,
+       3,     1,     1,     1,     1,     1,     3
 };
 
 
@@ -1292,7 +1301,7 @@ yyreduce:
         (yyval.node) = create_contain_node(ast_operator_type::AST_OP_COMPILE_UNIT, (yyvsp[0].node));
         ast_root = (yyval.node);
     }
-#line 1296 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1305 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 3: /* CompileUnit: CompileUnit FuncDef  */
@@ -1300,7 +1309,7 @@ yyreduce:
                           {
         (yyval.node) = insert_ast_node((yyvsp[-1].node), (yyvsp[0].node));
     }
-#line 1304 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1313 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 4: /* CompileUnit: Decl  */
@@ -1309,7 +1318,7 @@ yyreduce:
         (yyval.node) = create_contain_node(ast_operator_type::AST_OP_COMPILE_UNIT, (yyvsp[0].node));
         ast_root = (yyval.node);
     }
-#line 1313 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1322 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 5: /* CompileUnit: CompileUnit Decl  */
@@ -1317,7 +1326,7 @@ yyreduce:
                        {
         (yyval.node) = insert_ast_node((yyvsp[-1].node), (yyvsp[0].node));
     }
-#line 1321 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1330 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 6: /* FuncDef: T_VOID T_ID '(' ')' Block  */
@@ -1326,7 +1335,7 @@ yyreduce:
 		/* 0代表void */
         (yyval.node) = create_func_def(0, (yyvsp[-3].var_id).lineno, (yyvsp[-3].var_id).id, (yyvsp[0].node), nullptr);
     }
-#line 1330 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1339 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 7: /* FuncDef: T_VOID T_ID '(' FuncFParams ')' Block  */
@@ -1335,7 +1344,7 @@ yyreduce:
         /* 0代表void */
 		(yyval.node) = create_func_def(0, (yyvsp[-4].var_id).lineno, (yyvsp[-4].var_id).id, (yyvsp[0].node), (yyvsp[-2].node));
     }
-#line 1339 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1348 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 8: /* FuncDef: Btype T_ID '(' ')' Block  */
@@ -1344,7 +1353,7 @@ yyreduce:
         /* 1代表int */
 		(yyval.node) = create_func_def(1, (yyvsp[-3].var_id).lineno, (yyvsp[-3].var_id).id, (yyvsp[0].node), nullptr);
     }
-#line 1348 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1357 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 9: /* FuncDef: Btype T_ID '(' FuncFParams ')' Block  */
@@ -1353,7 +1362,7 @@ yyreduce:
         /* 1代表int */
 		(yyval.node) = create_func_def(1, (yyvsp[-4].var_id).lineno, (yyvsp[-4].var_id).id, (yyvsp[0].node), (yyvsp[-2].node));
     }
-#line 1357 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1366 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 10: /* FuncDef: T_VOID T_ID '(' ')' ';'  */
@@ -1362,7 +1371,7 @@ yyreduce:
 		/* 0代表void */
         (yyval.node) = create_func_def(0, (yyvsp[-3].var_id).lineno, (yyvsp[-3].var_id).id, nullptr);
     }
-#line 1366 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1375 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 11: /* FuncDef: T_VOID T_ID '(' FuncFParams ')' ';'  */
@@ -1371,7 +1380,7 @@ yyreduce:
         /* 0代表void */
 		(yyval.node) = create_func_def(0, (yyvsp[-4].var_id).lineno, (yyvsp[-4].var_id).id, (yyvsp[-2].node));
     }
-#line 1375 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1384 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 12: /* FuncDef: Btype T_ID '(' ')' ';'  */
@@ -1380,7 +1389,7 @@ yyreduce:
         /* 1代表int */
 		(yyval.node) = create_func_def(1, (yyvsp[-3].var_id).lineno, (yyvsp[-3].var_id).id,  nullptr);
     }
-#line 1384 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1393 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 13: /* FuncDef: Btype T_ID '(' FuncFParams ')' ';'  */
@@ -1389,7 +1398,7 @@ yyreduce:
         /* 1代表int */
 		(yyval.node) = create_func_def(1, (yyvsp[-4].var_id).lineno, (yyvsp[-4].var_id).id, (yyvsp[-2].node));
     }
-#line 1393 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1402 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 14: /* FuncFParams: FuncFParam  */
@@ -1397,7 +1406,7 @@ yyreduce:
                           {
         (yyval.node) = create_contain_node(ast_operator_type::AST_OP_FUNC_FORMAL_PARAMS, (yyvsp[0].node));
     }
-#line 1401 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1410 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 15: /* FuncFParams: FuncFParams ',' FuncFParam  */
@@ -1405,7 +1414,7 @@ yyreduce:
                                  {
         (yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
     }
-#line 1409 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1418 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 16: /* FuncFParam: Btype T_ID  */
@@ -1414,7 +1423,7 @@ yyreduce:
 		ast_node * new_node = create_func_formal_param((yyvsp[0].var_id).lineno, (yyvsp[0].var_id).id);
         (yyval.node) = new_ast_node(ast_operator_type::AST_PARAM, (yyvsp[-1].node), new_node, nullptr);
     }
-#line 1418 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1427 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 17: /* FuncFParam: Btype FuncFParamArray  */
@@ -1422,7 +1431,7 @@ yyreduce:
                                {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_PARAM, (yyvsp[-1].node), (yyvsp[0].node), nullptr);
 	}
-#line 1426 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1435 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 18: /* FuncFParamArray: T_ID '[' ']'  */
@@ -1435,7 +1444,7 @@ yyreduce:
 		ast_node * para_node = new_ast_leaf_node(var_id_attr{para, (yyvsp[-2].var_id).lineno});
 		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY,id_node, para_node, nullptr);
 	}
-#line 1439 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1448 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 19: /* FuncFParamArray: T_ID '[' ConstExp ']'  */
@@ -1449,7 +1458,7 @@ yyreduce:
 		ast_node * para_node = new_ast_leaf_node(var_id_attr{para, (yyvsp[-3].var_id).lineno});
 		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY,id_node, para_node, nullptr);
 	}
-#line 1453 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1462 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 20: /* FuncFParamArray: FuncFParamArray '[' ConstExp ']'  */
@@ -1457,7 +1466,7 @@ yyreduce:
                                                 {
 		(yyval.node) = insert_ast_node((yyvsp[-3].node), (yyvsp[-1].node));
 	}
-#line 1461 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1470 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 21: /* Block: '{' '}'  */
@@ -1466,7 +1475,7 @@ yyreduce:
         // 语句块没有语句
         (yyval.node) = nullptr;
     }
-#line 1470 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1479 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 22: /* Block: '{' BlockItemList '}'  */
@@ -1475,7 +1484,7 @@ yyreduce:
         // 语句块含有语句
         (yyval.node) = (yyvsp[-1].node);
     }
-#line 1479 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1488 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 23: /* BlockItemList: BlockItem  */
@@ -1485,7 +1494,7 @@ yyreduce:
         // 创建一个AST_OP_BLOCK类型的中间节点，孩子为Statement($1)
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_BLOCK, (yyvsp[0].node), nullptr);
     }
-#line 1489 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1498 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 24: /* BlockItemList: BlockItemList BlockItem  */
@@ -1496,7 +1505,7 @@ yyreduce:
         // BlockItem($2)作为Block($1)的孩子 
         (yyval.node) = insert_ast_node((yyvsp[-1].node), (yyvsp[0].node));
     }
-#line 1500 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1509 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 25: /* BlockItem: Statement  */
@@ -1504,7 +1513,7 @@ yyreduce:
                        {
         (yyval.node) = (yyvsp[0].node);
     }
-#line 1508 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1517 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 26: /* BlockItem: Decl  */
@@ -1512,7 +1521,7 @@ yyreduce:
               {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1516 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1525 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 27: /* Statement: LVal '=' Expr ';'  */
@@ -1524,7 +1533,7 @@ yyreduce:
         // 创建一个AST_OP_ASSIGN类型的中间节点，孩子为Id和Expr($3)
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, (yyvsp[-3].node), (yyvsp[-1].node), nullptr);
     }
-#line 1528 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1537 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 28: /* Statement: Expr ';'  */
@@ -1536,7 +1545,7 @@ yyreduce:
         // 创建一个AST_OP_EXPR类型的中间节点，孩子为Expr($1)
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_EXPR, (yyvsp[-1].node), nullptr);
     }
-#line 1540 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1549 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 29: /* Statement: Block  */
@@ -1544,7 +1553,7 @@ yyreduce:
                {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1548 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1557 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 30: /* Statement: T_IF '(' Cond ')' Statement  */
@@ -1553,7 +1562,7 @@ yyreduce:
 		// to do something
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_IF, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
 	}
-#line 1557 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1566 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 31: /* Statement: T_IF '(' Cond ')' Statement T_ELSE Statement  */
@@ -1564,7 +1573,7 @@ yyreduce:
 		ast_node * new_node = new_ast_node(ast_operator_type::AST_OP_BLOCK, (yyvsp[0].node), nullptr);
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_IF, (yyvsp[-4].node), (yyvsp[-2].node), new_node, nullptr);
 	}
-#line 1568 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1577 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 32: /* Statement: T_WHILE '(' Cond ')' Statement  */
@@ -1572,7 +1581,7 @@ yyreduce:
                                         {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_WHILE, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
 	}
-#line 1576 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1585 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 33: /* Statement: T_BREAK ';'  */
@@ -1580,7 +1589,7 @@ yyreduce:
                      {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_BREAK, nullptr);
 	}
-#line 1584 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1593 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 34: /* Statement: T_CONTINUE ';'  */
@@ -1588,7 +1597,7 @@ yyreduce:
                         {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_CONTINUE, nullptr);
     }
-#line 1592 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1601 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 35: /* Statement: T_RETURN Expr ';'  */
@@ -1597,7 +1606,7 @@ yyreduce:
         // 返回语句
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_RETURN_STATEMENT, (yyvsp[-1].node), nullptr);
     }
-#line 1601 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1610 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 36: /* Statement: T_RETURN ';'  */
@@ -1606,7 +1615,7 @@ yyreduce:
         // 返回语句 没有子节点代表不return
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_RETURN_STATEMENT, nullptr);
     }
-#line 1610 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1619 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 37: /* Cond: LOrExp  */
@@ -1614,7 +1623,7 @@ yyreduce:
               {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_COND, (yyvsp[0].node), nullptr);
 }
-#line 1618 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1627 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 38: /* Expr: AddExp  */
@@ -1622,7 +1631,7 @@ yyreduce:
               {
         (yyval.node) = (yyvsp[0].node);
     }
-#line 1626 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1635 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 39: /* AddExp: AddExp T_ADD MulExp  */
@@ -1633,7 +1642,7 @@ yyreduce:
         // 创建一个AST_OP_ADD类型的中间节点，孩子为Expr($1)和Term($3)
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_ADD, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
     }
-#line 1637 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1646 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 40: /* AddExp: AddExp T_SUB MulExp  */
@@ -1644,7 +1653,7 @@ yyreduce:
         // 创建一个AST_OP_ADD类型的中间节点，孩子为Expr($1)和Term($3)
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_SUB, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
     }
-#line 1648 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1657 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 41: /* AddExp: MulExp  */
@@ -1652,7 +1661,7 @@ yyreduce:
                 {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1656 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1665 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 42: /* MulExp: MulExp T_MUL UnaryExp  */
@@ -1660,7 +1669,7 @@ yyreduce:
                                {
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_MUL, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
     }
-#line 1664 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1673 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 43: /* MulExp: MulExp T_DIV UnaryExp  */
@@ -1668,7 +1677,7 @@ yyreduce:
                                {
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_DIV, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
     }
-#line 1672 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1681 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 44: /* MulExp: MulExp T_MOD UnaryExp  */
@@ -1676,7 +1685,7 @@ yyreduce:
                                {
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_MOD, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
     }
-#line 1680 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1689 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 45: /* MulExp: UnaryExp  */
@@ -1684,7 +1693,7 @@ yyreduce:
                   {
         (yyval.node) = (yyvsp[0].node);
     }
-#line 1688 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1697 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 46: /* RelExp: AddExp  */
@@ -1692,7 +1701,7 @@ yyreduce:
                 {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1696 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1705 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 47: /* RelExp: RelExp T_GTH AddExp  */
@@ -1700,7 +1709,7 @@ yyreduce:
                              {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_GTH, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
 	}
-#line 1704 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1713 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 48: /* RelExp: RelExp T_LTH AddExp  */
@@ -1708,7 +1717,7 @@ yyreduce:
                              {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_STH, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
 	}
-#line 1712 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1721 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 49: /* RelExp: RelExp T_GTH '=' AddExp  */
@@ -1716,7 +1725,7 @@ yyreduce:
                                  {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_GOE, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
 	}
-#line 1720 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1729 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 50: /* RelExp: RelExp T_LTH '=' AddExp  */
@@ -1724,7 +1733,7 @@ yyreduce:
                                  {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_SOE, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
 	}
-#line 1728 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1737 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 51: /* EqExp: RelExp  */
@@ -1732,7 +1741,7 @@ yyreduce:
                {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1736 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1745 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 52: /* EqExp: EqExp '=' '=' RelExp  */
@@ -1740,7 +1749,7 @@ yyreduce:
                               {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_EE, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
 	}
-#line 1744 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1753 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
   case 53: /* EqExp: EqExp T_NOT '=' RelExp  */
@@ -1748,253 +1757,285 @@ yyreduce:
                                 {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_NE, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
 	}
-#line 1752 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1761 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 54: /* LAndExp: EqExp  */
-#line 338 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 54: /* EqExp: '(' EqExp ')'  */
+#line 336 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                    {
+		(yyval.node) = (yyvsp[-1].node);
+	}
+#line 1769 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 55: /* LAndExp: EqExp  */
+#line 341 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                 {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1760 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1777 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 55: /* LAndExp: LAndExp T_AND T_AND EqExp  */
-#line 342 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 56: /* LAndExp: LAndExp T_AND T_AND EqExp  */
+#line 345 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                    {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ANDAND, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
 	}
-#line 1768 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1785 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 56: /* LOrExp: LAndExp  */
-#line 347 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 57: /* LAndExp: LAndExp T_AND T_AND LAndExp  */
+#line 349 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                     {
+		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ANDAND, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
+	}
+#line 1793 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 58: /* LAndExp: '(' LAndExp ')'  */
+#line 352 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                      {
+		(yyval.node) = (yyvsp[-1].node);
+	}
+#line 1801 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 59: /* LAndExp: T_NOT LAndExp  */
+#line 355 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                       {
+		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_NOT, (yyvsp[0].node), nullptr);
+	}
+#line 1809 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 60: /* LOrExp: LAndExp  */
+#line 360 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                  {
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 1776 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1817 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 57: /* LOrExp: LOrExp T_OR T_OR LAndExp  */
-#line 351 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 61: /* LOrExp: LOrExp T_OR T_OR LAndExp  */
+#line 364 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                   {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_OROR, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
 	}
-#line 1784 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1825 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 58: /* UnaryExp: PrimaryExp  */
-#line 356 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 62: /* UnaryExp: PrimaryExp  */
+#line 369 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                       {
         (yyval.node) = (yyvsp[0].node);
     }
-#line 1792 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1833 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 59: /* UnaryExp: T_ID '(' ')'  */
-#line 359 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 63: /* UnaryExp: T_ID '(' ')'  */
+#line 372 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                    {
         // 用户自定义的不含实参的函数调用
         (yyval.node) = create_func_call((yyvsp[-2].var_id).lineno, (yyvsp[-2].var_id).id, nullptr);
     }
-#line 1801 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1842 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 60: /* UnaryExp: T_ID '(' FuncRParams ')'  */
-#line 363 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 64: /* UnaryExp: T_ID '(' FuncRParams ')'  */
+#line 376 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                {
         // 用户自定义的含有实参的参数调用
         (yyval.node) = create_func_call((yyvsp[-3].var_id).lineno, (yyvsp[-3].var_id).id, (yyvsp[-1].node));
     }
-#line 1810 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1851 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 61: /* UnaryExp: T_ADD UnaryExp  */
-#line 367 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 65: /* UnaryExp: T_ADD UnaryExp  */
+#line 380 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                          {
 		// 一元表达式
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_ADD, (yyvsp[0].node), nullptr);
 	}
-#line 1819 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1860 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 62: /* UnaryExp: T_SUB UnaryExp  */
-#line 371 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 66: /* UnaryExp: T_SUB UnaryExp  */
+#line 384 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                          {
 		// 一元表达式
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_SUB, (yyvsp[0].node), nullptr);
 	}
-#line 1828 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1869 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 63: /* UnaryExp: T_NOT UnaryExp  */
-#line 375 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 67: /* UnaryExp: T_NOT UnaryExp  */
+#line 388 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                          {
 		// 一元表达式
         (yyval.node) = new_ast_node(ast_operator_type::AST_OP_NOT, (yyvsp[0].node), nullptr);
 	}
-#line 1837 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1878 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 64: /* Array: T_ID '[' ConstExp ']'  */
-#line 382 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 68: /* Array: T_ID '[' ConstExp ']'  */
+#line 395 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                             {
 		ast_node * id_node = new_ast_leaf_node(var_id_attr{(yyvsp[-3].var_id).id, (yyvsp[-3].var_id).lineno});
 
 		free((yyvsp[-3].var_id).id);
 		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY,id_node, (yyvsp[-1].node), nullptr);
 	}
-#line 1848 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1889 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 65: /* Array: Array '[' ConstExp ']'  */
-#line 388 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 69: /* Array: Array '[' ConstExp ']'  */
+#line 401 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                         {
 		(yyval.node) = insert_ast_node((yyvsp[-3].node), (yyvsp[-1].node));
 	}
-#line 1856 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1897 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 66: /* ArrayInitVal: '{' ExpList '}'  */
-#line 394 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 70: /* ArrayInitVal: '{' ExpList '}'  */
+#line 407 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                              {
 		// 变量节点
 		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY_INIT_VAL, (yyvsp[-1].node), nullptr);
 	}
-#line 1865 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1906 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 67: /* ArrayInitVal: '{' ArrayInitValList '}'  */
-#line 398 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 71: /* ArrayInitVal: '{' ArrayInitValList '}'  */
+#line 411 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                         {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY_INIT_VAL, (yyvsp[-1].node), nullptr);
-	}
-#line 1873 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
-    break;
-
-  case 68: /* ArrayInitValList: ArrayInitVal  */
-#line 404 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                {
-		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY_INIT_VAL_LIST, (yyvsp[0].node), nullptr);
-	}
-#line 1881 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
-    break;
-
-  case 69: /* ArrayInitValList: ArrayInitValList ',' ArrayInitVal  */
-#line 407 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                           {
-		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
-    }
-#line 1889 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
-    break;
-
-  case 70: /* ExpList: Expr  */
-#line 413 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-              {
-        (yyval.node) = new_ast_node(ast_operator_type::AST_EXP_LIST, (yyvsp[0].node), nullptr);
-    }
-#line 1897 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
-    break;
-
-  case 71: /* ExpList: ExpList ',' Expr  */
-#line 416 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                      {
-		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
-	}
-#line 1905 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
-    break;
-
-  case 72: /* ConstArrayInitVal: '{' ConstExpList '}'  */
-#line 423 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                       {
-		// 变量节点
-		(yyval.node) = new_ast_node(ast_operator_type::AST_CONST_ARRAY_INIT_VAL, (yyvsp[-1].node), nullptr);
 	}
 #line 1914 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 73: /* ConstArrayInitVal: '{' ConstArrayInitValList '}'  */
-#line 427 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                        {
-		(yyval.node) = new_ast_node(ast_operator_type::AST_CONST_ARRAY_INIT_VAL, (yyvsp[-1].node), nullptr);
+  case 72: /* ArrayInitValList: ArrayInitVal  */
+#line 417 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                {
+		(yyval.node) = new_ast_node(ast_operator_type::AST_ARRAY_INIT_VAL_LIST, (yyvsp[0].node), nullptr);
 	}
 #line 1922 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 74: /* ConstArrayInitValList: ConstArrayInitVal  */
-#line 433 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                          {
-		(yyval.node) = new_ast_node(ast_operator_type::AST_CONST_ARRAY_INIT_VAL_LIST, (yyvsp[0].node), nullptr);
-	}
+  case 73: /* ArrayInitValList: ArrayInitValList ',' ArrayInitVal  */
+#line 420 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                           {
+		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
+    }
 #line 1930 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 75: /* ConstArrayInitValList: ConstArrayInitValList ',' ConstArrayInitVal  */
-#line 436 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                                                     {
-		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
+  case 74: /* ExpList: Expr  */
+#line 426 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+              {
+        (yyval.node) = new_ast_node(ast_operator_type::AST_EXP_LIST, (yyvsp[0].node), nullptr);
     }
 #line 1938 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 76: /* ConstExpList: ConstExp  */
-#line 442 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
-                       {
-        (yyval.node) = new_ast_node(ast_operator_type::AST_CONST_EXP_LIST, (yyvsp[0].node), nullptr);
-    }
+  case 75: /* ExpList: ExpList ',' Expr  */
+#line 429 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                      {
+		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
+	}
 #line 1946 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 77: /* ConstExpList: ConstExpList ',' ConstExp  */
-#line 445 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 76: /* ConstArrayInitVal: '{' ConstExpList '}'  */
+#line 436 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                       {
+		// 变量节点
+		(yyval.node) = new_ast_node(ast_operator_type::AST_CONST_ARRAY_INIT_VAL, (yyvsp[-1].node), nullptr);
+	}
+#line 1955 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 77: /* ConstArrayInitVal: '{' ConstArrayInitValList '}'  */
+#line 440 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                        {
+		(yyval.node) = new_ast_node(ast_operator_type::AST_CONST_ARRAY_INIT_VAL, (yyvsp[-1].node), nullptr);
+	}
+#line 1963 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 78: /* ConstArrayInitValList: ConstArrayInitVal  */
+#line 446 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                          {
+		(yyval.node) = new_ast_node(ast_operator_type::AST_CONST_ARRAY_INIT_VAL_LIST, (yyvsp[0].node), nullptr);
+	}
+#line 1971 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 79: /* ConstArrayInitValList: ConstArrayInitValList ',' ConstArrayInitVal  */
+#line 449 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                                                     {
+		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
+    }
+#line 1979 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 80: /* ConstExpList: ConstExp  */
+#line 455 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+                       {
+        (yyval.node) = new_ast_node(ast_operator_type::AST_CONST_EXP_LIST, (yyvsp[0].node), nullptr);
+    }
+#line 1987 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+    break;
+
+  case 81: /* ConstExpList: ConstExpList ',' ConstExp  */
+#line 458 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                {
 		(yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
 	}
-#line 1954 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 1995 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 78: /* Decl: VarDecl  */
-#line 451 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 82: /* Decl: VarDecl  */
+#line 464 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                   {
 	    (yyval.node) = (yyvsp[0].node);
     }
-#line 1962 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2003 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 79: /* Decl: ConstDecl  */
-#line 454 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 83: /* Decl: ConstDecl  */
+#line 467 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                {
         (yyval.node) = (yyvsp[0].node);
     }
-#line 1970 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2011 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 80: /* ConstDecl: T_CONST Btype ConstDefList ';'  */
-#line 460 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 84: /* ConstDecl: T_CONST Btype ConstDefList ';'  */
+#line 473 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                           {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_VAR_CONST_DECL, (yyvsp[-2].node), (yyvsp[-1].node), nullptr);
 	}
-#line 1978 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2019 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 81: /* ConstDefList: ConstDef  */
-#line 463 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 85: /* ConstDefList: ConstDef  */
+#line 476 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                        {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_VAR_CONST_DEF, (yyvsp[0].node), nullptr);
 	}
-#line 1986 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2027 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 82: /* ConstDefList: ConstDefList ',' ConstDef  */
-#line 466 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 86: /* ConstDefList: ConstDefList ',' ConstDef  */
+#line 479 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                    {
 		(yyval.node) = insert_ast_node((yyvsp[-2].node) , (yyvsp[0].node));
 	}
-#line 1994 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2035 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 83: /* ConstDef: T_ID '=' ConstInitVal  */
-#line 472 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 87: /* ConstDef: T_ID '=' ConstInitVal  */
+#line 485 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                   {
 		// 变量节点
 		ast_node * id_node = new_ast_leaf_node(var_id_attr{(yyvsp[-2].var_id).id, (yyvsp[-2].var_id).lineno});
@@ -2002,59 +2043,59 @@ yyreduce:
 		free((yyvsp[-2].var_id).id);
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, id_node, (yyvsp[0].node), nullptr);
 	}
-#line 2006 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2047 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 84: /* ConstDef: Array '=' ConstArrayInitVal  */
-#line 479 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 88: /* ConstDef: Array '=' ConstArrayInitVal  */
+#line 492 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                      {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
 	}
-#line 2014 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2055 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 85: /* ConstExp: AddExp  */
-#line 484 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 89: /* ConstExp: AddExp  */
+#line 497 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                  {
 	    (yyval.node) = (yyvsp[0].node);
     }
-#line 2022 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2063 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 86: /* ConstInitVal: ConstExp  */
-#line 489 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 90: /* ConstInitVal: ConstExp  */
+#line 502 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                         {
         (yyval.node) = (yyvsp[0].node);
     }
-#line 2030 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2071 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 87: /* VarDecl: Btype VarDefList ';'  */
-#line 494 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 91: /* VarDecl: Btype VarDefList ';'  */
+#line 507 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                               {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_VAR_VAR_DECL, (yyvsp[-2].node), (yyvsp[-1].node), nullptr);
 	}
-#line 2038 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2079 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 88: /* VarDefList: VarDef  */
-#line 499 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 92: /* VarDefList: VarDef  */
+#line 512 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                   {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_VAR_VAR_DEF, (yyvsp[0].node), nullptr);
 	}
-#line 2046 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2087 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 89: /* VarDefList: VarDefList ',' VarDef  */
-#line 502 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 93: /* VarDefList: VarDefList ',' VarDef  */
+#line 515 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                {
 		(yyval.node) = insert_ast_node((yyvsp[-2].node) , (yyvsp[0].node));
 	}
-#line 2054 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2095 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 90: /* VarDef: T_ID '=' InitVal  */
-#line 507 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 94: /* VarDef: T_ID '=' InitVal  */
+#line 520 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                            {
 		// 变量节点
 		ast_node * id_node = new_ast_leaf_node(var_id_attr{(yyvsp[-2].var_id).id, (yyvsp[-2].var_id).lineno});
@@ -2062,11 +2103,11 @@ yyreduce:
 		free((yyvsp[-2].var_id).id);
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, id_node, (yyvsp[0].node), nullptr);
 	}
-#line 2066 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2107 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 91: /* VarDef: T_ID  */
-#line 515 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 95: /* VarDef: T_ID  */
+#line 528 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
              {
 		// 变量节点
         ast_node * id_node = new_ast_leaf_node(var_id_attr{(yyvsp[0].var_id).id, (yyvsp[0].var_id).lineno});
@@ -2074,77 +2115,77 @@ yyreduce:
         free((yyvsp[0].var_id).id);
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, id_node, nullptr);
 	}
-#line 2078 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2119 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 92: /* VarDef: Array '=' ArrayInitVal  */
-#line 522 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 96: /* VarDef: Array '=' ArrayInitVal  */
+#line 535 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                                  {
 		// 变量节点
 
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, (yyvsp[-2].node), (yyvsp[0].node), nullptr);
 	}
-#line 2088 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2129 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 93: /* VarDef: Array  */
-#line 527 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 97: /* VarDef: Array  */
+#line 540 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                 {
 		// 变量节点
 
 		(yyval.node) = new_ast_node(ast_operator_type::AST_OP_ASSIGN, (yyvsp[0].node), nullptr);
 	}
-#line 2098 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2139 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 94: /* InitVal: Expr  */
-#line 534 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 98: /* InitVal: Expr  */
+#line 547 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
               {
 		/* 可以是多种式子 */
 		(yyval.node) = (yyvsp[0].node);
 	}
-#line 2107 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2148 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 95: /* Btype: T_INT  */
-#line 542 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 99: /* Btype: T_INT  */
+#line 555 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
              {
 		(yyval.node) = new_ast_node(ast_operator_type::AST_TYPE_INT, nullptr);
 	}
-#line 2115 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2156 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 96: /* PrimaryExp: '(' Expr ')'  */
-#line 547 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 100: /* PrimaryExp: '(' Expr ')'  */
+#line 560 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                            {
         /* PrimaryExp = Expr */
         (yyval.node) = (yyvsp[-1].node);
     }
-#line 2124 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2165 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 97: /* PrimaryExp: T_DIGIT  */
-#line 551 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 101: /* PrimaryExp: T_DIGIT  */
+#line 564 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
               {
         // 无符号整数识别
 
         // 终结符作为抽象语法树的叶子节点进行创建
         (yyval.node) = new_ast_leaf_node(digit_int_attr{(yyvsp[0].integer_num).val, (yyvsp[0].integer_num).lineno});
     }
-#line 2135 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2176 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 98: /* PrimaryExp: LVal  */
-#line 557 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 102: /* PrimaryExp: LVal  */
+#line 570 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
             {
         // 左值
         (yyval.node) = (yyvsp[0].node);
     }
-#line 2144 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2185 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 99: /* LVal: T_ID  */
-#line 564 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 103: /* LVal: T_ID  */
+#line 577 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
             {
         // 终结符作为抽象语法树的叶子节点进行创建
         (yyval.node) = new_ast_leaf_node(var_id_attr{(yyvsp[0].var_id).id, (yyvsp[0].var_id).lineno});
@@ -2152,36 +2193,36 @@ yyreduce:
 		// 对于字符型字面量的字符串空间需要释放，因词法用到了strdup进行了字符串复制
 		free((yyvsp[0].var_id).id);
     }
-#line 2156 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2197 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 100: /* LVal: Array  */
-#line 571 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 104: /* LVal: Array  */
+#line 584 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                {
 		// 左值
         (yyval.node) = (yyvsp[0].node);
 	}
-#line 2165 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2206 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 101: /* FuncRParams: Expr  */
-#line 577 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 105: /* FuncRParams: Expr  */
+#line 590 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                    {
         (yyval.node) = create_contain_node(ast_operator_type::AST_OP_FUNC_REAL_PARAMS, (yyvsp[0].node));
     }
-#line 2173 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2214 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
-  case 102: /* FuncRParams: FuncRParams ',' Expr  */
-#line 580 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+  case 106: /* FuncRParams: FuncRParams ',' Expr  */
+#line 593 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
                            {
         (yyval.node) = insert_ast_node((yyvsp[-2].node), (yyvsp[0].node));
     }
-#line 2181 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2222 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
     break;
 
 
-#line 2185 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
+#line 2226 "/home/code/SimpleCompiler/frontend/AST/flexbison/autogenerated/MinicBison.cpp"
 
       default: break;
     }
@@ -2374,7 +2415,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 584 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
+#line 597 "/home/code/SimpleCompiler/frontend/AST/flexbison/Minic.y"
 
 
 // 语法识别错误要调用函数的定义

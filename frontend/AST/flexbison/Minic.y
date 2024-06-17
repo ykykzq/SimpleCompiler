@@ -333,6 +333,9 @@ EqExp : RelExp {
 	 EqExp T_NOT '=' RelExp {
 		$$ = new_ast_node(ast_operator_type::AST_OP_NE, $1, $4, nullptr);
 	}
+	|'('EqExp')'{
+		$$ = $2;
+	}
 	;
 /*逻辑与表达式*/
 LAndExp : EqExp {
@@ -341,6 +344,16 @@ LAndExp : EqExp {
 	|
 	 LAndExp T_AND T_AND EqExp {
 		$$ = new_ast_node(ast_operator_type::AST_OP_ANDAND, $1, $4, nullptr);
+	}
+	|
+	 LAndExp T_AND T_AND LAndExp {
+		$$ = new_ast_node(ast_operator_type::AST_OP_ANDAND, $1, $4, nullptr);
+	}
+	|'('LAndExp')'{
+		$$ = $2;
+	}
+	| T_NOT LAndExp{
+		$$ = new_ast_node(ast_operator_type::AST_OP_NOT, $2, nullptr);
 	}
 	;
 /*逻辑或表达式*/
