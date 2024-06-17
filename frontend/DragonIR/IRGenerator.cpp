@@ -1113,7 +1113,7 @@ bool IRGenerator::ir_comp(ast_node * node)
     return true;
 }
 
-/// @brief 布尔运算（&& ||）节点翻译成线性中间IR。如果父节点有跳转指令进行跳转
+/// @brief 布尔运算（&& ||）节点翻译成线性中间IR。同时处理!作为unary
 /// @param node AST节点
 /// @return 翻译是否成功，true：成功，false：失败
 bool IRGenerator::ir_bool_cal(ast_node * node)
@@ -1205,25 +1205,44 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
 
         return true;
     } else if (node->node_type == ast_operator_type::AST_OP_NOT) {
-        ast_node * src_node = node->sons[0];
 
-        ast_node * left = ir_visit_ast_node(src_node);
+        ast_node * src1_node = node->sons[0];
+
+        ast_node * left = ir_visit_ast_node(src1_node);
         if (!left) {
             // 某个变量没有定值
             return false;
         }
-        // auto src1 = src_node->val;
 
-        //装填指令
-        node->blockInsts.addInst(left->blockInsts);
-        if (left->val != nullptr) // nullptr代表为一个&& 或 || 或 !
-            node->blockInsts.addInst(new GotoIRInst(left->val, node->false_blcok_label, node->true_blcok_label));
+        //分布尔和unary两类处理
+        if (node->sons[0]->val != nullptr || node->sons[0]->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID ||
+            node->sons[0]->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT) {
+            //如果是作为unary operator
+            Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_BOOL);
 
-        return true;
+            auto src1 = src1_node->val;
+            auto src2 = new ConstValue(0);
+
+            // 创建临时变量保存IR的值，以及线性IR指令
+            node->blockInsts.addInst(left->blockInsts);
+            node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_EE_B, resultValue, src1, src2));
+
+            node->val = resultValue;
+            return true;
+        } else {
+            // auto src1 = src_node->val;
+
+            //装填指令
+            node->blockInsts.addInst(left->blockInsts);
+            if (left->val != nullptr) // nullptr代表为一个&& 或 || 或 !
+                node->blockInsts.addInst(new GotoIRInst(left->val, node->false_blcok_label, node->true_blcok_label));
+            return true;
+        }
     } else {
         //不是&&或||，翻译失败
         return false;
     }
+    return false;
 }
 
 /// @brief 标识符叶子节点翻译成线性中间IR——本质上确认该变量存在
