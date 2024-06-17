@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "Function.h"
+// #include "Block.h"
 //#include "IRCode.h"
 #include "../frontend/DragonIR/IRCode.h"
 #include "Value.h"
@@ -108,6 +109,9 @@ public:
 
     /// 遍历抽象树过程中的当前处理函数
     Function * currentFunc = nullptr;
+
+    // /// 遍历抽象树过程中的当前语句块
+    // Block * currentBlock = nullptr;
 
 private:
     /// @brief 变量名映射表，变量名-变量，只保存全局变量以及常量

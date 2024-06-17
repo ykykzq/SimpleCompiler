@@ -1,34 +1,29 @@
-
 int n;
 
-void putint(int k);
 int getint();
-
-int test(int a)
-{
-    n = n + 1;
-    return a + 1;
-}
+void putint(int k);
 
 int main()
 {
-    int a;
-    int b[4];
-
-    b[0] = 1;
-    b[1] = 2;
-    b[2] = 3;
-    b[3] = 4;
-
-    n = 2;
+    int a, b;
 
     a = getint();
+    b = getint();
 
-    // notice right-> left
-    b[n] = test(a);
+    int c;
+    c = getint();
 
-    putint(b[2]);
-    putint(b[3]);
+    if(!((a < b) && (a > c))) {
+        putint(2);
+    } else {
+        putint(1);
+    }
+
+    if((a > 5) && ((c < 10) && (c > 0))) {
+        putint(3);
+    } else {
+        putint(4);
+    }
 
     return 0;
 }
