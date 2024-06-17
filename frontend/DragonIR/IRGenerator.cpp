@@ -47,7 +47,7 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     ast2ir_handlers[ast_operator_type::AST_OP_MOD] = &IRGenerator::ir_mod;
 
     /* 一元运算符 */
-    ast2ir_handlers[ast_operator_type::AST_OP_NOT] = &IRGenerator::ir_unary_not;
+    // ast2ir_handlers[ast_operator_type::AST_OP_NOT] = &IRGenerator::ir_unary_not;
 
     /* 比较运算 */
     ast2ir_handlers[ast_operator_type::AST_OP_GTH] = &IRGenerator::ir_comp;
@@ -60,6 +60,7 @@ IRGenerator::IRGenerator(ast_node * _root, SymbolTable * _symtab) : root(_root),
     /* 布尔运算 */
     ast2ir_handlers[ast_operator_type::AST_OP_ANDAND] = &IRGenerator::ir_bool_cal;
     ast2ir_handlers[ast_operator_type::AST_OP_OROR] = &IRGenerator::ir_bool_cal;
+    ast2ir_handlers[ast_operator_type::AST_OP_NOT] = &IRGenerator::ir_bool_cal;
 
     /* 语句 */
     ast2ir_handlers[ast_operator_type::AST_OP_EXPR] = &IRGenerator::ir_expr_noshow;
@@ -798,33 +799,33 @@ bool IRGenerator::ir_mod(ast_node * node)
     return true;
 }
 
-/// @brief 一元not运算AST节点翻译成线性中间IR
-/// @param node AST节点
-/// @return 翻译是否成功，true：成功，false：失败
-bool IRGenerator::ir_unary_not(ast_node * node)
-{
-    ast_node * src1_node = node->sons[0];
+// /// @brief 一元not运算AST节点翻译成线性中间IR
+// /// @param node AST节点
+// /// @return 翻译是否成功，true：成功，false：失败
+// bool IRGenerator::ir_unary_not(ast_node * node)
+// {
+//     ast_node * src1_node = node->sons[0];
 
-    //如果为一元运算节点
-    // 加法的左边操作数
-    ast_node * left = ir_visit_ast_node(src1_node);
-    if (!left) {
-        // 某个变量没有定值
-        return false;
-    }
-    Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_BOOL);
+//     //如果为一元运算节点
+//     // 加法的左边操作数
+//     ast_node * left = ir_visit_ast_node(src1_node);
+//     if (!left) {
+//         // 某个变量没有定值
+//         return false;
+//     }
+//     Value * resultValue = symtab->currentFunc->newTempValue(BasicType::TYPE_BOOL);
 
-    auto src1 = src1_node->val;
-    auto src2 = new ConstValue(0);
+//     auto src1 = src1_node->val;
+//     auto src2 = new ConstValue(0);
 
-    // 创建临时变量保存IR的值，以及线性IR指令
-    node->blockInsts.addInst(left->blockInsts);
-    node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_EE_B, resultValue, src1, src2));
+//     // 创建临时变量保存IR的值，以及线性IR指令
+//     node->blockInsts.addInst(left->blockInsts);
+//     node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_EE_B, resultValue, src1, src2));
 
-    node->val = resultValue;
+//     node->val = resultValue;
 
-    return true;
-}
+//     return true;
+// }
 
 /// @brief 赋值AST节点翻译成线性中间IR
 /// @param node AST节点
@@ -1015,7 +1016,8 @@ bool IRGenerator::ir_conditon(ast_node * node)
 
     //如果是单纯的布尔值
     if (node->sons[0]->node_type != ast_operator_type::AST_OP_ANDAND &&
-        node->sons[0]->node_type != ast_operator_type::AST_OP_OROR) {
+        node->sons[0]->node_type != ast_operator_type::AST_OP_OROR &&
+        node->sons[0]->node_type != ast_operator_type::AST_OP_NOT) {
         node->blockInsts.addInst(new GotoIRInst(cond_inst_node->val, node->true_blcok_label, node->false_blcok_label));
     }
     return true;
@@ -1137,6 +1139,9 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
         node->true_blcok_label = node->parent->true_blcok_label;
         node->false_blcok_label = node->parent->false_blcok_label;
         // node->exit_blcok_label = node->parent->exit_blcok_label;
+    } else if (node->parent->node_type == ast_operator_type::AST_OP_NOT) {
+        node->true_blcok_label = node->parent->false_blcok_label;
+        node->false_blcok_label = node->parent->true_blcok_label;
     }
 
     //根据当前运算类型
@@ -1197,6 +1202,22 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
         node->blockInsts.addInst(right->blockInsts);
         if (right->val != nullptr) // nullptr代表为一个&& 或 ||
             node->blockInsts.addInst(new GotoIRInst(right->val, node->true_blcok_label, node->false_blcok_label));
+
+        return true;
+    } else if (node->node_type == ast_operator_type::AST_OP_NOT) {
+        ast_node * src_node = node->sons[0];
+
+        ast_node * left = ir_visit_ast_node(src_node);
+        if (!left) {
+            // 某个变量没有定值
+            return false;
+        }
+        // auto src1 = src_node->val;
+
+        //装填指令
+        node->blockInsts.addInst(left->blockInsts);
+        if (left->val != nullptr) // nullptr代表为一个&& 或 || 或 !
+            node->blockInsts.addInst(new GotoIRInst(left->val, node->false_blcok_label, node->true_blcok_label));
 
         return true;
     } else {
