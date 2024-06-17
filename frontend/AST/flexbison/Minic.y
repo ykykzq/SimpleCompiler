@@ -336,6 +336,9 @@ EqExp : RelExp {
 	|'('EqExp')'{
 		$$ = $2;
 	}
+	| T_NOT EqExp{
+		$$ = new_ast_node(ast_operator_type::AST_OP_NOT, $2, nullptr);
+	}
 	;
 /*逻辑与表达式*/
 LAndExp : EqExp {
