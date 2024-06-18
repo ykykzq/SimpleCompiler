@@ -1,29 +1,57 @@
-int n;
+int buf[2][100];
 
-int getint();
-void putint(int k);
+int getarray(int a[]);
+void putarray(int n, int d[]);
+
+// sort [l, r)
+void merge_sort(int l, int r)
+{
+    if (l + 1 >= r)
+        return;
+
+    int mid;
+    mid = (l + r) / 2;
+    merge_sort(l, mid);
+    merge_sort(mid, r);
+
+    int i, j, k;
+    i = l;
+    j = mid;
+    k = l;
+    while (i < mid && j < r) {
+        if (buf[0][i] < buf[0][j]) {
+            buf[1][k] = buf[0][i];
+            i = i + 1;
+        } else {
+            buf[1][k] = buf[0][j];
+            j = j + 1;
+        }
+        k = k + 1;
+    }
+    while (i < mid) {
+        buf[1][k] = buf[0][i];
+        i = i + 1;
+        k = k + 1;
+    }
+    while (j < r) {
+        buf[1][k] = buf[0][j];
+        j = j + 1;
+        k = k + 1;
+    }
+
+    while (l < r) {
+        buf[0][l] = buf[1][l];
+        l = l + 1;
+    }
+}
 
 int main()
 {
-    int a, b;
+    int n;
 
-    a = getint();
-    b = getint();
+    n = getarray(buf[0]);
 
-    int c;
-    c = getint();
-
-    if(!((a < b) && (a > c))) {
-        putint(2);
-    } else {
-        putint(1);
-    }
-
-    if((a > 5) && ((c < 10) && (c > 0))) {
-        putint(3);
-    } else {
-        putint(4);
-    }
-
+    merge_sort(0, n);
+    putarray(n, buf[0]);
     return 0;
 }

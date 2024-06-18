@@ -1386,10 +1386,25 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
                     }
                     j++;
                 }
+                fore_value = temp1;
+                //再乘以4。temp1是元素相对于基址的偏移
+                auto temp1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                if (fore_value->isPointer()) {
+                    Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                    node->blockInsts.addInst(new AssignIRInst(dequote, fore_value));
+                    fore_value = dequote;
+                }
+                node->blockInsts.addInst(
+                    new BinaryIRInst(IRInstOperator::IRINST_OP_MUL_I, temp1, fore_value, new ConstValue(4)));
+
+                //再加上基址。temp2是最终的元素地址
                 auto temp2 = symtab->currentFunc->newTempArrayValue(BasicType::TYPE_INT, indexs);
+                node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp2, temp1, array_value));
                 node->val = temp2;
-                break;
+
+                return true;
             }
+            //如果index存在，继续运算
             if (index2->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT)
                 src3 = new ConstValue((int32_t) index2->integer_val);
             else if (index2->node_type == ast_operator_type::AST_OP_LEAF_VAR_ID) {
