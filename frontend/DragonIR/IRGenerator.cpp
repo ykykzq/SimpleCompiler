@@ -1225,6 +1225,10 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
 
             // 创建临时变量保存IR的值，以及线性IR指令
             node->blockInsts.addInst(left->blockInsts);
+            if (src1_node->val->isPointer()) {
+                src1 = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(new AssignIRInst(src1, src1_node->val));
+            }
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_EE_B, resultValue, src1, src2));
 
             node->val = resultValue;
