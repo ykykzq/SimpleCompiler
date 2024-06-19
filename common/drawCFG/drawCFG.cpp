@@ -25,6 +25,9 @@ bool label(const std::string & line)
     // 这里是默认处理逻辑
     //新建并更换当前function的block
     //并把label作为当前block的唯一索引，添加到block入口中
+
+    //同时还需要检查当前的block是否已经有出口。
+    //没有出口代表平滑流入新的block，设置出口
     return true;
 }
 
