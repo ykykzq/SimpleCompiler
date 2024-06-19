@@ -179,6 +179,7 @@ bool IRGenerator::ir_function_define(ast_node * node)
     InterCode & irCode = symtab->currentFunc->getInterCode();
 
     // 这里也可增加一个函数入口Label指令，便于后续基本块划分
+    irCode.addInst(new LabelIRInst());
 
     // 创建并加入Entry入口指令
     irCode.addInst(new EntryIRInst());
