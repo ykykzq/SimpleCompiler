@@ -695,7 +695,6 @@ bool IRGenerator::ir_sub(ast_node * node)
 
         node->val = resultValue;
     }
-
     return true;
 }
 
@@ -715,7 +714,7 @@ bool IRGenerator::ir_mul(ast_node * node)
         }
     }
 
-    //代数化简
+    //代数化简&&强度消减 of 5*a
     if (src1_node->val != nullptr) {
         if (src1_node->val->isConst()) {
             if (src1_node->val->intVal == 0) {
@@ -724,9 +723,66 @@ bool IRGenerator::ir_mul(ast_node * node)
             } else if (src1_node->val->intVal == 1) {
                 node->val = src2_node->val;
                 return true;
+            } else if (src1_node->val->intVal >= 2) {
+                //强度消减
+                Value * fore_temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(
+                    new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, fore_temp_value, src2_node->val, src2_node->val));
+                for (int i = 2; i < src1_node->val->intVal; i++) {
+                    Value * temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                    node->blockInsts.addInst(
+                        new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp_value, src2_node->val, fore_temp_value));
+                    fore_temp_value = temp_value;
+                }
+                node->val = fore_temp_value;
+                return true;
             }
         }
+    } else if (src1_node->node_type == ast_operator_type::AST_OP_LEAF_LITERAL_UINT) {
+        if (src1_node->integer_val == 0) {
+            node->val = new ConstValue(0);
+            return true;
+        } else if (src1_node->integer_val == 1) {
+            ast_node * right = ir_visit_ast_node(src2_node);
+            if (!right) {
+                // 某个变量没有定值
+                return false;
+            }
+            Value * src2 = right->val;
+            if (src2->isPointer()) {
+                Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+                src2 = dequote;
+            }
+            node->val = src2;
+            return true;
+        } else if (src1_node->integer_val >= 2) {
+            //强度消减
+            Value * fore_temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+            // 加法的右边操作数
+            ast_node * right = ir_visit_ast_node(src2_node);
+            if (!right) {
+                // 某个变量没有定值
+                return false;
+            }
+            Value * src2 = right->val;
+            if (src2->isPointer()) {
+                Value * dequote = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(new AssignIRInst(dequote, src2));
+                src2 = dequote;
+            }
+            node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, fore_temp_value, src2, src2));
+            for (int i = 2; i < src1_node->integer_val; i++) {
+                Value * temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
+                node->blockInsts.addInst(
+                    new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp_value, src2, fore_temp_value));
+                fore_temp_value = temp_value;
+            }
+            node->val = fore_temp_value;
+            return true;
+        }
     }
+
     if (src2_node->val != nullptr) {
         if (src2_node->val->isConst()) {
             if (src2_node->val->intVal == 0) {
