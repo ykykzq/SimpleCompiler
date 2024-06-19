@@ -537,6 +537,14 @@ bool IRGenerator::ir_add(ast_node * node)
     ast_node * src1_node = node->sons[0];
     ast_node * src2_node = node->sons[1];
 
+    //常数合并
+    if (src1_node->val != nullptr && src2_node->val != nullptr) {
+        if (src1_node->val->isConst() && src2_node->val->isConst()) {
+            node->val = new ConstValue(src1_node->val->intVal + src2_node->val->intVal);
+            return true;
+        }
+    }
+
     // 加法节点，左结合，先计算左节点，后计算右节点
 
     // 加法的左边操作数
@@ -587,7 +595,13 @@ bool IRGenerator::ir_sub(ast_node * node)
 {
     ast_node * src1_node = node->sons[0];
     ast_node * src2_node = node->sons[1];
-
+    //常数合并
+    if (src1_node->val != nullptr && src2_node->val != nullptr) {
+        if (src1_node->val->isConst() && src2_node->val->isConst()) {
+            node->val = new ConstValue(src1_node->val->intVal - src2_node->val->intVal);
+            return true;
+        }
+    }
     if (src2_node != nullptr) {
         // 加法节点，左结合，先计算左节点，后计算右节点
 
@@ -653,6 +667,13 @@ bool IRGenerator::ir_mul(ast_node * node)
 {
     ast_node * src1_node = node->sons[0];
     ast_node * src2_node = node->sons[1];
+    //常数合并
+    if (src1_node->val != nullptr && src2_node->val != nullptr) {
+        if (src1_node->val->isConst() && src2_node->val->isConst()) {
+            node->val = new ConstValue(src1_node->val->intVal * src2_node->val->intVal);
+            return true;
+        }
+    }
 
     // 加法节点，左结合，先计算左节点，后计算右节点
 
@@ -705,6 +726,14 @@ bool IRGenerator::ir_div(ast_node * node)
     ast_node * src1_node = node->sons[0];
     ast_node * src2_node = node->sons[1];
 
+    //常数合并
+    if (src1_node->val != nullptr && src2_node->val != nullptr) {
+        if (src1_node->val->isConst() && src2_node->val->isConst()) {
+            node->val = new ConstValue(src1_node->val->intVal / src2_node->val->intVal);
+            return true;
+        }
+    }
+
     // 加法节点，左结合，先计算左节点，后计算右节点
 
     // 加法的左边操作数
@@ -755,6 +784,13 @@ bool IRGenerator::ir_mod(ast_node * node)
 {
     ast_node * src1_node = node->sons[0];
     ast_node * src2_node = node->sons[1];
+    //常数合并
+    if (src1_node->val != nullptr && src2_node->val != nullptr) {
+        if (src1_node->val->isConst() && src2_node->val->isConst()) {
+            node->val = new ConstValue(src1_node->val->intVal % src2_node->val->intVal);
+            return true;
+        }
+    }
 
     // 加法节点，左结合，先计算左节点，后计算右节点
 

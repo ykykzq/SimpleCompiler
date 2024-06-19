@@ -57,6 +57,9 @@ int gDirectRun = 0;
 /// @brief 输出中间IR，含汇编或者自定义IR等，默认输出线性IR
 int gShowSymbol = 0;
 
+/// @brief 输出中间IR和CFG
+int gShowCFG = 0;
+
 /// @brief 前端分析器，默认选Flex和Bison
 bool gFrontEndFlexBison = true;
 
@@ -76,7 +79,7 @@ std::string gOutputFile;
 /// @param exeName
 void showHelp(const std::string & exeName)
 {
-    std::cout << exeName + " -S [-A | -D] [-a | -I] [-o output] source\n";
+    std::cout << exeName + " -S [-A | -D] [-a | -I | -C] [-o output] source\n";
     std::cout << exeName + " -R [-A | -D] source\n";
 }
 
@@ -89,7 +92,7 @@ int ArgsAnalysis(int argc, char * argv[])
     int ch;
 
     // 指定参数解析的选项，可识别-h、-o、-S、-a、-I、-R、-A、-D选项，并且-o要求必须要有附加参数
-    const char options[] = "ho:SaIRAD";
+    const char options[] = "ho:SaIRADC";
 
     opterr = 1;
 
@@ -111,6 +114,10 @@ lb_check:
             case 'I':
                 // 产生中间IR
                 gShowLineIR = 1;
+                break;
+            case 'C':
+                // 产生中间IR
+                gShowCFG = 1;
                 break;
             case 'R':
                 // 直接运行，默认运行
@@ -167,7 +174,7 @@ lb_check:
         return -1;
     }
 
-    flag = gShowLineIR + gShowAST;
+    flag = gShowLineIR + gShowAST + gShowCFG;
 
     if (gShowSymbol) {
 
@@ -192,6 +199,8 @@ lb_check:
             gOutputFile = "ast.png";
         } else if (gShowLineIR) {
             gOutputFile = "ir.txt";
+        } else if (gShowCFG) {
+            gOutputFile = "CFG.txt";
         } else {
             gOutputFile = "asm.s";
         }
@@ -309,6 +318,17 @@ int main(int argc, char * argv[])
         free_ast();
 
         if (gShowLineIR) {
+
+            // 输出IR
+            symtab.outputIR(gOutputFile);
+
+            // 设置返回结果：正常
+            result = 0;
+
+            break;
+        }
+
+        if (gShowCFG) {
 
             // 输出IR
             symtab.outputIR(gOutputFile);
