@@ -336,7 +336,7 @@ int main(int argc, char * argv[])
 
             // 遍历抽象语法树产生线性IR，相关信息保存到符号表中
             CFG_Generator IR2CFG;
-            subResult = IR2CFG.run(gOutputFile);
+            subResult = IR2CFG.run("ir.txt");
 
             // 设置返回结果：正常
             result = 0;

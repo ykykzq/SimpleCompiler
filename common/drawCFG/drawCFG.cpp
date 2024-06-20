@@ -22,6 +22,8 @@ bool CFG_Generator::func_define(const std::string & line)
         }
     }
 
+    //取出@与(之间的函数名
+    name = name.substr(1, name.find('(') - 1);
     // 新建并更换当前的fuction
     auto func = newFunction(name);
     setCurrentFunction(func);
@@ -45,13 +47,15 @@ bool CFG_Generator::label(const std::string & line)
             break;
         }
     }
-    //去除label name中的第一个字符"."
-    label_name = label_name.substr(1);
+    //去除label name中的第一个字符"."和最后的":""
+    label_name = label_name.substr(1, label_name.find(':') - 1);
 
     //同时还需要检查当前的block是否已经有出口。
     //没有出口代表平滑流入新的block，设置出口
-    if (getCurrentFunction()->currentBlock->exits.empty()) {
-        getCurrentFunction()->currentBlock->exits.push_back(label_name);
+    if (getCurrentFunction()->currentBlock != nullptr) {
+        if (getCurrentFunction()->currentBlock->exits.empty()) {
+            getCurrentFunction()->currentBlock->exits.push_back(label_name);
+        }
     }
 
     //新建并更换当前function的block
@@ -68,8 +72,11 @@ bool CFG_Generator::label(const std::string & line)
 /// @return 翻译是否成功，true：成功，false：失败
 bool CFG_Generator::goto_inst(const std::string & line)
 {
+    // 跳转指令也塞入当前块内
+    getCurrentFunction()->currentBlock->irInstructions.push_back(line);
+
     // 取出两个label添加到出口中
-    //取出label的名字
+    // 取出label的名字
     std::istringstream iss(line);
     std::string jump_type;
 
@@ -83,7 +90,7 @@ bool CFG_Generator::goto_inst(const std::string & line)
 
             while (iss >> label_name) {
                 ++wordCount;
-                if (wordCount == 2) {
+                if (wordCount == 3) {
                     //去除label name中的第一个字符"."后，放进block中
                     label_name = label_name.substr(1);
                     getCurrentFunction()->currentBlock->exits.push_back(label_name);
@@ -97,7 +104,7 @@ bool CFG_Generator::goto_inst(const std::string & line)
 
             while (iss >> label_name) {
                 ++wordCount;
-                if (wordCount == 3 || wordCount == 5) {
+                if (wordCount == 4 || wordCount == 6) {
                     //去除label name中的第一个字符"."后，放进block中
                     label_name = label_name.substr(1);
                     getCurrentFunction()->currentBlock->exits.push_back(label_name);
@@ -119,6 +126,7 @@ bool CFG_Generator::default_expr(const std::string & line)
 {
     // 这里是对第二种情况的处理逻辑
     //塞入到当前function的当前block里
+    getCurrentFunction()->currentBlock->irInstructions.push_back(line);
 
     return true;
 }
@@ -153,6 +161,10 @@ bool CFG_Generator::run(std::string file_name)
             label(line);
         } else if (firstWord == "declare") {
             //忽略声明
+            continue;
+        } else if (firstWord == "{" || firstWord == "}") {
+            //忽略花括号
+            continue;
         } else {
             default_expr(line);
         }
