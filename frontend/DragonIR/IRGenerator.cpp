@@ -773,7 +773,7 @@ bool IRGenerator::ir_mul(ast_node * node)
                 src2 = dequote;
             }
             node->blockInsts.addInst(new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, fore_temp_value, src2, src2));
-            for (int i = 2; i < src1_node->integer_val; i++) {
+            for (uint32_t i = 2; i < src1_node->integer_val; i++) {
                 Value * temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
                 node->blockInsts.addInst(
                     new BinaryIRInst(IRInstOperator::IRINST_OP_ADD_I, temp_value, src2, fore_temp_value));

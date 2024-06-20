@@ -20,7 +20,7 @@
 #include "../DragonIR/IRCode.h"
 //#include "Value.h"
 #include "../../common/Value.h"
-#include "IRInst.h"
+#include "../DragonIR/IRInst.h"
 
 /// @brief AST节点的类型
 enum class ast_operator_type : int {

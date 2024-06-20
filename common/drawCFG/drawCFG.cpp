@@ -2,50 +2,120 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <gvc.h>
 #include "./drawCFG.h"
 
 /// @brief 识别到函数定义语句
 /// @param line ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool func_define(const std::string & line)
+bool CFG_Generator::func_define(const std::string & line)
 {
-    // 这里是对第一种情况的处理逻辑
+    //取出名字
+    std::istringstream iss(line);
+    std::string name;
+    int wordCount = 0;
+
+    while (iss >> name) {
+        ++wordCount;
+        if (wordCount == 3) {
+            break;
+        }
+    }
+
     // 新建并更换当前的fuction
-    auto func = new CFG_function;
-    CFG_manager.addFunction(func);
-    CFG_manager.setCurrentFunction(func);
+    auto func = newFunction(name);
+    setCurrentFunction(func);
+    currentFunction->name = name;
     return true;
 }
 
-/// @brief 识别到函数定义语句
+/// @brief 识别到label语句
 /// @param line ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool label(const std::string & line)
+bool CFG_Generator::label(const std::string & line)
 {
-    // 这里是默认处理逻辑
-    //新建并更换当前function的block
-    //并把label作为当前block的唯一索引，添加到block入口中
+    //取出label的名字
+    std::istringstream iss(line);
+    std::string label_name;
+    int wordCount = 0;
+
+    while (iss >> label_name) {
+        ++wordCount;
+        if (wordCount == 1) {
+            break;
+        }
+    }
+    //去除label name中的第一个字符"."
+    label_name = label_name.substr(1);
 
     //同时还需要检查当前的block是否已经有出口。
     //没有出口代表平滑流入新的block，设置出口
+    if (getCurrentFunction()->currentBlock->exits.empty()) {
+        getCurrentFunction()->currentBlock->exits.push_back(label_name);
+    }
+
+    //新建并更换当前function的block
+    //并把label作为当前block的唯一索引，添加到block入口中
+    auto new_block = getCurrentFunction()->newBlock();
+    getCurrentFunction()->addEntry2Block(label_name, new_block);
+    getCurrentFunction()->currentBlock = new_block;
+
     return true;
 }
 
 /// @brief 识别到跳转
 /// @param line ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool goto_inst(const std::string & line)
+bool CFG_Generator::goto_inst(const std::string & line)
 {
-    // 这里是默认处理逻辑
     // 取出两个label添加到出口中
+    //取出label的名字
+    std::istringstream iss(line);
+    std::string jump_type;
 
+    // 区分 br 与 bc
+    if (iss >> jump_type) {
+        if (jump_type == "br") {
+            // br，只添加一个出口
+            std::istringstream iss(line);
+            std::string label_name;
+            int wordCount = 0;
+
+            while (iss >> label_name) {
+                ++wordCount;
+                if (wordCount == 2) {
+                    //去除label name中的第一个字符"."后，放进block中
+                    label_name = label_name.substr(1);
+                    getCurrentFunction()->currentBlock->exits.push_back(label_name);
+                }
+            }
+        } else if (jump_type == "bc") {
+            // bc，添加两个出口
+            std::istringstream iss(line);
+            std::string label_name;
+            int wordCount = 0;
+
+            while (iss >> label_name) {
+                ++wordCount;
+                if (wordCount == 3 || wordCount == 5) {
+                    //去除label name中的第一个字符"."后，放进block中
+                    label_name = label_name.substr(1);
+                    getCurrentFunction()->currentBlock->exits.push_back(label_name);
+                }
+            }
+        }
+
+    } else {
+        // 取出第一个单词失败
+        return false;
+    }
     return true;
 }
 
 /// @brief 识别到其他语句
 /// @param line ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool default_expr(const std::string & line)
+bool CFG_Generator::default_expr(const std::string & line)
 {
     // 这里是对第二种情况的处理逻辑
     //塞入到当前function的当前block里
@@ -53,21 +123,24 @@ bool default_expr(const std::string & line)
     return true;
 }
 
-//处理ir
-int main()
+/// @brief 运行产生CFG
+/// @param file_name 文件路径
+/// @return 翻译是否成功，true：成功，false：失败
+bool CFG_Generator::run(std::string file_name)
 {
-    std::ifstream file("1.txt");
+    std::ifstream file(file_name);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file 1.txt" << std::endl;
-        return 1;
+        std::cerr << "Failed to open file" << std::endl;
+        return false;
     }
 
+    //根据首单词的不同进行不同的处理
     std::string line;
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string firstWord, secondWord;
+        std::string firstWord;
 
-        if (!(iss >> firstWord >> secondWord)) {
+        if (!(iss >> firstWord)) {
             std::cerr << "Error reading words from line: " << line << std::endl;
             continue;
         }
@@ -78,11 +151,53 @@ int main()
             goto_inst(line);
         } else if (firstWord.compare(0, 1, ".") == 0) {
             label(line);
+        } else if (firstWord == "declare") {
+            //忽略声明
         } else {
             default_expr(line);
         }
     }
 
     file.close();
-    return 0;
+
+    // //下面遍历func和func中的block，生成CFG
+    // //遍历函数
+    // for (auto cfg_func: functions) {
+    //     // 创建一个Graphviz上下文
+    //     GVC_t * gvc = gvContext();
+
+    //     // 创建一个空的图
+    //     Agraph_t * g = agopen("g", Agdirected, nullptr);
+    //     //遍历block，创建所有node
+    //     for (auto cfg_blcok: cfg_func->blocks) {
+    //         //创建节点
+    //         Agnode_t * n1 = agnode(g, "node1", 1);
+    //         //把ir添加进去
+    //         char * label1 = "This is a large text block\n";
+    //         agsafeset(n1, "shape", "box", "");
+    //         agsafeset(n1, "label", label1, "");
+    //     }
+
+    //     //遍历block，创建所有edge
+    //     for (auto cfg_blcok: cfg_func->blocks) {
+    //         //创建边
+    //     }
+
+    //     //输出图片；每一个函数输出一张图
+    //     // 设置输出格式
+    //     std::string outputFormat = "png";
+    //     std::string outputFile = cfg_func->name + ".png";
+
+    //     // 渲染图并输出到文件
+    //     FILE * fp = fopen(outputFile.c_str(), "w");
+    //     gvRender(gvc, g, outputFormat.c_str(), fp);
+    //     fclose(fp);
+
+    //     // 释放资源
+    //     gvFreeLayout(gvc, g);
+    //     agclose(g);
+    //     gvFreeContext(gvc);
+    // }
+
+    return true;
 }

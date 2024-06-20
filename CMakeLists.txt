@@ -155,6 +155,8 @@ set(COMMON_SRCS
 	common/Function.h
 	common/SymbolTable.cpp
 	common/SymbolTable.h
+	common/drawCFG/drawCFG.cpp
+	common/drawCFG/drawCFG.h
 )
 
 # 系统差异性代码集合

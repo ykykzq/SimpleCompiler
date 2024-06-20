@@ -38,6 +38,7 @@
 #include "common/SymbolTable.h"
 // #include "getopt-port.h"
 #include "utils/getopt-port.h"
+#include "common/drawCFG/drawCFG.h"
 
 /// @brief 是否显示帮助信息
 bool gShowHelp = false;
@@ -116,7 +117,7 @@ lb_check:
                 gShowLineIR = 1;
                 break;
             case 'C':
-                // 产生中间IR
+                // 产生CFG
                 gShowCFG = 1;
                 break;
             case 'R':
@@ -331,7 +332,11 @@ int main(int argc, char * argv[])
         if (gShowCFG) {
 
             // 输出IR
-            symtab.outputIR(gOutputFile);
+            // symtab.outputIR(gOutputFile);
+
+            // 遍历抽象语法树产生线性IR，相关信息保存到符号表中
+            CFG_Generator IR2CFG;
+            subResult = IR2CFG.run(gOutputFile);
 
             // 设置返回结果：正常
             result = 0;
