@@ -72,8 +72,9 @@ bool CFG_Generator::label(const std::string & line)
 /// @return 翻译是否成功，true：成功，false：失败
 bool CFG_Generator::goto_inst(const std::string & line)
 {
-    // 跳转指令也塞入当前块内
-    getCurrentFunction()->currentBlock->irInstructions.push_back(line);
+    // 跳转指令也去掉'\t'后塞入当前块内
+    auto ir_str = line.substr(1);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
 
     // 取出两个label添加到出口中
     // 取出label的名字
@@ -104,7 +105,11 @@ bool CFG_Generator::goto_inst(const std::string & line)
 
             while (iss >> label_name) {
                 ++wordCount;
-                if (wordCount == 4 || wordCount == 6) {
+                if (wordCount == 4) {
+                    //去除label name中的第一个字符"."和","，放进block中
+                    label_name = label_name.substr(1, label_name.find(',') - 1);
+                    getCurrentFunction()->currentBlock->exits.push_back(label_name);
+                } else if (wordCount == 6) {
                     //去除label name中的第一个字符"."后，放进block中
                     label_name = label_name.substr(1);
                     getCurrentFunction()->currentBlock->exits.push_back(label_name);
@@ -125,7 +130,7 @@ bool CFG_Generator::goto_inst(const std::string & line)
 bool CFG_Generator::default_expr(const std::string & line)
 {
     // 这里是对第二种情况的处理逻辑
-    //塞入到当前function的当前block里
+    // 去除'\t'后塞入到当前function的当前block里
     auto ir_str = line.substr(1);
     getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
 
@@ -193,13 +198,21 @@ bool CFG_Generator::run(std::string file_name)
             }
             agsafeset(n1, "shape", "box", "");
             agsafeset(n1, "label", all_ir_str.data(), "");
+            cfg_func->addCFGnode(cfg_blcok, n1);
         }
 
-        // //再遍历一次block，创建所有edge
-        // for (auto cfg_blcok: cfg_func->blocks) {
-        //     //创建边
-        // }
-
+        //再遍历一次block，创建所有edge
+        for (auto cfg_blcok1: cfg_func->blocks) {
+            //创建边
+            auto from_node = cfg_func->nodeMap[cfg_blcok1];
+            for (const auto & exit_label: cfg_blcok1->exits) {
+                auto to_block = cfg_func->blockMap[exit_label];
+                if (to_block != nullptr) {
+                    auto to_node = cfg_func->nodeMap[to_block];
+                    agedge(g, from_node, to_node, nullptr, 1);
+                }
+            }
+        }
         //输出图片；每一个函数输出一张图
         // 设置布局
         gvLayout(gvc, g, "dot");

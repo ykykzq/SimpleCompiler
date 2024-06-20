@@ -34,7 +34,7 @@ public:
 
     //用来画图
     std::vector<Agnode_t *> nodes; // 存储该函数的所有CFG_block
-    std::unordered_map<std::string, Agnode_t *> nodeMap;
+    std::unordered_map<CFG_block *, Agnode_t *> nodeMap;
 
 public:
     CFG_function() : currentBlock(nullptr)
@@ -63,10 +63,10 @@ public:
     }
 
     // 添加一个新的node
-    void addCFGnode(const std::string & name, Agnode_t * node)
+    void addCFGnode(CFG_block * block, Agnode_t * node)
     {
         nodes.push_back(node);
-        nodeMap[name] = node;
+        nodeMap[block] = node;
     }
 };
 
