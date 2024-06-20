@@ -53,6 +53,7 @@ source.zip
 ir.txt
 ast.png
 asm.s
+*.png
 
 # history
 .history
