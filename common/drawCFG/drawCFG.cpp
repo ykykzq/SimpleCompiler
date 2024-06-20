@@ -126,7 +126,8 @@ bool CFG_Generator::default_expr(const std::string & line)
 {
     // 这里是对第二种情况的处理逻辑
     //塞入到当前function的当前block里
-    getCurrentFunction()->currentBlock->irInstructions.push_back(line);
+    auto ir_str = line.substr(1);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
 
     return true;
 }
@@ -172,44 +173,50 @@ bool CFG_Generator::run(std::string file_name)
 
     file.close();
 
-    // //下面遍历func和func中的block，生成CFG
-    // //遍历函数
-    // for (auto cfg_func: functions) {
-    //     // 创建一个Graphviz上下文
-    //     GVC_t * gvc = gvContext();
+    //下面遍历func和func中的block，生成CFG
+    //遍历函数
+    for (auto cfg_func: functions) {
+        // 创建一个Graphviz上下文
+        GVC_t * gvc = gvContext();
 
-    //     // 创建一个空的图
-    //     Agraph_t * g = agopen("g", Agdirected, nullptr);
-    //     //遍历block，创建所有node
-    //     for (auto cfg_blcok: cfg_func->blocks) {
-    //         //创建节点
-    //         Agnode_t * n1 = agnode(g, "node1", 1);
-    //         //把ir添加进去
-    //         char * label1 = "This is a large text block\n";
-    //         agsafeset(n1, "shape", "box", "");
-    //         agsafeset(n1, "label", label1, "");
-    //     }
+        // 创建一个空的图
+        Agraph_t * g = agopen("g", Agdirected, nullptr);
 
-    //     //遍历block，创建所有edge
-    //     for (auto cfg_blcok: cfg_func->blocks) {
-    //         //创建边
-    //     }
+        //遍历block，创建所有node
+        for (auto cfg_blcok: cfg_func->blocks) {
+            //创建节点
+            Agnode_t * n1 = agnode(g, cfg_blcok->entries[0].data(), 1);
+            std::string all_ir_str;
+            //把ir添加进去
+            for (const auto & ir_str: cfg_blcok->irInstructions) {
+                all_ir_str = all_ir_str + ir_str + "\n";
+            }
+            agsafeset(n1, "shape", "box", "");
+            agsafeset(n1, "label", all_ir_str.data(), "");
+        }
 
-    //     //输出图片；每一个函数输出一张图
-    //     // 设置输出格式
-    //     std::string outputFormat = "png";
-    //     std::string outputFile = cfg_func->name + ".png";
+        // //再遍历一次block，创建所有edge
+        // for (auto cfg_blcok: cfg_func->blocks) {
+        //     //创建边
+        // }
 
-    //     // 渲染图并输出到文件
-    //     FILE * fp = fopen(outputFile.c_str(), "w");
-    //     gvRender(gvc, g, outputFormat.c_str(), fp);
-    //     fclose(fp);
+        //输出图片；每一个函数输出一张图
+        // 设置布局
+        gvLayout(gvc, g, "dot");
+        // 设置输出格式
+        std::string outputFormat = "png";
+        std::string outputFile = cfg_func->name + ".png";
 
-    //     // 释放资源
-    //     gvFreeLayout(gvc, g);
-    //     agclose(g);
-    //     gvFreeContext(gvc);
-    // }
+        // 渲染图并输出到文件
+        FILE * fp = fopen(outputFile.c_str(), "w");
+        gvRender(gvc, g, outputFormat.c_str(), fp);
+        fclose(fp);
+
+        // 释放资源
+        gvFreeLayout(gvc, g);
+        agclose(g);
+        gvFreeContext(gvc);
+    }
 
     return true;
 }
