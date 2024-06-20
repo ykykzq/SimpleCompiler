@@ -41,7 +41,6 @@ public:
     {}
 
     /// @brief 新建一个block
-    /// @param
     /// @return 指向新block的指针
     CFG_block * newBlock()
     {
