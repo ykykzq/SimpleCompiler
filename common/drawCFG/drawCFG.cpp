@@ -36,6 +36,7 @@ bool CFG_Generator::func_define(const std::string & line)
 /// @return 翻译是否成功，true：成功，false：失败
 bool CFG_Generator::label(const std::string & line)
 {
+
     //取出label的名字
     std::istringstream iss(line);
     std::string label_name;
@@ -63,6 +64,10 @@ bool CFG_Generator::label(const std::string & line)
     auto new_block = getCurrentFunction()->newBlock();
     getCurrentFunction()->addEntry2Block(label_name, new_block);
     getCurrentFunction()->currentBlock = new_block;
+
+    // label塞入当前块内
+    auto ir_str = line.substr(1);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
 
     return true;
 }
