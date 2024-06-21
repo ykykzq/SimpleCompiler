@@ -56,6 +56,7 @@ bool CFG_Generator::label(const std::string & line)
     if (getCurrentFunction()->currentBlock != nullptr) {
         if (getCurrentFunction()->currentBlock->exits.empty()) {
             getCurrentFunction()->currentBlock->exits.push_back(label_name);
+            getCurrentFunction()->currentBlock->exits.push_back(" \\l ");
         }
     }
 
@@ -68,6 +69,7 @@ bool CFG_Generator::label(const std::string & line)
     // label塞入当前块内
     auto ir_str = line.substr(1);
     getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
+    getCurrentFunction()->currentBlock->irInstructions.push_back("|");
 
     return true;
 }
@@ -80,6 +82,7 @@ bool CFG_Generator::goto_inst(const std::string & line)
     // 跳转指令也去掉'\t'后塞入当前块内
     auto ir_str = line.substr(1);
     getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(" \\l ");
 
     // 取出两个label添加到出口中
     // 取出label的名字
@@ -100,6 +103,7 @@ bool CFG_Generator::goto_inst(const std::string & line)
                     //去除label name中的第一个字符"."后，放进block中
                     label_name = label_name.substr(1);
                     getCurrentFunction()->currentBlock->exits.push_back(label_name);
+                    getCurrentFunction()->currentBlock->exits.push_back(" \\l ");
                 }
             }
         } else if (jump_type == "bc") {
@@ -114,10 +118,12 @@ bool CFG_Generator::goto_inst(const std::string & line)
                     //去除label name中的第一个字符"."和","，放进block中
                     label_name = label_name.substr(1, label_name.find(',') - 1);
                     getCurrentFunction()->currentBlock->exits.push_back(label_name);
+                    getCurrentFunction()->currentBlock->exits.push_back(" \\l ");
                 } else if (wordCount == 6) {
                     //去除label name中的第一个字符"."后，放进block中
                     label_name = label_name.substr(1);
                     getCurrentFunction()->currentBlock->exits.push_back(label_name);
+                    getCurrentFunction()->currentBlock->exits.push_back(" \\l ");
                 }
             }
         }
@@ -138,6 +144,7 @@ bool CFG_Generator::default_expr(const std::string & line)
     // 去除'\t'后塞入到当前function的当前block里
     auto ir_str = line.substr(1);
     getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(" \\l ");
 
     return true;
 }
@@ -201,7 +208,7 @@ bool CFG_Generator::run(std::string file_name)
             for (const auto & ir_str: cfg_blcok->irInstructions) {
                 all_ir_str = all_ir_str + ir_str + "\n";
             }
-            agsafeset(n1, "shape", "box", "");
+            agsafeset(n1, "shape", "record", "");
             agsafeset(n1, "label", all_ir_str.data(), "");
             cfg_func->addCFGnode(cfg_blcok, n1);
         }
