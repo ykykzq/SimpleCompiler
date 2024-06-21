@@ -1,3 +1,14 @@
+/**
+ * @file drawCFG.cpp
+ * @author ykykzq(https://github.com/ykykzq)
+ * @brief 根据已经生成的ir文件，生成CFG
+ * @version 0.1
+ * @date 2024-06-21
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 #include <iostream>
 #include <fstream>
 #include <sstream>

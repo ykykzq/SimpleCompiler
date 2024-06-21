@@ -157,6 +157,8 @@ set(COMMON_SRCS
 	common/SymbolTable.h
 	common/drawCFG/drawCFG.cpp
 	common/drawCFG/drawCFG.h
+	optimizer/ConstPropagation.h
+	optimizer/ConstPropagation.cpp
 )
 
 # 系统差异性代码集合

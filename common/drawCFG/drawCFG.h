@@ -1,7 +1,14 @@
-// 应当定义两个类：CFG_function与CFG_blcok。
-// 其中CFG_block有如下参数：一个vector，存储该函数的所有CFG_blcok；一个unordered_map，保存从std::string到CFG_blcok的映射关系；一个currentBlcok，保存当前正在活动的CFG_block
-// CFG_blcok类有如下参数：一个存储std::string的vector，存储该block所有的入口；一个存储std::string的vector，存储该函数所有的出口；一个存储std::string的vector，存储所有的ir指令
-// 该头文件还定义一个全局变量： CFG_currentFunction，保存当前正在活动的CFG_function
+/**
+ * @file drawCFG.cpp
+ * @author ykykzq(https://github.com/ykykzq)
+ * @brief 根据已经生成的ir文件，生成CFG
+ * @version 0.1
+ * @date 2024-06-21
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 #ifndef CFG_H
 #define CFG_H
 
