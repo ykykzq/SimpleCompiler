@@ -233,8 +233,9 @@ bool CFG_Generator::run(std::string file_name)
         // 设置布局
         gvLayout(gvc, g, "dot");
         // 设置输出格式
+        std::string dest_directory = ""; //暂时不设置输出文件夹
         std::string outputFormat = "png";
-        std::string outputFile = cfg_func->name + ".png";
+        std::string outputFile = dest_directory + cfg_func->name + ".png";
 
         // 渲染图并输出到文件
         FILE * fp = fopen(outputFile.c_str(), "w");
