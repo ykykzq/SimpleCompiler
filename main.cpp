@@ -332,11 +332,11 @@ int main(int argc, char * argv[])
         if (gShowCFG) {
 
             // 输出IR
-            // symtab.outputIR(gOutputFile);
+            symtab.outputIR(gOutputFile);
 
             // 遍历抽象语法树产生线性IR，相关信息保存到符号表中
             CFG_Generator IR2CFG;
-            subResult = IR2CFG.run("ir.txt");
+            subResult = IR2CFG.run(gOutputFile);
 
             // 设置返回结果：正常
             result = 0;
