@@ -337,6 +337,9 @@ Value * Function::newVarValue(std::string name, BasicType type)
         // 已存在的Value，返回失败
         retVal = nullptr;
     }
+    //语句块管理
+    blockVarsVector.push_back(retVal);
+    sp++;
 
     return retVal;
 }
@@ -350,6 +353,10 @@ Value * Function::newVarValue(BasicType type)
     Value * var = new VarValue(type);
 
     insertValue(var);
+
+    //语句块管理
+    blockVarsVector.push_back(var);
+    sp++;
 
     return var;
 }
@@ -391,6 +398,9 @@ Value * Function::newLocalArrayValue(std::string name, BasicType type, std::vect
         insertValue(retVal);
     }
 
+    //语句块管理
+    blockVarsVector.push_back(retVal);
+    sp++;
     return retVal;
 }
 
@@ -411,6 +421,10 @@ Value * Function::newTempArrayValue(BasicType type, std::vector<int32_t> index)
     }
     insertValue(retVal);
 
+    //语句块管理
+    blockVarsVector.push_back(retVal);
+    sp++;
+
     return retVal;
 }
 
@@ -423,6 +437,9 @@ Value * Function::newPointerValue(BasicType type)
     Value * var = new PointerValue(type);
 
     insertValue(var);
+    //语句块管理
+    blockVarsVector.push_back(var);
+    sp++;
 
     return var;
 }
@@ -446,6 +463,10 @@ Value * Function::newTempValue(BasicType type)
 
     insertValue(temp);
 
+    //语句块管理
+    blockVarsVector.push_back(temp);
+    sp++;
+
     return temp;
 }
 
@@ -458,12 +479,18 @@ Value * Function::findValue(std::string name, bool create)
     Value * temp = nullptr;
 
     // 这里只是针对函数内的变量进行检查，如果要考虑全局变量，则需要继续检查symtab的符号表
-    auto pIter = varsMap.find(name);
-    if (pIter != varsMap.end()) {
+    // auto pIter = varsMap.find(name);
+    // if (pIter != varsMap.end()) {
 
-        // 如果考虑作用域、存在重名的时候，需要从varsVector逆序检查到底用那个Value
+    //     // 如果考虑作用域、存在重名的时候，需要从varsVector逆序检查到底用那个Value
 
-        temp = pIter->second;
+    //     temp = pIter->second;
+    // }
+    for (int i = sp - 1; i >= 0; --i) {
+        if (blockVarsVector[i]->name == name) {
+            temp = blockVarsVector[i];
+            return temp;
+        }
     }
 
     // 没有找到，并且指定了全局符号表，则继续查找
@@ -488,9 +515,15 @@ Value * Function::findValueLN(std::string local_name, bool create)
     Value * temp = nullptr;
 
     // 这里只是针对函数内的变量进行检查，如果要考虑全局变量，则需要继续检查symtab的符号表
-    for (auto var: varsVector) {
-        if (var->local_name == local_name) {
-            temp = var;
+    // for (auto var: varsVector) {
+    //     if (var->local_name == local_name) {
+    //         temp = var;
+    //     }
+    // }
+    for (int i = sp - 1; i >= 0; --i) {
+        if (blockVarsVector[i]->local_name == local_name) {
+            temp = blockVarsVector[i];
+            return temp;
         }
     }
 

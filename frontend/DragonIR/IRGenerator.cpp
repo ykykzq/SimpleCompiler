@@ -467,6 +467,9 @@ bool IRGenerator::ir_function_call(ast_node * node)
 /// @return 翻译是否成功，true：成功，false：失败
 bool IRGenerator::ir_block(ast_node * node)
 {
+    //语句块管理
+    symtab->currentFunc->tp = symtab->currentFunc->sp;
+
     std::vector<ast_node *>::iterator pIter;
     for (pIter = node->sons.begin(); pIter != node->sons.end(); ++pIter) {
 
@@ -479,6 +482,11 @@ bool IRGenerator::ir_block(ast_node * node)
         node->blockInsts.addInst(temp->blockInsts);
     }
 
+    //语句块管理
+    for (int i = symtab->currentFunc->sp - 1; i >= symtab->currentFunc->tp; i--) {
+        symtab->currentFunc->blockVarsVector.pop_back();
+        symtab->currentFunc->sp--;
+    }
     return true;
 }
 

@@ -220,6 +220,17 @@ protected:
     /// @param val Value信息
     void insertValue(Value * val);
 
+public:
+    /// @brief 当前block的栈顶编号
+    int sp = 0;
+
+    /// @brief 暂存上一个block的栈编号
+    int tp = 0;
+
+    /// @brief 使用Vector维护一个栈
+    /// @brief 存储的是各个变量
+    std::vector<Value *> blockVarsVector;
+
 private:
     /// @brief 函数名
     std::string name;
