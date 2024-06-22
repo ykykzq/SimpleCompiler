@@ -1636,6 +1636,7 @@ bool IRGenerator::ir_leaf_node_array_var(ast_node * node)
                     if (j >= i) {
                         indexs.push_back(index_iter);
                     }
+                    j++;
                 }
                 auto temp2 = symtab->currentFunc->newTempArrayValue(BasicType::TYPE_INT, indexs);
                 node->val = temp2;

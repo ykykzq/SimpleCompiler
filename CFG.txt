@@ -1,243 +1,36 @@
-declare i32 @buf[2][100]
-define void @merge_sort(i32 %t0, i32 %t2)
-{
-	declare i32 %l1
-	declare i32 %l3
-	declare i32 %t4
-	declare i1 %t5
-	declare i32 %l6
-	declare i32 %t7
-	declare i32 %t8
-	declare i32 %l9
-	declare i32 %l10
-	declare i32 %l11
-	declare i1 %t12
-	declare i1 %t13
-	declare i32 %t14
-	declare i32 %t15
-	declare i32 %t16
-	declare i32 *%t17
-	declare i32 %t18
-	declare i32 %t19
-	declare i32 %t20
-	declare i32 *%t21
-	declare i1 %t22
-	declare i32 %t23
-	declare i32 %t24
-	declare i32 %t25
-	declare i32 %t26
-	declare i32 %t27
-	declare i32 *%t28
-	declare i32 %t29
-	declare i32 %t30
-	declare i32 %t31
-	declare i32 *%t32
-	declare i32 %t33
-	declare i32 %t34
-	declare i32 %t35
-	declare i32 %t36
-	declare i32 %t37
-	declare i32 *%t38
-	declare i32 %t39
-	declare i32 %t40
-	declare i32 %t41
-	declare i32 *%t42
-	declare i32 %t43
-	declare i32 %t44
-	declare i32 %t45
-	declare i1 %t46
-	declare i32 %t47
-	declare i32 %t48
-	declare i32 %t49
-	declare i32 *%t50
-	declare i32 %t51
-	declare i32 %t52
-	declare i32 %t53
-	declare i32 *%t54
-	declare i32 %t55
-	declare i32 %t56
-	declare i32 %t57
-	declare i1 %t58
-	declare i32 %t59
-	declare i32 %t60
-	declare i32 %t61
-	declare i32 *%t62
-	declare i32 %t63
-	declare i32 %t64
-	declare i32 %t65
-	declare i32 *%t66
-	declare i32 %t67
-	declare i32 %t68
-	declare i32 %t69
-	declare i1 %t70
-	declare i32 %t71
-	declare i32 %t72
-	declare i32 %t73
-	declare i32 *%t74
-	declare i32 %t75
-	declare i32 %t76
-	declare i32 %t77
-	declare i32 *%t78
-	declare i32 %t79
-	declare i32 %t80
-.L0:
-	entry
-	%l1 = %t0
-	%l3 = %t2
-	%t4 = add %l1, 1
-	%t5 = icmp ge %t4, %l3
-	bc %t5, label .L2, label .L3
-.L2:
-	br label .L4
-.L3:
-.L4:
-	%t7 = add %l1, %l3
-	%t8 = div %t7, 2
-	%l6 = %t8
-	call void @merge_sort(i32 %l1, i32 %l6)
-	call void @merge_sort(i32 %l6, i32 %l3)
-	%l9 = %l1
-	%l10 = %l6
-	%l11 = %l1
-.L5:
-	%t12 = icmp lt %l9, %l6
-	bc %t12, label .L8, label .L7
-.L8:
-	%t13 = icmp lt %l10, %l3
-	bc %t13, label .L6, label .L7
-.L6:
-	%t14 = mul 0, 100
-	%t15 = add %t14, %l9
-	%t16 = mul %t15, 4
-	%t17 = add %t16, @buf
-	%t18 = mul 0, 100
-	%t19 = add %t18, %l10
-	%t20 = mul %t19, 4
-	%t21 = add %t20, @buf
-	%t23 = *%t17
-	%t24 = *%t21
-	%t22 = icmp lt %t23, %t24
-	bc %t22, label .L9, label .L10
-.L9:
-	%t29 = mul 0, 100
-	%t30 = add %t29, %l9
-	%t31 = mul %t30, 4
-	%t32 = add %t31, @buf
-	%t25 = mul 1, 100
-	%t26 = add %t25, %l11
-	%t27 = mul %t26, 4
-	%t28 = add %t27, @buf
-	%t33 = *%t32
-	*%t28 = %t33
-	%t34 = add %l9, 1
-	%l9 = %t34
-	br label .L11
-.L10:
-	%t39 = mul 0, 100
-	%t40 = add %t39, %l10
-	%t41 = mul %t40, 4
-	%t42 = add %t41, @buf
-	%t35 = mul 1, 100
-	%t36 = add %t35, %l11
-	%t37 = mul %t36, 4
-	%t38 = add %t37, @buf
-	%t43 = *%t42
-	*%t38 = %t43
-	%t44 = add %l10, 1
-	%l10 = %t44
-.L11:
-	%t45 = add %l11, 1
-	%l11 = %t45
-	br label .L5
-.L7:
-.L12:
-	%t46 = icmp lt %l9, %l6
-	bc %t46, label .L13, label .L14
-.L13:
-	%t51 = mul 0, 100
-	%t52 = add %t51, %l9
-	%t53 = mul %t52, 4
-	%t54 = add %t53, @buf
-	%t47 = mul 1, 100
-	%t48 = add %t47, %l11
-	%t49 = mul %t48, 4
-	%t50 = add %t49, @buf
-	%t55 = *%t54
-	*%t50 = %t55
-	%t56 = add %l9, 1
-	%l9 = %t56
-	%t57 = add %l11, 1
-	%l11 = %t57
-	br label .L12
-.L14:
-.L15:
-	%t58 = icmp lt %l10, %l3
-	bc %t58, label .L16, label .L17
-.L16:
-	%t63 = mul 0, 100
-	%t64 = add %t63, %l10
-	%t65 = mul %t64, 4
-	%t66 = add %t65, @buf
-	%t59 = mul 1, 100
-	%t60 = add %t59, %l11
-	%t61 = mul %t60, 4
-	%t62 = add %t61, @buf
-	%t67 = *%t66
-	*%t62 = %t67
-	%t68 = add %l10, 1
-	%l10 = %t68
-	%t69 = add %l11, 1
-	%l11 = %t69
-	br label .L15
-.L17:
-.L18:
-	%t70 = icmp lt %l1, %l3
-	bc %t70, label .L19, label .L20
-.L19:
-	%t75 = mul 1, 100
-	%t76 = add %t75, %l1
-	%t77 = mul %t76, 4
-	%t78 = add %t77, @buf
-	%t71 = mul 0, 100
-	%t72 = add %t71, %l1
-	%t73 = mul %t72, 4
-	%t74 = add %t73, @buf
-	%t79 = *%t78
-	*%t74 = %t79
-	%t80 = add %l1, 1
-	%l1 = %t80
-	br label .L18
-.L20:
-.L1:
-	exit
-}
 define i32 @main()
 {
-	declare i32 %l81
-	declare i32 %l82
-	declare i32 %t83
-	declare i32 %t84
-	declare i32 %t85
-	declare i32 %t86[100]
-	declare i32 %t87
-	declare i32 %t88
-	declare i32 %t89
-	declare i32 %t90
-	declare i32 %t91[100]
-.L21:
+	declare i32 %l0
+	declare i32 %l1[3][4][5]
+	declare i32 %t2
+	declare i32 %t3
+	declare i32 %t4
+	declare i32 %t5
+	declare i32 %t6
+	declare i32 *%t7
+	declare i32 %t8
+	declare i32 %t9
+	declare i32 %t10
+	declare i32 %t11
+	declare i32 %t12
+	declare i32 *%t13
+.L0:
 	entry
-	%t83 = mul 0, 100
-	%t85 = mul %t83, 4
-	%t86 = add %t85, @buf
-	%t87 = call i32 @getarray(i32 %t86[100])
-	%l82 = %t87
-	call void @merge_sort(i32 0, i32 %l82)
-	%t88 = mul 0, 100
-	%t90 = mul %t88, 4
-	%t91 = add %t90, @buf
-	call void @putarray(i32 %l82, i32 %t91[100])
-	%l81 = 0
-	br label .L22
-.L22:
-	exit %l81
+	%t2 = mul 0, 4
+	%t3 = add %t2, 1
+	%t4 = mul %t3, 5
+	%t5 = add %t4, 2
+	%t6 = mul %t5, 4
+	%t7 = add %t6, %l1
+	*%t7 = 1
+	%t8 = mul 0, 4
+	%t9 = add %t8, 1
+	%t10 = mul %t9, 5
+	%t11 = add %t10, 2
+	%t12 = mul %t11, 4
+	%t13 = add %t12, %l1
+	%l0 = *%t13
+	br label .L1
+.L1:
+	exit %l0
 }
