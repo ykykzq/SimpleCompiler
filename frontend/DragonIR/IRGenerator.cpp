@@ -732,7 +732,7 @@ bool IRGenerator::ir_mul(ast_node * node)
             } else if (src1_node->val->intVal == 1) {
                 node->val = src2_node->val;
                 return true;
-            } else if (src1_node->val->intVal >= 2) {
+            } else if (src1_node->val->intVal >= 2&&src1_node->val->intVal <= 32) {
                 //强度消减
                 Value * fore_temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
                 node->blockInsts.addInst(
@@ -765,7 +765,7 @@ bool IRGenerator::ir_mul(ast_node * node)
             }
             node->val = src2;
             return true;
-        } else if (src1_node->integer_val >= 2) {
+        } else if (src1_node->integer_val >= 2&&src1_node->integer_val <= 32) {
             //强度消减
             Value * fore_temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
             // 加法的右边操作数
