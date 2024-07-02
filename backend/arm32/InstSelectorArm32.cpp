@@ -155,6 +155,79 @@ void InstSelectorArm32::translate_assign(IRInst * inst)
         iloc.store_var(REG_ALLOC_SIMPLE_SRC1_REG_NO, rs, 9);
     }
 }
+/// @brief neg操作指令翻译成ARM32汇编
+/// @param inst IR指令
+/// @param operator_name 操作码
+/// @param rs_reg_no 结果寄存器号
+/// @param op1_reg_no 源操作数1寄存器号
+void InstSelectorArm32::translate_neg_operator(IRInst * inst)
+{
+    Value * rs = inst->getDst();
+    Value * arg2 = inst->getSrc1();
+    Value * arg1 = new ConstValue(0);
+
+    int rs_reg_no = REG_ALLOC_SIMPLE_DST_REG_NO;
+    int op1_reg_no = REG_ALLOC_SIMPLE_SRC1_REG_NO;
+    int op2_reg_no = REG_ALLOC_SIMPLE_SRC2_REG_NO;
+    std::string arg1_reg_name, arg2_reg_name;
+    int arg1_reg_no = arg1->regId, arg2_reg_no = arg2->regId;
+
+    // 看arg1是否是寄存器，若是则寄存器寻址，否则要load变量到寄存器中
+    if (arg1_reg_no == -1) {
+        // arg1 -> r8
+        iloc.load_var(op1_reg_no, arg1);
+    } else if (arg1_reg_no != op1_reg_no) {
+        // 已分配的操作数1的寄存器和操作数2的缺省寄存器一致，这样会使得操作数2的值设置到一个寄存器上
+        // 缺省寄存器  2    3
+        // 实际寄存器  3    -1   有问题
+        // 实际寄存器  3    3    有问题
+        // 实际寄存器  3    4    无问题
+        if ((arg1_reg_no == op2_reg_no) && ((arg2_reg_no == -1) || (arg2_reg_no == op2_reg_no))) {
+            iloc.mov_reg(op1_reg_no, arg1_reg_no);
+        } else {
+            op1_reg_no = arg1_reg_no;
+        }
+    }
+
+    arg1_reg_name = PlatformArm32::regName[op1_reg_no];
+
+    // 看arg2是否是寄存器，若是则寄存器寻址，否则要load变量到寄存器中
+    if (arg2_reg_no == -1) {
+        // arg1 -> r8
+        iloc.load_var(op2_reg_no, arg2);
+    } else if (arg2_reg_no != op2_reg_no) {
+        // 已分配的操作数2的寄存器和操作数1的缺省寄存器一致，这样会使得操作数2的值设置到一个寄存器上
+        // 缺省寄存器  2    3
+        // 实际寄存器  -1   2   有问题
+        // 实际寄存器  2    2    有问题
+        // 实际寄存器  4    2    无问题
+        if ((arg2_reg_no == op1_reg_no) && ((arg1_reg_no == -1) || (arg1_reg_no == op1_reg_no))) {
+            iloc.mov_reg(op2_reg_no, arg2_reg_no);
+        } else {
+            op2_reg_no = arg2_reg_no;
+        }
+    }
+
+    arg2_reg_name = PlatformArm32::regName[op2_reg_no];
+
+    // 看结果变量是否是寄存器，若不是则采用参数指定的寄存器rs_reg_name
+    if (rs->regId != -1) {
+        rs_reg_no = rs->regId;
+    } else if (rs->isTemp()) {
+        // 临时变量
+        rs->regId = rs_reg_no;
+    }
+
+    std::string rs_reg_name = PlatformArm32::regName[rs_reg_no];
+
+    iloc.inst("sub", rs_reg_name, arg1_reg_name, arg2_reg_name);
+
+    // 结果不是寄存器，则需要把rs_reg_name保存到结果变量中
+    if (rs->regId == -1) {
+        // r8 -> rs 可能用到r9
+        iloc.store_var(rs_reg_no, rs, op2_reg_no);
+    }
+}
 
 /// @brief 二元操作指令翻译成ARM32汇编
 /// @param inst IR指令
@@ -243,7 +316,13 @@ void InstSelectorArm32::translate_add_int32(IRInst * inst)
 /// @param inst IR指令
 void InstSelectorArm32::translate_sub_int32(IRInst * inst)
 {
-    translate_two_operator(inst, "sub");
+    if (inst->getSrc2() == nullptr) {
+        //负数
+        translate_neg_operator(inst);
+    } else {
+        //正常的减法
+        translate_two_operator(inst, "sub");
+    }
 }
 
 /// @brief 函数调用指令翻译成ARM32汇编

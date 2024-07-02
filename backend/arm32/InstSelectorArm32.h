@@ -72,6 +72,13 @@ protected:
     /// @param inst IR指令
     void translate_sub_int32(IRInst * inst);
 
+    /// @brief neg操作指令翻译成ARM32汇编
+    /// @param inst IR指令
+    /// @param operator_name 操作码
+    /// @param rs_reg_no 结果寄存器号
+    /// @param op1_reg_no 源操作数1寄存器号
+    void translate_neg_operator(IRInst * inst);
+
     /// @brief 二元操作指令翻译成ARM32汇编
     /// @param inst IR指令
     /// @param operator_name 操作码
