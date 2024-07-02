@@ -80,6 +80,10 @@ protected:
     /// @param inst IR指令
     void translate_div_int32(IRInst * inst);
 
+    /// @brief 整数取模指令翻译成ARM32汇编
+    /// @param inst IR指令
+    void translate_mod_int32(IRInst * inst);
+
     /// @brief neg操作指令翻译成ARM32汇编
     /// @param inst IR指令
     /// @param operator_name 操作码

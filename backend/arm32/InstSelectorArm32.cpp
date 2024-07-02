@@ -36,6 +36,7 @@ InstSelectorArm32::InstSelectorArm32(vector<IRInst *> & _irCode, ILocArm32 & _il
     translator_handlers[IRInstOperator::IRINST_OP_SUB_I] = &InstSelectorArm32::translate_sub_int32;
     translator_handlers[IRInstOperator::IRINST_OP_MUL_I] = &InstSelectorArm32::translate_mul_int32;
     translator_handlers[IRInstOperator::IRINST_OP_DIV_I] = &InstSelectorArm32::translate_div_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_MOD_I] = &InstSelectorArm32::translate_mod_int32;
 
     translator_handlers[IRInstOperator::IRINST_OP_FUNC_CALL] = &InstSelectorArm32::translate_call;
 }
@@ -321,11 +322,89 @@ void InstSelectorArm32::translate_mul_int32(IRInst * inst)
     translate_two_operator(inst, "mul");
 }
 
-/// @brief 整数乘法指令翻译成ARM32汇编
+/// @brief 整数除法指令翻译成ARM32汇编
 /// @param inst IR指令
 void InstSelectorArm32::translate_div_int32(IRInst * inst)
 {
     translate_two_operator(inst, "sdiv");
+}
+
+/// @brief 整数取模指令翻译成ARM32汇编
+/// @param inst IR指令
+void InstSelectorArm32::translate_mod_int32(IRInst * inst)
+{
+    // TODO:取模
+    Value * rs = inst->getDst();
+    Value * arg1 = inst->getSrc1();
+    Value * arg2 = inst->getSrc2();
+
+    int rs_reg_no = REG_ALLOC_SIMPLE_DST_REG_NO;
+    int op1_reg_no = REG_ALLOC_SIMPLE_SRC1_REG_NO;
+    int op2_reg_no = REG_ALLOC_SIMPLE_SRC2_REG_NO;
+
+    std::string arg1_reg_name, arg2_reg_name;
+    int arg1_reg_no = arg1->regId, arg2_reg_no = arg2->regId;
+
+    // 看arg1是否是寄存器，若是则寄存器寻址，否则要load变量到寄存器中
+    if (arg1_reg_no == -1) {
+        // arg1 -> r8
+        iloc.load_var(op1_reg_no, arg1);
+    } else if (arg1_reg_no != op1_reg_no) {
+        // 已分配的操作数1的寄存器和操作数2的缺省寄存器一致，这样会使得操作数2的值设置到一个寄存器上
+        // 缺省寄存器  2    3
+        // 实际寄存器  3    -1   有问题
+        // 实际寄存器  3    3    有问题
+        // 实际寄存器  3    4    无问题
+        if ((arg1_reg_no == op2_reg_no) && ((arg2_reg_no == -1) || (arg2_reg_no == op2_reg_no))) {
+            iloc.mov_reg(op1_reg_no, arg1_reg_no);
+        } else {
+            op1_reg_no = arg1_reg_no;
+        }
+    }
+
+    arg1_reg_name = PlatformArm32::regName[op1_reg_no];
+
+    // 看arg2是否是寄存器，若是则寄存器寻址，否则要load变量到寄存器中
+    if (arg2_reg_no == -1) {
+        // arg1 -> r8
+        iloc.load_var(op2_reg_no, arg2);
+    } else if (arg2_reg_no != op2_reg_no) {
+        // 已分配的操作数2的寄存器和操作数1的缺省寄存器一致，这样会使得操作数2的值设置到一个寄存器上
+        // 缺省寄存器  2    3
+        // 实际寄存器  -1   2   有问题
+        // 实际寄存器  2    2    有问题
+        // 实际寄存器  4    2    无问题
+        if ((arg2_reg_no == op1_reg_no) && ((arg1_reg_no == -1) || (arg1_reg_no == op1_reg_no))) {
+            iloc.mov_reg(op2_reg_no, arg2_reg_no);
+        } else {
+            op2_reg_no = arg2_reg_no;
+        }
+    }
+
+    arg2_reg_name = PlatformArm32::regName[op2_reg_no];
+
+    // 看结果变量是否是寄存器，若不是则采用参数指定的寄存器rs_reg_name
+    if (rs->regId != -1) {
+        rs_reg_no = rs->regId;
+    } else if (rs->isTemp()) {
+        // 临时变量
+        rs->regId = rs_reg_no;
+    }
+
+    //临时存一个
+    std::string tmp_reg_name = PlatformArm32::regName[7];
+    std::string rs_reg_name = PlatformArm32::regName[rs_reg_no];
+
+    //除法、乘法、减法完成取模操作
+    iloc.inst("sdiv", tmp_reg_name, arg1_reg_name, arg2_reg_name);
+    iloc.inst("mul", tmp_reg_name, tmp_reg_name, arg2_reg_name);
+    iloc.inst("sub", rs_reg_name, arg1_reg_name, tmp_reg_name);
+
+    // 结果不是寄存器，则需要把rs_reg_name保存到结果变量中
+    if (rs->regId == -1) {
+        // r8 -> rs 可能用到r9
+        iloc.store_var(rs_reg_no, rs, op2_reg_no);
+    }
 }
 
 /// @brief 整数减法指令翻译成ARM32汇编

@@ -1,7 +1,6 @@
-//test mul
+//test rem
 int main(){
-    int a, b;
+    int a;
     a = 10;
-    b = 5;
-    return a * b;
+    return a % 3;
 }
