@@ -52,6 +52,12 @@ public:
         return funcVector;
     }
 
+    /// @brief 获得变量列表
+    std::vector<Value *> & getVarsList()
+    {
+        return varsVector;
+    }
+
     /// @brief 根据变量名获取当前符号（只管理全局变量）
     /// \param name 变量名
     /// \param create 变量查找不到时若为true则自动创建，否则不创建

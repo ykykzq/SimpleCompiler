@@ -237,6 +237,8 @@ Value * SymbolTable::newArrayValue(std::string name, BasicType type, std::vector
 /// @param val Value信息
 void SymbolTable::insertValue(Value * val)
 {
+    //打补丁，便于后端进行全局变量识别
+    val->_global = true;
     varsMap.emplace(val->name, val);
     varsVector.push_back(val);
 }

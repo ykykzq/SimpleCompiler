@@ -57,7 +57,14 @@ void CodeGeneratorArm32::genHeader()
 void CodeGeneratorArm32::genDataSection()
 {
     // 可直接操作文件指针fp进行写操作
-
+    fprintf(fp, ".data\n");
+    //输出全局变量
+    for (auto var: symtab.getVarsList()) {
+        string varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+        if (var->isLocalVar())
+            fprintf(fp, "%s: .word 0\n", varName.c_str());
+    }
+    fprintf(fp, "\n");
     // 目前不支持全局变量和静态变量，以及字符串常量
 }
 
@@ -312,7 +319,7 @@ void CodeGeneratorArm32::stackAlloc(Function * func)
 
         // 对于简单类型的寄存器分配策略，假定临时变量和局部变量都保存在栈中，属于内存
         // 而对于图着色等，临时变量一般是寄存器，局部变量也可能修改为寄存器
-		// TODO 考虑如何进行分配使得临时变量尽量保存在寄存器中，作为优化点考虑
+        // TODO 考虑如何进行分配使得临时变量尽量保存在寄存器中，作为优化点考虑
 #if 0
         if (var->isTemp()) {
             continue;

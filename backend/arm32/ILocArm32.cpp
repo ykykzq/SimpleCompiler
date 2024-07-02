@@ -282,15 +282,24 @@ void ILocArm32::load_var(int rs_reg_no, Value * var)
                 emit("mov", rsReg, regName);
             }
         } else {
+            if (var->_global) {
+                // 全局变量
+                auto varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+                std::string rsReg = PlatformArm32::regName[rs_reg_no];
+                emit("movw", rsReg, "#:lower16:" + varName);
+                emit("movt", rsReg, "#:upper16:" + varName);
+                //加入一条ldr指令
+                emit("ldr", rsReg, "[" + rsReg + "]");
+            } else {
+                // 目前只考虑局部变量，不考虑数组等
+                int off = getAdjustOffset(var);
 
-            // 目前只考虑局部变量，不考虑数组等
-            int off = getAdjustOffset(var);
+                // 对于栈内分配的局部数组，可直接在栈指针上进行移动与运算
+                // 但对于形参，其保存的是调用函数栈的数组的地址，需要读取出来
 
-            // 对于栈内分配的局部数组，可直接在栈指针上进行移动与运算
-            // 但对于形参，其保存的是调用函数栈的数组的地址，需要读取出来
-
-            // ldr r8,[sp,#16]
-            load_base(rs_reg_no, var->baseRegNo, off);
+                // ldr r8,[sp,#16]
+                load_base(rs_reg_no, var->baseRegNo, off);
+            }
         }
     }
 }
@@ -338,22 +347,35 @@ void ILocArm32::store_var(int src_reg_no, Value * var, int tmp_reg_no)
         }
 
     } else {
-        // 所有定义的变量,不可能是数组！
+        if (var->_global) {
+            // 所有定义的变量,不可能是数组！
 
-        // 对于全局变量，首先把全局变量的左值保存到寄存器中，后间接寻址
-        // 对于局部变量，则直接从栈基址+偏移寻址
+            // 对于全局变量，首先把全局变量的左值保存到寄存器中，后间接寻址
+            // 全局变量
+            auto varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+            std::string srcReg = PlatformArm32::regName[src_reg_no];
+            std::string tmpReg = PlatformArm32::regName[tmp_reg_no];
+            emit("movw", tmpReg, "#:lower16:" + varName);
+            emit("movt", tmpReg, "#:upper16:" + varName);
+            //加入一条ldr指令
+            emit("str", srcReg, "[" + tmpReg + "]");
+        }
 
-        // 目前只考虑局部变量
+        else {
+            // 对于局部变量，则直接从栈基址+偏移寻址
 
-        // 栈帧偏移
-        int32_t off = getAdjustOffset(var);
+            // 目前只考虑局部变量
 
-        // 基址寄存器名字
-        tmpReg = PlatformArm32::regName[var->baseRegNo];
+            // 栈帧偏移
+            int32_t off = getAdjustOffset(var);
 
-        // str r8,[r9]
-        // str r8, [fp, # - 16]
-        store_base(src_reg_no, var->baseRegNo, off, tmp_reg_no);
+            // 基址寄存器名字
+            tmpReg = PlatformArm32::regName[var->baseRegNo];
+
+            // str r8,[r9]
+            // str r8, [fp, # - 16]
+            store_base(src_reg_no, var->baseRegNo, off, tmp_reg_no);
+        }
     }
 }
 

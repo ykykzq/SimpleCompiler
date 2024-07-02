@@ -1,6 +1,9 @@
-//test local var define
-int main(){
-	int a[2][2][2]={{{1,2},{3,4}},{{5,6},{7,8}}};
+//test global var define
+int a;
+int b;
 
-    return 0;
+int main(){
+    a = 3;
+    b = 5;
+    return a + b;
 }

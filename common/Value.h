@@ -79,6 +79,8 @@ protected:
     bool _pointer = false;
 
 public:
+    /// @brief 是否是全局变量
+    bool _global = false;
     /// @brief 变量名或内部标识的名字
     std::string name;
 
