@@ -320,6 +320,9 @@ class GotoIRInst : public IRInst {
 public:
     Value * condition;
 
+    //前一条比较指令的类型，用于后端生成指令
+    IRInstOperator fore_cmp_inst_op;
+
 public:
     /// @brief return语句指令
     /// @param target 跳转目标
@@ -334,4 +337,25 @@ public:
 
     /// @brief 转换成字符串
     void toString(std::string & str) override;
+
+    /// @brief 获取真出口
+    /// @return TrueLabel
+    IRInst * getTrueLabel()
+    {
+        return trueInst;
+    }
+
+    /// @brief 获取假出口
+    /// @return FalseLabel
+    IRInst * getFalseLabel()
+    {
+        return falseInst;
+    }
+
+    /// @brief 获取跳转条件
+    /// @return condtion
+    Value * getCondition()
+    {
+        return condition;
+    }
 };

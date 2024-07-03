@@ -24,20 +24,33 @@
 InstSelectorArm32::InstSelectorArm32(vector<IRInst *> & _irCode, ILocArm32 & _iloc, Function * _func)
     : ir(_irCode), iloc(_iloc), func(_func)
 {
+    //出口与入口
     translator_handlers[IRInstOperator::IRINST_OP_ENTRY] = &InstSelectorArm32::translate_entry;
     translator_handlers[IRInstOperator::IRINST_OP_EXIT] = &InstSelectorArm32::translate_exit;
 
+    //跳转
     translator_handlers[IRInstOperator::IRINST_OP_LABEL] = &InstSelectorArm32::translate_label;
     translator_handlers[IRInstOperator::IRINST_OP_GOTO] = &InstSelectorArm32::translate_goto;
 
+    //赋值
     translator_handlers[IRInstOperator::IRINST_OP_ASSIGN] = &InstSelectorArm32::translate_assign;
 
+    //加减乘除
     translator_handlers[IRInstOperator::IRINST_OP_ADD_I] = &InstSelectorArm32::translate_add_int32;
     translator_handlers[IRInstOperator::IRINST_OP_SUB_I] = &InstSelectorArm32::translate_sub_int32;
     translator_handlers[IRInstOperator::IRINST_OP_MUL_I] = &InstSelectorArm32::translate_mul_int32;
     translator_handlers[IRInstOperator::IRINST_OP_DIV_I] = &InstSelectorArm32::translate_div_int32;
     translator_handlers[IRInstOperator::IRINST_OP_MOD_I] = &InstSelectorArm32::translate_mod_int32;
 
+    //比较指令
+    translator_handlers[IRInstOperator::IRINST_OP_GTH_B] = &InstSelectorArm32::translate_cmp_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_EE_B] = &InstSelectorArm32::translate_cmp_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_GOE_B] = &InstSelectorArm32::translate_cmp_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_NE_B] = &InstSelectorArm32::translate_cmp_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_SOE_B] = &InstSelectorArm32::translate_cmp_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_STH_B] = &InstSelectorArm32::translate_cmp_int32;
+
+    //函数调用
     translator_handlers[IRInstOperator::IRINST_OP_FUNC_CALL] = &InstSelectorArm32::translate_call;
 }
 
@@ -65,13 +78,47 @@ void InstSelectorArm32::translate_nop(IRInst * inst)
 /// @param inst IR指令
 void InstSelectorArm32::translate_label(IRInst * inst)
 {
-    // iloc.label(inst->getLabel());
+    iloc.label(inst->getLabelName());
 }
 
 /// @brief goto指令指令翻译成ARM32汇编
 /// @param inst IR指令
 void InstSelectorArm32::translate_goto(IRInst * inst)
-{}
+{
+    GotoIRInst * goto_inst = dynamic_cast<GotoIRInst *>(inst);
+    if (goto_inst->getTrueLabel() == goto_inst->getFalseLabel()) {
+        //无条件跳转
+        std::string toLabel = goto_inst->getTrueLabel()->getLabelName();
+        iloc.inst("b", toLabel);
+    } else {
+        //有条件跳转
+
+        //生成跳转指令
+        std::string condop;
+        if (goto_inst->fore_cmp_inst_op == IRInstOperator::IRINST_OP_GTH_B) {
+            condop = "bgt";
+        } else if (goto_inst->fore_cmp_inst_op == IRInstOperator::IRINST_OP_GOE_B) {
+            condop = "bge";
+        } else if (goto_inst->fore_cmp_inst_op == IRInstOperator::IRINST_OP_STH_B) {
+            condop = "blt";
+        } else if (goto_inst->fore_cmp_inst_op == IRInstOperator::IRINST_OP_SOE_B) {
+            condop = "ble";
+        } else if (goto_inst->fore_cmp_inst_op == IRInstOperator::IRINST_OP_NE_B) {
+            condop = "bne";
+        } else if (goto_inst->fore_cmp_inst_op == IRInstOperator::IRINST_OP_EE_B) {
+            condop = "beq";
+        } else {
+            //出错
+            printf("不支持的比较类别");
+        }
+
+        //两个跳转位置
+        std::string truelabel = goto_inst->getTrueLabel()->getLabelName();
+        std::string falselabel = goto_inst->getFalseLabel()->getLabelName();
+        iloc.inst(condop, truelabel);
+        iloc.inst("b", falselabel);
+    }
+}
 
 /// @brief 函数入口指令翻译成ARM32汇编
 /// @param inst IR指令
@@ -333,7 +380,7 @@ void InstSelectorArm32::translate_div_int32(IRInst * inst)
 /// @param inst IR指令
 void InstSelectorArm32::translate_mod_int32(IRInst * inst)
 {
-    // TODO:取模
+    // 取模
     Value * rs = inst->getDst();
     Value * arg1 = inst->getSrc1();
     Value * arg2 = inst->getSrc2();
@@ -418,6 +465,68 @@ void InstSelectorArm32::translate_sub_int32(IRInst * inst)
         //正常的减法
         translate_two_operator(inst, "sub");
     }
+}
+
+/// @brief cmp比较指令翻译成ARM32汇编
+/// @param inst IR指令
+void InstSelectorArm32::translate_cmp_int32(IRInst * inst)
+{
+    //一条比较指令
+
+    //取出两个源操作数
+    Value * arg1 = inst->getSrc1();
+    Value * arg2 = inst->getSrc2();
+
+    //默认的寄存器号
+    int rs_reg_no = REG_ALLOC_SIMPLE_DST_REG_NO;
+    int op1_reg_no = REG_ALLOC_SIMPLE_SRC1_REG_NO;
+    int op2_reg_no = REG_ALLOC_SIMPLE_SRC2_REG_NO;
+
+    //选择特定的寄存器号
+    std::string arg1_reg_name, arg2_reg_name;
+    int arg1_reg_no = arg1->regId, arg2_reg_no = arg2->regId;
+
+    // 看arg1是否是寄存器，若是则寄存器寻址，否则要load变量到寄存器中
+    if (arg1_reg_no == -1) {
+        // arg1 -> r8
+        iloc.load_var(op1_reg_no, arg1);
+    } else if (arg1_reg_no != op1_reg_no) {
+        // 已分配的操作数1的寄存器和操作数2的缺省寄存器一致，这样会使得操作数2的值设置到一个寄存器上
+        // 缺省寄存器  2    3
+        // 实际寄存器  3    -1   有问题
+        // 实际寄存器  3    3    有问题
+        // 实际寄存器  3    4    无问题
+        if ((arg1_reg_no == op2_reg_no) && ((arg2_reg_no == -1) || (arg2_reg_no == op2_reg_no))) {
+            iloc.mov_reg(op1_reg_no, arg1_reg_no);
+        } else {
+            op1_reg_no = arg1_reg_no;
+        }
+    }
+
+    arg1_reg_name = PlatformArm32::regName[op1_reg_no];
+
+    // 看arg2是否是寄存器，若是则寄存器寻址，否则要load变量到寄存器中
+    if (arg2_reg_no == -1) {
+        // arg1 -> r8
+        iloc.load_var(op2_reg_no, arg2);
+    } else if (arg2_reg_no != op2_reg_no) {
+        // 已分配的操作数2的寄存器和操作数1的缺省寄存器一致，这样会使得操作数2的值设置到一个寄存器上
+        // 缺省寄存器  2    3
+        // 实际寄存器  -1   2   有问题
+        // 实际寄存器  2    2    有问题
+        // 实际寄存器  4    2    无问题
+        if ((arg2_reg_no == op1_reg_no) && ((arg1_reg_no == -1) || (arg1_reg_no == op1_reg_no))) {
+            iloc.mov_reg(op2_reg_no, arg2_reg_no);
+        } else {
+            op2_reg_no = arg2_reg_no;
+        }
+    }
+
+    arg2_reg_name = PlatformArm32::regName[op2_reg_no];
+
+    std::string rs_reg_name = PlatformArm32::regName[rs_reg_no];
+
+    iloc.inst("cmp", arg1_reg_name, arg2_reg_name);
 }
 
 /// @brief 函数调用指令翻译成ARM32汇编

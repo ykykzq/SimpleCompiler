@@ -394,7 +394,7 @@ void EntryIRInst::toString(std::string & str)
     str = "entry";
 }
 
-/// @brief 无条件跳转语句指令
+/// @brief 跳转语句指令
 /// @param target 跳转目标
 GotoIRInst::GotoIRInst(IRInst * target) : IRInst(IRInstOperator::IRINST_OP_GOTO, nullptr)
 {

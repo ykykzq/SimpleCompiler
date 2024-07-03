@@ -84,6 +84,10 @@ protected:
     /// @param inst IR指令
     void translate_mod_int32(IRInst * inst);
 
+    /// @brief 比较指令翻译成ARM32汇编
+    /// @param inst IR指令
+    void translate_cmp_int32(IRInst * inst);
+
     /// @brief neg操作指令翻译成ARM32汇编
     /// @param inst IR指令
     /// @param operator_name 操作码

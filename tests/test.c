@@ -1,6 +1,9 @@
-//test rem
+int a;
+
 int main(){
-    int a;
-    a = 10;
-    return a % 3;
+	a = 10;
+	if( a>0 ){
+		return 1;
+	}
+	return 0;
 }

@@ -732,7 +732,7 @@ bool IRGenerator::ir_mul(ast_node * node)
             } else if (src1_node->val->intVal == 1) {
                 node->val = src2_node->val;
                 return true;
-            } else if (src1_node->val->intVal >= 2&&src1_node->val->intVal <= 32) {
+            } else if (src1_node->val->intVal >= 2 && src1_node->val->intVal <= 32) {
                 //强度消减
                 Value * fore_temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
                 node->blockInsts.addInst(
@@ -765,7 +765,7 @@ bool IRGenerator::ir_mul(ast_node * node)
             }
             node->val = src2;
             return true;
-        } else if (src1_node->integer_val >= 2&&src1_node->integer_val <= 32) {
+        } else if (src1_node->integer_val >= 2 && src1_node->integer_val <= 32) {
             //强度消减
             Value * fore_temp_value = symtab->currentFunc->newTempValue(BasicType::TYPE_INT);
             // 加法的右边操作数
@@ -1212,7 +1212,9 @@ bool IRGenerator::ir_conditon(ast_node * node)
     if (node->sons[0]->node_type != ast_operator_type::AST_OP_ANDAND &&
         node->sons[0]->node_type != ast_operator_type::AST_OP_OROR &&
         node->sons[0]->node_type != ast_operator_type::AST_OP_NOT) {
-        node->blockInsts.addInst(new GotoIRInst(cond_inst_node->val, node->true_blcok_label, node->false_blcok_label));
+        auto new_goto_inst = new GotoIRInst(cond_inst_node->val, node->true_blcok_label, node->false_blcok_label);
+        new_goto_inst->fore_cmp_inst_op = node->blockInsts.getInsts().back()->getOp();
+        node->blockInsts.addInst(new_goto_inst);
     }
     return true;
 }
@@ -1361,12 +1363,18 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
 
         //装填指令
         node->blockInsts.addInst(left->blockInsts);
-        if (left->val != nullptr) // nullptr代表为一个&& 或 ||
-            node->blockInsts.addInst(new GotoIRInst(left->val, node->son2_label, node->false_blcok_label));
+        if (left->val != nullptr) { // nullptr代表为一个&& 或 ||
+            auto new_goto_inst = new GotoIRInst(left->val, node->son2_label, node->false_blcok_label);
+            new_goto_inst->fore_cmp_inst_op = node->blockInsts.getInsts().back()->getOp();
+            node->blockInsts.addInst(new_goto_inst);
+        }
         node->blockInsts.addInst(node->son2_label);
         node->blockInsts.addInst(right->blockInsts);
-        if (right->val != nullptr)
-            node->blockInsts.addInst(new GotoIRInst(right->val, node->true_blcok_label, node->false_blcok_label));
+        if (right->val != nullptr) {
+            auto new_goto_inst = new GotoIRInst(right->val, node->true_blcok_label, node->false_blcok_label);
+            new_goto_inst->fore_cmp_inst_op = node->blockInsts.getInsts().back()->getOp();
+            node->blockInsts.addInst(new_goto_inst);
+        }
 
         return true;
     } else if (node->node_type == ast_operator_type::AST_OP_OROR) {
@@ -1390,12 +1398,18 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
 
         //装填指令
         node->blockInsts.addInst(left->blockInsts);
-        if (left->val != nullptr) // nullptr代表为一个&& 或 ||
-            node->blockInsts.addInst(new GotoIRInst(left->val, node->true_blcok_label, node->son2_label));
+        if (left->val != nullptr) { // nullptr代表为一个&& 或 ||
+            auto new_goto_inst = new GotoIRInst(left->val, node->true_blcok_label, node->son2_label);
+            new_goto_inst->fore_cmp_inst_op = node->blockInsts.getInsts().back()->getOp();
+            node->blockInsts.addInst(new_goto_inst);
+        }
         node->blockInsts.addInst(node->son2_label);
         node->blockInsts.addInst(right->blockInsts);
-        if (right->val != nullptr) // nullptr代表为一个&& 或 ||
-            node->blockInsts.addInst(new GotoIRInst(right->val, node->true_blcok_label, node->false_blcok_label));
+        if (right->val != nullptr) { // nullptr代表为一个&& 或 ||
+            auto new_goto_inst = new GotoIRInst(right->val, node->true_blcok_label, node->false_blcok_label);
+            new_goto_inst->fore_cmp_inst_op = node->blockInsts.getInsts().back()->getOp();
+            node->blockInsts.addInst(new_goto_inst);
+        }
 
         return true;
     } else if (node->node_type == ast_operator_type::AST_OP_NOT) {
@@ -1432,8 +1446,11 @@ bool IRGenerator::ir_bool_cal(ast_node * node)
 
             //装填指令
             node->blockInsts.addInst(left->blockInsts);
-            if (left->val != nullptr) // nullptr代表为一个&& 或 || 或 !
-                node->blockInsts.addInst(new GotoIRInst(left->val, node->false_blcok_label, node->true_blcok_label));
+            if (left->val != nullptr) { // nullptr代表为一个&& 或 ||
+                auto new_goto_inst = new GotoIRInst(left->val, node->false_blcok_label, node->true_blcok_label);
+                new_goto_inst->fore_cmp_inst_op = node->blockInsts.getInsts().back()->getOp();
+                node->blockInsts.addInst(new_goto_inst);
+            }
             return true;
         }
     } else {
