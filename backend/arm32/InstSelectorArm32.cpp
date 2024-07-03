@@ -78,7 +78,7 @@ void InstSelectorArm32::translate_nop(IRInst * inst)
 /// @param inst IR指令
 void InstSelectorArm32::translate_label(IRInst * inst)
 {
-    iloc.label(inst->getLabelName());
+    iloc.label("." + inst->getLabelName());
 }
 
 /// @brief goto指令指令翻译成ARM32汇编
@@ -89,7 +89,7 @@ void InstSelectorArm32::translate_goto(IRInst * inst)
     if (goto_inst->getTrueLabel() == goto_inst->getFalseLabel()) {
         //无条件跳转
         std::string toLabel = goto_inst->getTrueLabel()->getLabelName();
-        iloc.inst("b", toLabel);
+        iloc.inst("b", "." + toLabel);
     } else {
         //有条件跳转
 
@@ -115,8 +115,8 @@ void InstSelectorArm32::translate_goto(IRInst * inst)
         //两个跳转位置
         std::string truelabel = goto_inst->getTrueLabel()->getLabelName();
         std::string falselabel = goto_inst->getFalseLabel()->getLabelName();
-        iloc.inst(condop, truelabel);
-        iloc.inst("b", falselabel);
+        iloc.inst(condop, "." + truelabel);
+        iloc.inst("b", "." + falselabel);
     }
 }
 
