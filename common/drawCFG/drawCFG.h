@@ -12,6 +12,7 @@
 #ifndef CFG_H
 #define CFG_H
 
+#include "../../common/SymbolTable.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -20,9 +21,9 @@
 // CFG_block类
 class CFG_block {
 public:
-    std::vector<std::string> entries;        // 存储该block所有的入口
-    std::vector<std::string> exits;          // 存储该block所有的出口
-    std::vector<std::string> irInstructions; // 存储所有的ir指令
+    std::vector<std::string> entries;     // 存储该block所有的入口
+    std::vector<std::string> exits;       // 存储该block所有的出口
+    std::vector<IRInst *> irInstructions; // 存储所有的ir指令
 
     CFG_block()
     {}
@@ -79,10 +80,19 @@ public:
 // CFG_Generator类，管理多个CFG_function对象
 class CFG_Generator {
 protected:
-    std::vector<CFG_function *> functions; // 存储所有的CFG_function对象
+    // 存储所有的CFG_function对象
+    std::vector<CFG_function *> functions;
     std::unordered_map<std::string, CFG_function *> funcMap;
-    CFG_function * currentFunction; // 当前活动的CFG_function
+
+    // 当前活动的CFG_function
+    CFG_function * currentFunction;
+
+    /// @brief 符号表
+    SymbolTable * symtab;
+
 public:
+    CFG_Generator(SymbolTable * _symtab) : currentFunction(nullptr), symtab(_symtab)
+    {}
     CFG_Generator() : currentFunction(nullptr)
     {}
 
@@ -114,30 +124,29 @@ public:
     }
 
     /// @brief 运行产生CFG
-    /// @param file_name 文件路径
+    /// @param print_flag true:生成并打印;false:只生成CFG
     /// @return 翻译是否成功，true：成功，false：失败
-    bool run(std::string file_name);
+    bool run(bool print_flag);
+
+    /// @brief 获取指令序列
+    /// @return 指令序列
+    std::vector<IRInst *> & getInsts();
 
 protected:
     /// @brief 识别到函数定义语句
-    /// @param line ir语句
+    /// @param ir_inst ir语句
     /// @return 翻译是否成功，true：成功，false：失败
-    bool func_define(const std::string & line);
-
-    /// @brief 识别到函数定义语句
-    /// @param line ir语句
-    /// @return 翻译是否成功，true：成功，false：失败
-    bool label(const std::string & line);
+    bool label_inst(IRInst * ir_inst);
 
     /// @brief 识别到跳转
-    /// @param line ir语句
+    /// @param ir_inst ir语句
     /// @return 翻译是否成功，true：成功，false：失败
-    bool goto_inst(const std::string & line);
+    bool goto_inst(IRInst * ir_inst);
 
     /// @brief 识别到其他语句
-    /// @param line ir语句
+    /// @param ir_inst ir语句
     /// @return 翻译是否成功，true：成功，false：失败
-    bool default_expr(const std::string & line);
+    bool default_expr_inst(IRInst * ir_inst);
 };
 
 #endif // CFG_H

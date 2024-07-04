@@ -1,36 +1,88 @@
-define i32 @main()
+define i32 @get_one(i32 %t1)
 {
 	declare i32 %l0
-	declare i32 %l1[3][4][5]
-	declare i32 %t2
-	declare i32 %t3
-	declare i32 %t4
-	declare i32 %t5
-	declare i32 %t6
-	declare i32 *%t7
-	declare i32 %t8
-	declare i32 %t9
-	declare i32 %t10
-	declare i32 %t11
-	declare i32 %t12
-	declare i32 *%t13
+	declare i32 %l2
 .L0:
 	entry
-	%t2 = mul 0, 4
-	%t3 = add %t2, 1
-	%t4 = mul %t3, 5
-	%t5 = add %t4, 2
-	%t6 = mul %t5, 4
-	%t7 = add %t6, %l1
-	*%t7 = 1
-	%t8 = mul 0, 4
-	%t9 = add %t8, 1
-	%t10 = mul %t9, 5
-	%t11 = add %t10, 2
-	%t12 = mul %t11, 4
-	%t13 = add %t12, %l1
-	%l0 = *%t13
+	%l2 = %t1
+	%l0 = 1
 	br label .L1
 .L1:
 	exit %l0
+}
+define i32 @deepWhileBr(i32 %t4, i32 %t6)
+{
+	declare i32 %l3
+	declare i32 %l5
+	declare i32 %l7
+	declare i32 %l8
+	declare i32 %t9
+	declare i1 %t10
+	declare i32 %l11
+	declare i1 %t12
+	declare i32 %t13
+	declare i1 %t14
+	declare i32 %l15
+	declare i32 %t16
+	declare i32 %t17
+	declare i1 %t18
+	declare i32 %t19
+.L2:
+	entry
+	%l5 = %t4
+	%l7 = %t6
+	%t9 = add 2, 2
+	%l8 = %t9
+.L4:
+	%t10 = icmp lt %l8, 75
+	bc %t10, label .L5, label .L6
+.L5:
+	%l11 = 42
+	%t12 = icmp lt %l8, 100
+	bc %t12, label .L7, label .L8
+.L7:
+	%t13 = add %l8, %l11
+	%l8 = %t13
+	%t14 = icmp gt %l8, 99
+	bc %t14, label .L10, label .L11
+.L10:
+	%t16 = mul %l11, 2
+	%l15 = %t16
+	%t17 = call i32 @get_one(i32 0)
+	%t18 = icmp eq %t17, 1
+	bc %t18, label .L13, label .L14
+.L13:
+	%t19 = mul %l15, 2
+	%l8 = %t19
+	br label .L15
+.L14:
+.L15:
+	br label .L12
+.L11:
+.L12:
+	br label .L9
+.L8:
+.L9:
+	br label .L4
+.L6:
+	%l3 = %l8
+	br label .L3
+.L3:
+	exit %l3
+}
+define i32 @main()
+{
+	declare i32 %l20
+	declare i32 %l21
+	declare i32 %t22
+.L16:
+	entry
+	%l21 = 2
+	%t22 = call i32 @deepWhileBr(i32 %l21, i32 %l21)
+	%l21 = %t22
+	call void @putint(i32 %l21)
+	%l20 = 0
+	br label .L17
+.L17:
+	exit %l20
 }

@@ -4,7 +4,7 @@ int get_one(int a) {
 
 int deepWhileBr(int a, int b) {
   int c;
-  c = a + b;
+  c = 2 + 2;
   while (c < 75) {
     int d;
     d = 42;

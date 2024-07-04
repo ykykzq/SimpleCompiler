@@ -15,52 +15,17 @@
 #include <string>
 #include <gvc.h>
 #include "./drawCFG.h"
-
-/// @brief 识别到函数定义语句
-/// @param line ir语句
-/// @return 翻译是否成功，true：成功，false：失败
-bool CFG_Generator::func_define(const std::string & line)
-{
-    //取出名字
-    std::istringstream iss(line);
-    std::string name;
-    int wordCount = 0;
-
-    while (iss >> name) {
-        ++wordCount;
-        if (wordCount == 3) {
-            break;
-        }
-    }
-
-    //取出@与(之间的函数名
-    name = name.substr(1, name.find('(') - 1);
-    // 新建并更换当前的fuction
-    auto func = newFunction(name);
-    setCurrentFunction(func);
-    currentFunction->name = name;
-    return true;
-}
+#include "IRInst.h"
 
 /// @brief 识别到label语句
-/// @param line ir语句
+/// @param ir_inst ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool CFG_Generator::label(const std::string & line)
+bool CFG_Generator::label_inst(IRInst * ir_inst)
 {
 
     //取出label的名字
-    std::istringstream iss(line);
-    std::string label_name;
-    int wordCount = 0;
-
-    while (iss >> label_name) {
-        ++wordCount;
-        if (wordCount == 1) {
-            break;
-        }
-    }
     //去除label name中的第一个字符"."和最后的":""
-    label_name = label_name.substr(1, label_name.find(':') - 1);
+    auto label_name = ir_inst->getLabelName();
 
     //同时还需要检查当前的block是否已经有出口。
     //没有出口代表平滑流入新的block，设置出口
@@ -77,63 +42,41 @@ bool CFG_Generator::label(const std::string & line)
     getCurrentFunction()->currentBlock = new_block;
 
     // label塞入当前块内
-    auto ir_str = line.substr(1);
-    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_inst);
 
     return true;
 }
 
 /// @brief 识别到跳转
-/// @param line ir语句
+/// @param ir_inst ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool CFG_Generator::goto_inst(const std::string & line)
+bool CFG_Generator::goto_inst(IRInst * ir_inst)
 {
     // 跳转指令也去掉'\t'后塞入当前块内
-    auto ir_str = line.substr(1);
-    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_inst);
 
-    // 取出两个label添加到出口中
-    // 取出label的名字
-    std::istringstream iss(line);
-    std::string jump_type;
-
+    GotoIRInst * gotoInst = dynamic_cast<GotoIRInst *>(ir_inst);
     // 区分 br 与 bc
-    if (iss >> jump_type) {
-        if (jump_type == "br") {
-            // br，只添加一个出口
-            std::istringstream iss(line);
-            std::string label_name;
-            int wordCount = 0;
 
-            while (iss >> label_name) {
-                ++wordCount;
-                if (wordCount == 3) {
-                    //去除label name中的第一个字符"."后，放进block中
-                    label_name = label_name.substr(1);
-                    getCurrentFunction()->currentBlock->exits.push_back(label_name);
-                }
-            }
-        } else if (jump_type == "bc") {
-            // bc，添加两个出口
-            std::istringstream iss(line);
-            std::string label_name;
-            int wordCount = 0;
+    if (gotoInst->getTrueLabel() == gotoInst->getFalseLabel()) {
+        // br，只添加一个出口
 
-            while (iss >> label_name) {
-                ++wordCount;
-                if (wordCount == 4) {
-                    //去除label name中的第一个字符"."和","，放进block中
-                    label_name = label_name.substr(1, label_name.find(',') - 1);
-                    getCurrentFunction()->currentBlock->exits.push_back(label_name);
-                } else if (wordCount == 6) {
-                    //去除label name中的第一个字符"."后，放进block中
-                    label_name = label_name.substr(1);
-                    getCurrentFunction()->currentBlock->exits.push_back(label_name);
-                }
-            }
-        }
+        auto label_name = gotoInst->getTrueLabel()->getLabelName();
+        getCurrentFunction()->currentBlock->exits.push_back(label_name);
+    }
 
-    } else {
+    else if (gotoInst->getTrueLabel() != gotoInst->getFalseLabel()) {
+        // bc，添加两个出口
+
+        auto label_name1 = gotoInst->getTrueLabel()->getLabelName();
+        getCurrentFunction()->currentBlock->exits.push_back(label_name1);
+
+        //去除label name中的第一个字符"."后，放进block中
+        auto label_name2 = gotoInst->getFalseLabel()->getLabelName();
+        getCurrentFunction()->currentBlock->exits.push_back(label_name2);
+    }
+
+    else {
         // 取出第一个单词失败
         return false;
     }
@@ -141,58 +84,43 @@ bool CFG_Generator::goto_inst(const std::string & line)
 }
 
 /// @brief 识别到其他语句
-/// @param line ir语句
+/// @param ir_inst ir语句
 /// @return 翻译是否成功，true：成功，false：失败
-bool CFG_Generator::default_expr(const std::string & line)
+bool CFG_Generator::default_expr_inst(IRInst * ir_inst)
 {
     // 这里是对第二种情况的处理逻辑
     // 去除'\t'后塞入到当前function的当前block里
-    auto ir_str = line.substr(1);
-    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_str);
+    getCurrentFunction()->currentBlock->irInstructions.push_back(ir_inst);
 
     return true;
 }
 
 /// @brief 运行产生CFG
-/// @param file_name 文件路径
+/// @param print_flag true:生成并打印;false:只生成CFG
 /// @return 翻译是否成功，true：成功，false：失败
-bool CFG_Generator::run(std::string file_name)
+bool CFG_Generator::run(bool print_flag)
 {
-    std::ifstream file(file_name);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file" << std::endl;
-        return false;
-    }
+    //遍历每个function
+    for (auto ir_func: symtab->getFunctionList()) {
+        // 新建并更换当前的fuction
+        auto func = newFunction(ir_func->getName());
+        setCurrentFunction(func);
+        currentFunction->name = ir_func->getName();
 
-    //根据首单词的不同进行不同的处理
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string firstWord;
-
-        if (!(iss >> firstWord)) {
-            std::cerr << "Error reading words from line: " << line << std::endl;
-            continue;
-        }
-
-        if (firstWord == "define") {
-            func_define(line);
-        } else if (firstWord == "br" || firstWord == "bc") {
-            goto_inst(line);
-        } else if (firstWord.compare(0, 1, ".") == 0) {
-            label(line);
-        } else if (firstWord == "declare") {
-            //忽略声明
-            continue;
-        } else if (firstWord == "{" || firstWord == "}") {
-            //忽略花括号
-            continue;
-        } else {
-            default_expr(line);
+        //遍历ir
+        for (auto ir: ir_func->getInterCode().getInsts()) {
+            if (ir->getOp() == IRInstOperator::IRINST_OP_GOTO) {
+                //跳转指令
+                goto_inst(ir);
+            } else if (ir->getOp() == IRInstOperator::IRINST_OP_LABEL) {
+                // label
+                label_inst(ir);
+            } else {
+                //其他指令均塞进去
+                default_expr_inst(ir);
+            }
         }
     }
-
-    file.close();
 
     //下面遍历func和func中的block，生成CFG
     //遍历函数
@@ -209,7 +137,9 @@ bool CFG_Generator::run(std::string file_name)
             Agnode_t * n1 = agnode(g, cfg_blcok->entries[0].data(), 1);
             std::string all_ir_str;
             //把ir添加进去
-            for (const auto & ir_str: cfg_blcok->irInstructions) {
+            for (const auto & ir: cfg_blcok->irInstructions) {
+                std::string ir_str;
+                ir->toString(ir_str);
                 all_ir_str = all_ir_str + ir_str + "\n";
             }
             agsafeset(n1, "shape", "box", "");
@@ -237,10 +167,12 @@ bool CFG_Generator::run(std::string file_name)
         std::string outputFormat = "png";
         std::string outputFile = dest_directory + cfg_func->name + ".png";
 
-        // 渲染图并输出到文件
-        FILE * fp = fopen(outputFile.c_str(), "w");
-        gvRender(gvc, g, outputFormat.c_str(), fp);
-        fclose(fp);
+        if (print_flag) {
+            // 渲染图并输出到文件
+            FILE * fp = fopen(outputFile.c_str(), "w");
+            gvRender(gvc, g, outputFormat.c_str(), fp);
+            fclose(fp);
+        }
 
         // 释放资源
         gvFreeLayout(gvc, g);
