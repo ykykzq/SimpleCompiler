@@ -416,6 +416,17 @@ void ILocArm32::allocStack(Function * func, int tmp_reg_no)
 
     off += funcCallArgCnt * 4;
 
+    //修正，补足数组的部分
+    for (auto var: func->getVarValues()) {
+        if (var->isArray()) {
+            int arrar_extra_offset = 1;
+            for (auto index: var->arrayIndexVector) {
+                arrar_extra_offset = arrar_extra_offset * index;
+            }
+            off += (arrar_extra_offset - 1) * 4; //-1是因为在把数组当做正常变量使用时已经计入过一次
+        }
+    }
+
     // 不需要在栈内额外分配空间，则什么都不做
     if (0 == off)
         return;

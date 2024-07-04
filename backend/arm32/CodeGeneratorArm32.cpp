@@ -60,9 +60,20 @@ void CodeGeneratorArm32::genDataSection()
     fprintf(fp, ".data\n");
     //输出全局变量
     for (auto var: symtab.getVarsList()) {
-        string varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
-        if (var->isLocalVar())
-            fprintf(fp, "%s: .word 0\n", varName.c_str());
+        if (var->isArray()) {
+            //如果是数组
+            int space = 4; //一个int四个字节
+            for (auto index: var->arrayIndexVector) {
+                space = space * index;
+            }
+            string varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+            if (var->isLocalVar())
+                fprintf(fp, "%s: .space %d\n", varName.c_str(), space);
+        } else {
+            string varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+            if (var->isLocalVar())
+                fprintf(fp, "%s: .word 0\n", varName.c_str());
+        }
     }
     fprintf(fp, "\n");
     // 目前不支持全局变量和静态变量，以及字符串常量

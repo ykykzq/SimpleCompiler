@@ -1,9 +1,9 @@
-//test the priority of add and mul
+//test local var define
+
 int main(){
-    int a, b, c, d;
-    a = 10;
-    b = 4;
-    c = 2;
-    d = 2;
-    return (c + a) * (b - d); 
+	
+int a[2][3];
+    a[1][2] = 1;
+
+    return 0;
 }
