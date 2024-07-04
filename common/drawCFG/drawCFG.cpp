@@ -109,6 +109,7 @@ bool CFG_Generator::run(bool print_flag)
 
         //遍历ir
         for (auto ir: ir_func->getInterCode().getInsts()) {
+            code.push_back(ir);
             if (ir->getOp() == IRInstOperator::IRINST_OP_GOTO) {
                 //跳转指令
                 goto_inst(ir);
@@ -181,4 +182,11 @@ bool CFG_Generator::run(bool print_flag)
     }
 
     return true;
+}
+
+/// @brief 获取指令序列。注意，现在返回的是原始的指令序列
+/// @return 指令序列
+std::vector<IRInst *> & CFG_Generator::getInsts()
+{
+    return code;
 }

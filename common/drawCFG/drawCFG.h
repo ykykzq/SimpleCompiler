@@ -90,6 +90,9 @@ protected:
     /// @brief 符号表
     SymbolTable * symtab;
 
+    /// @brief 指令块的指令序列
+    std::vector<IRInst *> code;
+
 public:
     CFG_Generator(SymbolTable * _symtab) : currentFunction(nullptr), symtab(_symtab)
     {}
