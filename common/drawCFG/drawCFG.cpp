@@ -14,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include <gvc.h>
+#include <filesystem>
 #include "./drawCFG.h"
 #include "IRInst.h"
 
@@ -109,7 +110,6 @@ bool CFG_Generator::run(bool print_flag)
 
         //遍历ir
         for (auto ir: ir_func->getInterCode().getInsts()) {
-            code.push_back(ir);
             if (ir->getOp() == IRInstOperator::IRINST_OP_GOTO) {
                 //跳转指令
                 goto_inst(ir);
@@ -148,7 +148,7 @@ bool CFG_Generator::run(bool print_flag)
             cfg_func->addCFGnode(cfg_blcok, n1);
         }
 
-        //再遍历一次block，创建所有edge
+        //遍历当前函数的所有block，创建所有edge
         for (auto cfg_blcok1: cfg_func->blocks) {
             //创建边
             auto from_node = cfg_func->nodeMap[cfg_blcok1];
@@ -164,9 +164,15 @@ bool CFG_Generator::run(bool print_flag)
         // 设置布局
         gvLayout(gvc, g, "dot");
         // 设置输出格式
-        std::string dest_directory = ""; //暂时不设置输出文件夹
-        std::string outputFormat = "png";
+        std::string dest_directory = "./CFG/"; //输出文件夹
+        std::string outputFormat = "png";      //输出格式
         std::string outputFile = dest_directory + cfg_func->name + ".png";
+
+        // 检查文件夹是否存在
+        if (!std::filesystem::exists(dest_directory)) {
+            // 如果文件夹不存在，则创建文件夹
+            std::filesystem::create_directories(dest_directory);
+        }
 
         if (print_flag) {
             // 渲染图并输出到文件
@@ -182,11 +188,4 @@ bool CFG_Generator::run(bool print_flag)
     }
 
     return true;
-}
-
-/// @brief 获取指令序列。注意，现在返回的是原始的指令序列
-/// @return 指令序列
-std::vector<IRInst *> & CFG_Generator::getInsts()
-{
-    return code;
 }

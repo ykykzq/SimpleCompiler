@@ -44,6 +44,9 @@ public:
     std::vector<Agnode_t *> nodes; // 存储该函数的所有CFG_block
     std::unordered_map<CFG_block *, Agnode_t *> nodeMap;
 
+    /// @brief 当前函数的指令序列
+    std::vector<IRInst *> code;
+
 public:
     CFG_function() : currentBlock(nullptr)
     {}
@@ -75,6 +78,19 @@ public:
         nodes.push_back(node);
         nodeMap[block] = node;
     }
+
+    /// @brief 遍历基本块获取指令序列
+    /// @return 指令序列
+    std::vector<IRInst *> & getInsts()
+    {
+        code.clear();
+        for (auto basic_block: blocks) {
+            for (auto ir: basic_block->irInstructions) {
+                code.push_back(ir);
+            }
+        }
+        return code;
+    }
 };
 
 // CFG_Generator类，管理多个CFG_function对象
@@ -89,9 +105,6 @@ protected:
 
     /// @brief 符号表
     SymbolTable * symtab;
-
-    /// @brief 指令块的指令序列
-    std::vector<IRInst *> code;
 
 public:
     CFG_Generator(SymbolTable * _symtab) : currentFunction(nullptr), symtab(_symtab)
@@ -130,10 +143,6 @@ public:
     /// @param print_flag true:生成并打印;false:只生成CFG
     /// @return 翻译是否成功，true：成功，false：失败
     bool run(bool print_flag);
-
-    /// @brief 获取指令序列
-    /// @return 指令序列
-    std::vector<IRInst *> & getInsts();
 
 protected:
     /// @brief 识别到函数定义语句
