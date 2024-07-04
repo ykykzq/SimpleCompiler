@@ -336,13 +336,15 @@ void InstSelectorArm32::translate_two_operator(IRInst * inst,
 
     arg2_reg_name = PlatformArm32::regName[op2_reg_no];
 
-    // 看结果变量是否是寄存器，若不是则采用参数指定的寄存器rs_reg_name
-    if (rs->regId != -1) {
-        rs_reg_no = rs->regId;
-    } else if (rs->isTemp()) {
-        // 临时变量
-        rs->regId = rs_reg_no;
-    }
+    //注释掉，否则不会把临时变量存到栈里
+
+    // // 看结果变量是否是寄存器，若不是则采用参数指定的寄存器rs_reg_name
+    // if (rs->regId != -1) {
+    //     rs_reg_no = rs->regId;
+    // } else if (rs->isTemp()) {
+    //     // 临时变量
+    //     rs->regId = rs_reg_no;
+    // }
 
     std::string rs_reg_name = PlatformArm32::regName[rs_reg_no];
 
