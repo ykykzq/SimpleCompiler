@@ -184,7 +184,8 @@ void CodeGeneratorArm32::adjustFormalParamInsts(Function * func)
 
         // 产生赋值指令,R#n寄存器赋值到对应的变量上，放到放到Entry指令的后面
         // 注意R#n寄存器需要事先分配几个Value
-        newInsts.push_back(new AssignIRInst(val, RegVal[k]));
+        val->regId = k;
+        // newInsts.push_back(new AssignIRInst(val, RegVal[k]));
     }
 
     // 形参的前四个采用fp+偏移寻址，后面的sp+偏移寻址实参空间
