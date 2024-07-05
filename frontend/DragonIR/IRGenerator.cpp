@@ -371,6 +371,7 @@ bool IRGenerator::ir_function_formal_params(ast_node * node)
 
             // 创建变量，默认整型
             Value * param_in_func = symtab->currentFunc->newLocalArrayValue(var_name, BasicType::TYPE_INT, indexs);
+            param_in_func->_parameter = true;
             node->blockInsts.addInst(new AssignIRInst(param_in_func, var));
 
             // 默认是整数类型

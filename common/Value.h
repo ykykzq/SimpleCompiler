@@ -81,6 +81,10 @@ protected:
 public:
     /// @brief 是否是全局变量
     bool _global = false;
+
+    /// @brief 是否是调用传参
+    bool _parameter = false;
+
     /// @brief 变量名或内部标识的名字
     std::string name;
 

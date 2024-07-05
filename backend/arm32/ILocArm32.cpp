@@ -303,13 +303,21 @@ void ILocArm32::load_var(int rs_reg_no, Value * var)
             } else {
                 if (var->isArray()) {
                     //如果是数组
-                    std::string src_name = PlatformArm32::regName[rs_reg_no];
-                    std::string base = PlatformArm32::regName[var->baseRegNo];
-                    std::string temp_name = PlatformArm32::regName[4];
-                    int off = getAdjustOffset(var);
+                    if (var->_parameter) {
+                        //是调用传参
+                        int off = getAdjustOffset(var);
 
-                    emit("mov", temp_name, toStr(off));
-                    emit("add", src_name, base, temp_name);
+                        // ldr r8,[sp,#16]
+                        load_base(rs_reg_no, var->baseRegNo, off);
+                    } else {
+                        std::string src_name = PlatformArm32::regName[rs_reg_no];
+                        std::string base = PlatformArm32::regName[var->baseRegNo];
+                        std::string temp_name = PlatformArm32::regName[4];
+                        int off = getAdjustOffset(var);
+
+                        emit("mov", temp_name, toStr(off));
+                        emit("add", src_name, base, temp_name);
+                    }
                 } else {
                     // 目前只考虑局部变量，不考虑数组等
                     int off = getAdjustOffset(var);
