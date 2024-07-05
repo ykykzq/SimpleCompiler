@@ -97,7 +97,8 @@ void CodeGeneratorArm32::genCodeSection(Function * func)
     instSelector.run();
 
     // 删除无用的Label指令
-    iloc.deleteUsedLabel();
+    // 干嘛删除
+    // iloc.deleteUsedLabel();
 
     // ILOC代码输出为汇编代码
     string name = func->getName();

@@ -284,12 +284,22 @@ void ILocArm32::load_var(int rs_reg_no, Value * var)
         } else {
             if (var->_global) {
                 // 全局变量
-                auto varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
-                std::string rsReg = PlatformArm32::regName[rs_reg_no];
-                emit("movw", rsReg, "#:lower16:" + varName);
-                emit("movt", rsReg, "#:upper16:" + varName);
-                //加入一条ldr指令
-                emit("ldr", rsReg, "[" + rsReg + "]");
+                if (var->isArray()) {
+                    //如果是数组
+                    std::string varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+                    std::string src_name = PlatformArm32::regName[rs_reg_no];
+                    emit("movw", src_name, "#:lower16:" + varName);
+                    emit("movt", src_name, "#:upper16:" + varName);
+                    //不需要再用ldr解地址
+                } else {
+                    auto varName = var->getName()[0] == '@' ? var->getName().substr(1) : var->getName();
+                    std::string rsReg = PlatformArm32::regName[rs_reg_no];
+                    emit("movw", rsReg, "#:lower16:" + varName);
+                    emit("movt", rsReg, "#:upper16:" + varName);
+                    //加入一条ldr指令
+                    emit("ldr", rsReg, "[" + rsReg + "]");
+                }
+
             } else {
                 if (var->isArray()) {
                     //如果是数组
