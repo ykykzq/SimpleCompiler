@@ -291,14 +291,25 @@ void ILocArm32::load_var(int rs_reg_no, Value * var)
                 //加入一条ldr指令
                 emit("ldr", rsReg, "[" + rsReg + "]");
             } else {
-                // 目前只考虑局部变量，不考虑数组等
-                int off = getAdjustOffset(var);
+                if (var->isArray()) {
+                    //如果是数组
+                    std::string src_name = PlatformArm32::regName[rs_reg_no];
+                    std::string base = PlatformArm32::regName[var->baseRegNo];
+                    std::string temp_name = PlatformArm32::regName[4];
+                    int off = getAdjustOffset(var);
 
-                // 对于栈内分配的局部数组，可直接在栈指针上进行移动与运算
-                // 但对于形参，其保存的是调用函数栈的数组的地址，需要读取出来
+                    emit("mov", temp_name, toStr(off));
+                    emit("add", src_name, base, temp_name);
+                } else {
+                    // 目前只考虑局部变量，不考虑数组等
+                    int off = getAdjustOffset(var);
 
-                // ldr r8,[sp,#16]
-                load_base(rs_reg_no, var->baseRegNo, off);
+                    // 对于栈内分配的局部数组，可直接在栈指针上进行移动与运算
+                    // 但对于形参，其保存的是调用函数栈的数组的地址，需要读取出来
+
+                    // ldr r8,[sp,#16]
+                    load_base(rs_reg_no, var->baseRegNo, off);
+                }
             }
         }
     }
@@ -416,16 +427,16 @@ void ILocArm32::allocStack(Function * func, int tmp_reg_no)
 
     off += funcCallArgCnt * 4;
 
-    //修正，补足数组的部分
-    for (auto var: func->getVarValues()) {
-        if (var->isArray()) {
-            int arrar_extra_offset = 1;
-            for (auto index: var->arrayIndexVector) {
-                arrar_extra_offset = arrar_extra_offset * index;
-            }
-            off += (arrar_extra_offset - 1) * 4; //-1是因为在把数组当做正常变量使用时已经计入过一次
-        }
-    }
+    // //修正，补足数组的部分
+    // for (auto var: func->getVarValues()) {
+    //     if (var->isArray()) {
+    //         int arrar_extra_offset = 1;
+    //         for (auto index: var->arrayIndexVector) {
+    //             arrar_extra_offset = arrar_extra_offset * index;
+    //         }
+    //         off += (arrar_extra_offset - 1) * 4; //-1是因为在把数组当做正常变量使用时已经计入过一次
+    //     }
+    // }
 
     // 不需要在栈内额外分配空间，则什么都不做
     if (0 == off)

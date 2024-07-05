@@ -341,20 +341,42 @@ void CodeGeneratorArm32::stackAlloc(Function * func)
         if ((var->regId == -1) && (var->baseRegNo == -1)) {
 
             // 该变量没有分配寄存器
+            //如果是数组
+            if (var->isArray()) {
+                int size = 0;
+                //计算数组大小
+                int arrar_extra_offset = 1;
+                for (auto index: var->arrayIndexVector) {
+                    arrar_extra_offset = arrar_extra_offset * index;
+                }
+                size += arrar_extra_offset * 4;
 
-            int32_t size = var->getSize();
+                // 32位ARM平台按照4字节的大小整数倍分配局部变量
+                size += (4 - size % 4) % 4;
+                // 局部变量偏移
+                var->setOffset(sp_esp);
 
-            // 32位ARM平台按照4字节的大小整数倍分配局部变量
-            size += (4 - size % 4) % 4;
+                // 累计当前作用域大小
+                sp_esp += size;
 
-            // 局部变量偏移
-            var->setOffset(sp_esp);
+                // 设置基址寄存器名字
+                var->baseRegNo = REG_ALLOC_SIMPLE_FP_REG_NO;
 
-            // 累计当前作用域大小
-            sp_esp += size;
+            } else {
+                int32_t size = var->getSize();
 
-            // 设置基址寄存器名字
-            var->baseRegNo = REG_ALLOC_SIMPLE_FP_REG_NO;
+                // 32位ARM平台按照4字节的大小整数倍分配局部变量
+                size += (4 - size % 4) % 4;
+
+                // 局部变量偏移
+                var->setOffset(sp_esp);
+
+                // 累计当前作用域大小
+                sp_esp += size;
+
+                // 设置基址寄存器名字
+                var->baseRegNo = REG_ALLOC_SIMPLE_FP_REG_NO;
+            }
         }
     }
 

@@ -194,7 +194,19 @@ void InstSelectorArm32::translate_assign(IRInst * inst)
         // 内存变量 => 寄存器
 
         iloc.load_var(rs->regId, arg1);
-
+    } else if (arg1->isPointer()) {
+        //数组取值
+        std::string src_name = PlatformArm32::regName[REG_ALLOC_SIMPLE_SRC1_REG_NO];
+        iloc.load_var(REG_ALLOC_SIMPLE_SRC1_REG_NO, arg1);
+        iloc.inst("ldr", src_name, "[" + src_name + "]");
+        iloc.store_var(REG_ALLOC_SIMPLE_SRC1_REG_NO, rs, 9);
+    } else if (rs->isPointer()) {
+        //数组赋值
+        iloc.load_var(REG_ALLOC_SIMPLE_SRC1_REG_NO, arg1);
+        std::string src_name = PlatformArm32::regName[REG_ALLOC_SIMPLE_SRC1_REG_NO];
+        std::string rs_name = PlatformArm32::regName[4];
+        iloc.load_var(4, rs);
+        iloc.inst("str", src_name, "[" + rs_name + "]");
     } else {
         // 内存变量 => 内存变量
 
