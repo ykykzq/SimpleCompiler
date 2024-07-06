@@ -1,16 +1,9 @@
-
-int bubblesort(int arr[])
-{
-    
-    return 0;
-}
-
 int main(){
-
-    int a[10];
-    a[0]=4;
-
-    bubblesort(a);
-    
-    return 0;
+    int a = 100;
+    int b = 0;
+    while (a > 0) {
+        b = b + a;
+        a = a - 1;
+    }
+    return b;
 }

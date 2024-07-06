@@ -123,6 +123,20 @@ public:
         return new_func;
     }
 
+    /// @brief 返回function列表
+    /// @return function列表
+    std::vector<CFG_function *> getFunctions()
+    {
+        return functions;
+    }
+
+    /// @brief 返回符号表
+    /// @return 符号表symtab
+    SymbolTable * getSymtab()
+    {
+        return symtab;
+    }
+
     /// @brief 设置当前function
     /// @param function 变更的函数
     /// @return

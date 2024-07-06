@@ -150,6 +150,45 @@
 		},
 		{
 			// 可采用GCC或者Clang编译器
+			"name": "Debug CP IR",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/cmake-build-debug/minic",
+			"args": ["-S", "-P", "tests/test.c"],
+			// 程序的入口（main函数的入口）是否停止
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			// 根据需要修改修改目标架构，这里假定amd64
+			// "targetArchitecture": "amd64",
+			"linux": {
+				"MIMode": "gdb",
+				"miDebuggerPath": "/usr/bin/gdb"
+			},
+			"osx": {
+				"MIMode": "lldb"
+			},
+			"windows": {
+				"MIMode": "gdb"
+			},
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+			// 不需要编译时可注释掉
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			// 可采用GCC或者Clang编译器
 			"name": "Debug Backend ARM32",
 			"type": "cppdbg",
 			"request": "launch",

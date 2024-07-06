@@ -39,6 +39,7 @@
 // #include "getopt-port.h"
 #include "utils/getopt-port.h"
 #include "common/drawCFG/drawCFG.h"
+#include "optimizer/ConstPropagation.h"
 
 /// @brief 是否显示帮助信息
 bool gShowHelp = false;
@@ -61,6 +62,9 @@ int gShowSymbol = 0;
 /// @brief 输出中间IR和CFG
 int gShowCFG = 0;
 
+/// @brief 输出常数传播后的IR
+int gShowCpIR = 0;
+
 /// @brief 前端分析器，默认选Flex和Bison
 bool gFrontEndFlexBison = true;
 
@@ -80,7 +84,7 @@ std::string gOutputFile;
 /// @param exeName
 void showHelp(const std::string & exeName)
 {
-    std::cout << exeName + " -S [-A | -D] [-a | -I | -C] [-o output] source\n";
+    std::cout << exeName + " -S [-A | -D] [-a | -I | -C | -P] [-o output] source\n";
     std::cout << exeName + " -R [-A | -D] source\n";
 }
 
@@ -93,7 +97,7 @@ int ArgsAnalysis(int argc, char * argv[])
     int ch;
 
     // 指定参数解析的选项，可识别-h、-o、-S、-a、-I、-R、-A、-D选项，并且-o要求必须要有附加参数
-    const char options[] = "ho:SaIRADC";
+    const char options[] = "ho:SaIRADCP";
 
     opterr = 1;
 
@@ -119,6 +123,10 @@ lb_check:
             case 'C':
                 // 产生CFG
                 gShowCFG = 1;
+                break;
+            case 'P':
+                // 产生IR
+                gShowCpIR = 1;
                 break;
             case 'R':
                 // 直接运行，默认运行
@@ -175,7 +183,7 @@ lb_check:
         return -1;
     }
 
-    flag = gShowLineIR + gShowAST + gShowCFG;
+    flag = gShowLineIR + gShowAST + gShowCFG + gShowCpIR;
 
     if (gShowSymbol) {
 
@@ -202,6 +210,9 @@ lb_check:
             gOutputFile = "ir.txt";
         } else if (gShowCFG) {
             gOutputFile = "CFG.txt";
+
+        } else if (gShowCpIR) {
+            gOutputFile = "CP_IR.txt";
         } else {
             gOutputFile = "asm.s";
         }
@@ -337,6 +348,22 @@ int main(int argc, char * argv[])
             // 遍历抽象语法树产生线性IR，相关信息保存到符号表中
             CFG_Generator IR2CFG(&symtab);
             subResult = IR2CFG.run(true);
+
+            // 设置返回结果：正常
+            result = 0;
+
+            break;
+        }
+
+        if (gShowCpIR) {
+
+            // 生成CFG
+            CFG_Generator IR2CFG(&symtab);
+            subResult = IR2CFG.run(false);
+
+            //输出常数传播后的IR
+            ConstPropagation CpOptimter(&IR2CFG);
+            CpOptimter.outputIR(gOutputFile);
 
             // 设置返回结果：正常
             result = 0;
